@@ -65,6 +65,7 @@
         },
         "collapsible_tab_JqiqRE": {
           "type": "collapsible_tab",
+          "disabled": true,
           "settings": {
             "heading": "מידת הדוגמנית",
             "icon": "none",
