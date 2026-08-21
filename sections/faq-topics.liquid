@@ -13,6 +13,10 @@
     }
   }
 
+  .faq-topics__container {
+    direction: rtl;
+  }
+
   .faq-topics__header {
     margin-bottom: 3rem;
   }
@@ -122,7 +126,7 @@
 -%}
 
 <div class="color-{{ section.settings.color_scheme }} gradient">
-  <div class="page-width section-{{ section.id }}-padding">
+  <div class="page-width faq-topics__container section-{{ section.id }}-padding">
     {%- if section.settings.heading != blank -%}
       <div class="faq-topics__header" style="text-align: {{ section.settings.heading_alignment }};">
         <h2 class="inline-richtext {{ section.settings.heading_size }}">{{ section.settings.heading }}</h2>
