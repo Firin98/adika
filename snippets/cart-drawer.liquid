@@ -7,6 +7,9 @@
 
 {{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
 {{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'quick-add.css' | asset_url | stylesheet_tag }}
+{{ 'component-cart-drawer-recommendations.css' | asset_url | stylesheet_tag }}
 
 <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
@@ -90,6 +93,46 @@
           <div id="CartDrawer-CartItems" class="drawer__contents js-contents">
             {%- if cart != empty -%}
               <div class="drawer__cart-items-wrapper">
+                {%- if settings.cart_free_shipping_threshold != blank -%}
+                  {%- assign free_shipping_thresholds = settings.cart_free_shipping_threshold | remove: ' ' | split: ',' -%}
+                  {%- assign has_found_matching_threshold = false -%}
+
+                  {%- if free_shipping_thresholds.size > 1 -%}
+                    {%- for threshold in free_shipping_thresholds -%}
+                      {%- assign threshold_parts = threshold | split: ':' -%}
+                      {%- assign currency_code = threshold_parts | first | upcase -%}
+                      {%- if currency_code == cart.currency.iso_code -%}
+                        {%- assign free_shipping_calculated_threshold = threshold_parts | last -%}
+                        {%- assign has_found_matching_threshold = true -%}
+                        {%- break -%}
+                      {%- endif -%}
+                    {%- endfor -%}
+                  {%- else -%}
+                    {%- assign free_shipping_calculated_threshold = free_shipping_thresholds | last -%}
+                    {%- assign has_found_matching_threshold = true -%}
+                  {%- endif -%}
+
+                  {%- if has_found_matching_threshold -%}
+                    {%- assign threshold_in_cents = free_shipping_calculated_threshold | times: 100 -%}
+                    {%- assign calculated_total_price = cart.total_price -%}
+
+                    {%- for line_item in cart.items -%}
+                      {%- unless line_item.requires_shipping -%}
+                        {%- assign calculated_total_price = calculated_total_price | minus: line_item.final_line_price -%}
+                      {%- endunless -%}
+                    {%- endfor -%}
+
+                    <free-shipping-bar threshold="{{ threshold_in_cents }}" class="shipping-bar shipping-bar--large" style="--progress: {{ cart.total_price | times: 1.0 | divided_by: threshold_in_cents | at_most: 1 }}">
+                      {%- if calculated_total_price >= threshold_in_cents -%}
+                        <span class="shipping-bar__text">{{ 'cart.general.free_shipping' | t }}</span>
+                      {%- else -%}
+                        {%- capture remaining_amount -%}{{ calculated_total_price | minus: threshold_in_cents | abs | money }}{%- endcapture -%}
+                        <span class="shipping-bar__text">{{ 'cart.general.free_shipping_remaining_html' | t: remaining_amount: remaining_amount }}</span>
+                      {%- endif -%}
+                      <span class="shipping-bar__progress"></span>
+                    </free-shipping-bar>
+                  {%- endif -%}
+                {%- endif -%}
                 <table class="cart-items" role="table">
                   <thead role="rowgroup">
                     <tr role="row">
@@ -487,6 +530,18 @@
           <div id="CartDrawer-CartErrors" role="alert"></div>
         </form>
       </cart-drawer-items>
+      {%- if cart != empty and cart.items.first.product_id != blank -%}
+        <section class="drawer__recommendations">
+          <h3 class="drawer__recommendations-heading">{{ 'cart.general.recommendations_title' | t }}</h3>
+          <cart-drawer-recommendations
+            class="related-products"
+            data-url="{{ routes.product_recommendations_url }}?limit=4&intent=related"
+            data-section-id="cart-drawer-recommendations"
+            data-product-id="{{ cart.items.first.product_id }}"
+          >
+          </cart-drawer-recommendations>
+        </section>
+      {%- endif -%}
       <div class="drawer__footer">
         {%- if settings.show_cart_note -%}
           <details id="Details-CartDrawer">

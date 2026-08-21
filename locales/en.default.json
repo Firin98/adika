@@ -538,5 +538,12 @@
       "send_on": "YYYY-MM-DD",
       "send_on_label": "Send on (optional)"
     }
+  },
+  "cart": {
+    "general": {
+      "free_shipping": "You've earned free shipping!",
+      "free_shipping_remaining_html": "Add {{ remaining_amount }} more for free shipping",
+      "recommendations_title": "You may also like"
+    }
   }
 }

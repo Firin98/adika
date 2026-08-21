@@ -1449,6 +1449,12 @@
         "id": "cart_color_scheme",
         "label": "t:sections.all.colors.label",
         "default": "scheme-1"
+      },
+      {
+        "type": "text",
+        "id": "cart_free_shipping_threshold",
+        "label": "Free shipping minimum amount",
+        "info": "Enter amount as a number only. For multiple currencies use format: USD:50,EUR:60,JPY:9000"
       }
     ]
   }

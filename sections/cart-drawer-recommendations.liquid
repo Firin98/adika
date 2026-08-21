@@ -1,0 +1,158 @@
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'quick-add.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
+
+<style>
+  /* ── Scoped only to .cdr-card-wrapper ── */
+
+  .cdr-slider {
+    padding: 1.2rem 0 0.8rem;
+    max-width: 100%;
+  }
+
+  .cdr-card-wrapper {
+    padding: 0;
+  }
+
+  .cdr-card-wrapper .cdr-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    min-height: 110px;
+  }
+
+  .cdr-card-wrapper .cdr-card__image-wrap {
+    flex-shrink: 0;
+    width: 90px;
+    height: 90px;
+    overflow: hidden;
+    border-radius: var(--media-radius, 4px);
+    background: rgba(var(--color-foreground), 0.04);
+    display: block;
+  }
+
+  .cdr-card-wrapper .cdr-card__image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .cdr-card-wrapper .cdr-card__content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .cdr-card-wrapper .cdr-card__title {
+    font-size: 1.3rem;
+    font-weight: 500;
+    line-height: 1.3;
+    color: inherit;
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .cdr-card-wrapper .cdr-card__title:hover {
+    text-decoration: underline;
+  }
+
+  .cdr-card-wrapper .cdr-card__price .price {
+    font-size: 1.3rem;
+    margin: 0;
+  }
+
+  .cdr-card-wrapper .cdr-card__action {
+    margin: 0;
+  }
+
+  .cdr-card-wrapper .cdr-card__btn {
+    font-size: 1.2rem;
+    padding: 0.6rem 1rem;
+    min-height: unset;
+  }
+
+  /* Reset any global card styles leaking in */
+  .cdr-card-wrapper .quick-add {
+    padding: 0;
+    position: static;
+    opacity: 1;
+    transform: none;
+  }
+
+  .cdr-card-wrapper .quick-add__submit {
+    width: 100%;
+    color: #fff;
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <cart-drawer-recommendations
+    class="related-products"
+    data-url="{{ routes.product_recommendations_url }}?limit=4&intent=related"
+    data-section-id="{{ section.id }}"
+    data-product-id="{{ product.id }}"
+  >
+    {%- if recommendations.performed and recommendations.products_count > 0 -%}
+      <div class="cdr-slider">
+        <div class="swiper swiper--cdr">
+          <div class="swiper-wrapper">
+            {%- for recommendation in recommendations.products -%}
+              <div class="swiper-slide">
+                {%- render 'card-product-rec',
+                  card_product: recommendation,
+                  section_id: section.id,
+                  lazy_load: false,
+                  image_ratio: section.settings.image_ratio
+                -%}
+              </div>
+            {%- endfor -%}
+          </div>
+          <div class="swiper-pagination"></div>
+        </div>
+      </div>
+    {%- endif -%}
+  </cart-drawer-recommendations>
+</div>
+
+{% schema %}
+{
+  "name": "Cart Recommendations",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "adapt", "label": "Adapt to image" },
+        { "value": "portrait", "label": "Portrait" },
+        { "value": "square", "label": "Square" }
+      ],
+      "default": "square"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cart Recommendations"
+    }
+  ]
+}
+{% endschema %}

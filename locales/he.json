@@ -549,8 +549,9 @@
   },
   "cart": {
     "general": {
-      "free_shipping": "",
-      "free_shipping_remaining_html": "הוסיפי עוד {{ remaining_amount }}  ותקבלי משלוח חינם"
+      "free_shipping": "מגיע לך משלוח חינם!",
+      "free_shipping_remaining_html": "הוסיפי עוד {{ remaining_amount }}  ותקבלי משלוח חינם",
+      "recommendations_title": "אולי יעניין אותך גם"
     }
   },
   "shopify": {
