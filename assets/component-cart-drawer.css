@@ -461,7 +461,7 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   background: currentColor;
   transition: transform 0.3s ease;
   transform: scaleX(var(--progress, 0));
-  transform-origin: var(--transform-origin-start, left);
+  transform-origin: var(--transform-origin-start, right);
 }
 
 .shipping-bar--large {
