@@ -818,7 +818,8 @@ a.product__text {
   border-style: solid;
   border-width: var(--popup-border-width);
   box-shadow: var(--popup-shadow-horizontal-offset) var(--popup-shadow-vertical-offset) var(--popup-shadow-blur-radius)
-    rgba(var(--color-shadow), var(--popup-shadow-opacity));
+  rgba(var(--color-shadow), var(--popup-shadow-opacity));
+  min-width: 500px;
 }
 
 .product-popup-modal__content.focused {
