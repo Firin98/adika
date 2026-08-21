@@ -840,7 +840,8 @@ a.product__text {
     width: max-content;
     padding: 0 3rem;
     max-width: 70%;
-    max-height: max-content;
+    height: max-content;
+    max-height: 70svh;
     padding-bottom: 50px;
   }
 
