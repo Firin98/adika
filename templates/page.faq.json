@@ -100,7 +100,7 @@
           "settings": {
             "topic": "משלוחים",
             "question": "מידע על משלוחים",
-            "answer": "<p>לפרטים מלאים בנושא אספקה ומשלוחים בקרו בעמוד \"משלוחים\",<a href=\"https://www.intima-il.co.il/customer-service/delivery/\"> לחצי כאן</a>.</p>"
+            "answer": "<p>לפרטים מלאים בנושא אספקה ומשלוחים בקרו בעמוד \"משלוחים\"<a href=\"/pages/%D7%9E%D7%93%D7%99%D7%A0%D7%99%D7%95%D7%AA-%D7%9E%D7%A9%D7%9C%D7%95%D7%97%D7%99%D7%9D\" title=\"מדיניות משלוחים\">, לחצי כאן.</a></p>"
           }
         },
         "question_y8nMrN": {
