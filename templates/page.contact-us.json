@@ -90,7 +90,8 @@
       ],
       "custom_css": [
         ".page-width {max-width: 1440px;}",
-        " {direction: rtl;}"
+        " {direction: rtl;}",
+        ".image-with-text__content {display: flex; align-items: flex-start; width: max-content;}"
       ],
       "name": "t:sections.image-with-text.presets.name",
       "settings": {
