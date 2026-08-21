@@ -848,6 +848,7 @@ a.product__text {
     height: max-content;
     max-height: 70svh;
     padding-bottom: 50px;
+    min-width: 90%;
   }
 
   .product-media-modal__dialog .global-media-settings--no-shadow {
