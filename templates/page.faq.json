@@ -74,9 +74,9 @@
         "question_7NCtLz": {
           "type": "question",
           "settings": {
-            "topic": "Shipping",
-            "question": "Frequently asked question",
-            "answer": "<p>Share details about the answer to this question.</p>"
+            "topic": "הזמנות",
+            "question": "איך ניתן לוודא שקיבלתם את ההזמנה?",
+            "answer": "<p>במידה והזמנתכם התקבלה, תופיע לאחר ביצוע הרכישה הודעה המאשרת כי הזמנתכם התקבלה בהצלחה. בנוסף, ניתן לבדוק בכל רגע נתון את סטטוס ההזמנות בחשבונכם באתר. לאחר התחברות לחשבון באמצעות מייל וסיסמה, יש להקליק על \"החשבון שלי״ ולבחור ״הזמנות״.</p>"
           }
         },
         "question_Uxb44a": {
