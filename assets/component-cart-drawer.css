@@ -9,6 +9,7 @@
   justify-content: flex-start;
   background-color: rgba(var(--color-foreground), 0.5);
   transition: visibility var(--duration-default) ease;
+  direction: rtl;
 }
 
 .drawer.active {
