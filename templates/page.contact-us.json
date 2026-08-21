@@ -91,7 +91,8 @@
       "custom_css": [
         ".page-width {max-width: 1440px;}",
         " {direction: rtl;}",
-        ".image-with-text__content {display: flex; align-items: flex-start; width: max-content;}"
+        ".image-with-text__content {display: flex; align-items: flex-start; width: max-content;}",
+        "@media all and (max-width: 749px) {.image-with-text__content {width: auto; }}"
       ],
       "name": "t:sections.image-with-text.presets.name",
       "settings": {
