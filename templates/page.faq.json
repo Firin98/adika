@@ -44,91 +44,6 @@
         "banner_type": "banner"
       }
     },
-    "collapsible_content_xQxmmb": {
-      "type": "collapsible-content",
-      "blocks": {
-        "collapsible_row_YJrewX": {
-          "type": "collapsible_row",
-          "settings": {
-            "heading": "זוהי עובדה מבוססת שדעתו של",
-            "icon": "none",
-            "row_content": "<p>זוהי עובדה מבוססת שדעתו של<br/>test זוהי עובדה מבוססת שדעתו של Lorem<br/>dfsfsdfזוהי עובדה מבוססת שדעתו של Lorem</p>",
-            "page": ""
-          }
-        },
-        "collapsible_row_hQ64Md": {
-          "type": "collapsible_row",
-          "settings": {
-            "heading": "זוהי עובדה מבוססת שדעתו של",
-            "icon": "none",
-            "row_content": "<p>זוהי עובדה מבוססת שדעתו של<br/>test זוהי עובדה מבוססת שדעתו של Lorem<br/>dfsfsdf זוהי עובדה מבוססת שדעתו של<br/>tes</p>",
-            "page": ""
-          }
-        },
-        "collapsible_row_xxkkWE": {
-          "type": "collapsible_row",
-          "settings": {
-            "heading": "זוהי עובדה מבוססת שדעתו של",
-            "icon": "none",
-            "row_content": "<p>זוהי עובדה מבוססת שדעתו של<br/>test זוהי עובדה מבוססת שדעתו של Lorem<br/>dfsfsdf זוהי עובדה מבוססת שדעתו של<br/>test זוהי עובדה מבוססת שדעתו של Lorem<br/>sdfsdf זוהי עובדה מבוססת שדעתו של<br/> זוהי עובדה מבוססת שדעתו של Lorem<br/></p>",
-            "page": ""
-          }
-        },
-        "collapsible_row_ncHCra": {
-          "type": "collapsible_row",
-          "settings": {
-            "heading": "זוהי עובדה מבוססת שדעתו של",
-            "icon": "none",
-            "row_content": "<p>זוהי עובדה מבוססת שדעתו של<br/>test<br/>זוהי עובדה מבוססת שדעתו של Lorem<br/>dfsfsdf<br/>זוהי עובדה מבוססת שדעתו של<br/>test זוהי עובדה מבוססת שדעתו של Lorem<br/>sdfsdf זוהי עובדה מבוססת שדעתו של<br/> והי עובדה מבוססת שדעתו של Lorem<br/></p>",
-            "page": ""
-          }
-        },
-        "collapsible_row_H3rmQi": {
-          "type": "collapsible_row",
-          "settings": {
-            "heading": "זוהי עובדה מבוססת שדעתו של",
-            "icon": "none",
-            "row_content": "<p>זוהי עובדה מבוססת שדעתו של<br/>test<br/>זוהי עובדה מבוססת שדעתו של Lorem<br/>dfsfsdf<br/>זוהי עובדה מבוססת שדעתו של<br/>test<br/>זוהי עובדה מבוססת שדעתו של Lorem<br/>sdfsdf<br/>זוהי עובדה מבוססת שדעתו של<br/><br/>זוהי עובדה מבוססת שדעתו של Lorem<br/></p>",
-            "page": ""
-          }
-        },
-        "collapsible_row_FtCxX8": {
-          "type": "collapsible_row",
-          "settings": {
-            "heading": "זוהי עובדה מבוססת שדעתו של",
-            "icon": "none",
-            "row_content": "<p>זוהי עובדה מבוססת שדעתו של<br/>test<br/>זוהי עובדה מבוססת שדעתו של Lorem<br/>dfsfsdf<br/>זוהי עובדה מבוססת שדעתו של<br/>test<br/>זוהי עובדה מבוססת שדעתו של Lorem<br/>sdfsdf<br/>זוהי עובדה מבוססת שדעתו של<br/><br/>זוהי עובדה מבוססת שדעתו של Lorem<br/></p>",
-            "page": ""
-          }
-        }
-      },
-      "block_order": [
-        "collapsible_row_YJrewX",
-        "collapsible_row_hQ64Md",
-        "collapsible_row_xxkkWE",
-        "collapsible_row_ncHCra",
-        "collapsible_row_H3rmQi",
-        "collapsible_row_FtCxX8"
-      ],
-      "name": "t:sections.collapsible_content.presets.name",
-      "settings": {
-        "caption": "",
-        "heading": "Frequently Asked Questions",
-        "heading_size": "h2",
-        "heading_alignment": "center",
-        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
-        "layout": "none",
-        "container_color_scheme": "",
-        "color_scheme": "",
-        "open_first_collapsible_row": false,
-        "image_ratio": "adapt",
-        "desktop_layout": "image_second",
-        "padding_top": 114,
-        "padding_top_mobile": 65,
-        "padding_bottom": 100,
-        "padding_bottom_mobile": 50
-      }
-    },
     "faq_topics_L7L8Wp": {
       "type": "faq-topics",
       "blocks": {
@@ -182,7 +97,7 @@
       ],
       "name": "FAQ by topics",
       "settings": {
-        "heading": "FAQ",
+        "heading": "",
         "heading_size": "h1",
         "heading_alignment": "center",
         "color_scheme": "",
@@ -196,7 +111,6 @@
   "order": [
     "main",
     "rich_text_3rbNc6",
-    "collapsible_content_xQxmmb",
     "faq_topics_L7L8Wp"
   ]
 }
