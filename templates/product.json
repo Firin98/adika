@@ -1,1 +1,207 @@
-{"sections":{"main":{"type":"main-product","blocks":{"vendor":{"type":"text","disabled":true,"settings":{"text":"{{ product.vendor }}","text_style":"uppercase"}},"title":{"type":"title","settings":{}},"price":{"type":"price","settings":{}},"variant_picker":{"type":"variant_picker","settings":{"picker_type":"button","swatch_shape":"circle","enable_size_guide":true,"size_guide_text":"טבלת מידות","size_guide_page":"size-guide"}},"quantity_selector":{"type":"quantity_selector","disabled":true,"settings":{}},"buy_buttons":{"type":"buy_buttons","settings":{"show_dynamic_checkout":false,"show_gift_card_recipient":false}},"description":{"type":"description","settings":{}},"collapsible_tab_r838AT":{"type":"collapsible_tab","settings":{"heading":"תאור הפריט","icon":"none","content":"{{ product.description }}","page":""}},"collapsible_tab_JqiqRE":{"type":"collapsible_tab","settings":{"heading":"מידת הדוגמנית","icon":"none","content":"","page":""}},"collapsible_tab_KVcmDM":{"type":"collapsible_tab","settings":{"heading":"מידע נוסף","icon":"none","content":"<p>ארץ ייצור: {{ product.metafields.custom.country_of_origin.value }}<\/p><p>הרכב בד: {{ product.metafields.custom.material_composition.value }} <br\/><br\/>הוראות כביסה: {{ product.metafields.custom.care_instructions.value }}<br\/><br\/>פרטי יבואן: קבוצת גולף א.ק. בע”מ, ח”פ 510289564<\/p>","page":""}},"complementary_L9NYyT":{"type":"complementary","settings":{"block_heading":"complete the look","make_collapsible_row":false,"icon":"none","product_list_limit":3,"products_per_page":1,"pagination_style":"dots","image_ratio":"portrait","enable_quick_add":true}},"share":{"type":"share","disabled":true,"settings":{"share_label":"Share"}}},"block_order":["vendor","title","price","variant_picker","quantity_selector","buy_buttons","description","collapsible_tab_r838AT","collapsible_tab_JqiqRE","collapsible_tab_KVcmDM","complementary_L9NYyT","share"],"settings":{"enable_sticky_info":true,"color_scheme":"scheme-1","media_size":"large","constrain_to_viewport":false,"media_fit":"contain","gallery_layout":"stacked","mobile_thumbnails":"hide","media_position":"right","image_zoom":"none","hide_variants":false,"enable_video_looping":false,"padding_top":24,"padding_top_mobile":0,"padding_bottom":12,"padding_bottom_mobile":10}},"disclosures":{"type":"disclosures","disabled":true,"settings":{"heading":"Disclosures","heading_size":"h2","open_by_default":false,"color_scheme":"","padding_top":36,"padding_bottom":0}},"related-products":{"type":"related-products","disabled":true,"settings":{"heading":"You may also like","heading_size":"h2","products_to_show":4,"columns_desktop":4,"columns_mobile":"2","color_scheme":"scheme-1","image_ratio":"square","image_shape":"default","show_secondary_image":true,"show_vendor":false,"show_rating":false,"padding_top":36,"padding_bottom":28}},"featured_collection":{"type":"featured-collection","settings":{"collection":"all","products_to_show":4,"title":"We’re cute too","heading_size":"h1","heading_alignment":"right","description":"","show_description":false,"description_style":"body","columns_desktop":4,"enable_desktop_slider":true,"full_width":false,"show_view_all":false,"view_all_style":"solid","color_scheme":"scheme-1","image_ratio":"portrait","image_display_mode":"slider","image_shape":"default","show_secondary_image":false,"show_vendor":false,"show_rating":false,"quick_add":"standard","columns_mobile":"2","swipe_on_mobile":true,"padding_top":56,"padding_top_mobile":40,"padding_bottom":50,"padding_bottom_mobile":34}}},"order":["main","disclosures","related-products","featured_collection"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "vendor": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "{{ product.vendor }}",
+            "text_style": "uppercase"
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "settings": {
+            "picker_type": "button",
+            "swatch_shape": "circle",
+            "enable_size_guide": true,
+            "size_guide_text": "טבלת מידות",
+            "size_guide_page": "{{ product.metafields.custom.size_guide.value }}"
+          }
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "disabled": true,
+          "settings": {}
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": false,
+            "show_gift_card_recipient": false
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "collapsible_tab_r838AT": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "תאור הפריט",
+            "icon": "none",
+            "content": "{{ product.description }}",
+            "page": ""
+          }
+        },
+        "collapsible_tab_JqiqRE": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "מידת הדוגמנית",
+            "icon": "none",
+            "content": "",
+            "page": ""
+          }
+        },
+        "collapsible_tab_KVcmDM": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "מידע נוסף",
+            "icon": "none",
+            "content": "<p>ארץ ייצור: {{ product.metafields.custom.country_of_origin.value }}</p><p>הרכב בד: {{ product.metafields.custom.material_composition.value }} <br/><br/>הוראות כביסה: {{ product.metafields.custom.care_instructions.value }}<br/><br/>פרטי יבואן: קבוצת גולף א.ק. בע”מ, ח”פ 510289564</p>",
+            "page": ""
+          }
+        },
+        "complementary_L9NYyT": {
+          "type": "complementary",
+          "settings": {
+            "block_heading": "complete the look",
+            "make_collapsible_row": false,
+            "icon": "none",
+            "product_list_limit": 3,
+            "products_per_page": 1,
+            "pagination_style": "dots",
+            "image_ratio": "portrait",
+            "enable_quick_add": true
+          }
+        },
+        "share": {
+          "type": "share",
+          "disabled": true,
+          "settings": {
+            "share_label": "Share"
+          }
+        }
+      },
+      "block_order": [
+        "vendor",
+        "title",
+        "price",
+        "variant_picker",
+        "quantity_selector",
+        "buy_buttons",
+        "description",
+        "collapsible_tab_r838AT",
+        "collapsible_tab_JqiqRE",
+        "collapsible_tab_KVcmDM",
+        "complementary_L9NYyT",
+        "share"
+      ],
+      "settings": {
+        "enable_sticky_info": true,
+        "color_scheme": "scheme-1",
+        "media_size": "large",
+        "constrain_to_viewport": false,
+        "media_fit": "contain",
+        "gallery_layout": "stacked",
+        "mobile_thumbnails": "hide",
+        "media_position": "right",
+        "image_zoom": "none",
+        "hide_variants": false,
+        "enable_video_looping": false,
+        "padding_top": 24,
+        "padding_top_mobile": 0,
+        "padding_bottom": 12,
+        "padding_bottom_mobile": 10
+      }
+    },
+    "disclosures": {
+      "type": "disclosures",
+      "disabled": true,
+      "settings": {
+        "heading": "Disclosures",
+        "heading_size": "h2",
+        "open_by_default": false,
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 0
+      }
+    },
+    "related-products": {
+      "type": "related-products",
+      "disabled": true,
+      "settings": {
+        "heading": "You may also like",
+        "heading_size": "h2",
+        "products_to_show": 4,
+        "columns_desktop": 4,
+        "columns_mobile": "2",
+        "color_scheme": "scheme-1",
+        "image_ratio": "square",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": false,
+        "padding_top": 36,
+        "padding_bottom": 28
+      }
+    },
+    "featured_collection": {
+      "type": "featured-collection",
+      "settings": {
+        "collection": "all",
+        "products_to_show": 4,
+        "title": "We’re cute too",
+        "heading_size": "h1",
+        "heading_alignment": "right",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "columns_desktop": 4,
+        "enable_desktop_slider": true,
+        "full_width": false,
+        "show_view_all": false,
+        "view_all_style": "solid",
+        "color_scheme": "scheme-1",
+        "image_ratio": "portrait",
+        "image_display_mode": "slider",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "standard",
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "padding_top": 56,
+        "padding_top_mobile": 40,
+        "padding_bottom": 50,
+        "padding_bottom_mobile": 34
+      }
+    }
+  },
+  "order": [
+    "main",
+    "disclosures",
+    "related-products",
+    "featured_collection"
+  ]
+}
