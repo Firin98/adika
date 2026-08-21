@@ -128,11 +128,75 @@
         "padding_bottom": 100,
         "padding_bottom_mobile": 50
       }
+    },
+    "faq_topics_L7L8Wp": {
+      "type": "faq-topics",
+      "blocks": {
+        "question_z96pKd": {
+          "type": "question",
+          "settings": {
+            "topic": "Shipping",
+            "question": "Frequently asked question",
+            "answer": "<p>Share details about the answer to this question.</p>"
+          }
+        },
+        "question_7NCtLz": {
+          "type": "question",
+          "settings": {
+            "topic": "Shipping",
+            "question": "Frequently asked question",
+            "answer": "<p>Share details about the answer to this question.</p>"
+          }
+        },
+        "question_Uxb44a": {
+          "type": "question",
+          "settings": {
+            "topic": "Returns",
+            "question": "Frequently asked question",
+            "answer": "<p>Share details about the answer to this question.</p>"
+          }
+        },
+        "question_Pg664x": {
+          "type": "question",
+          "settings": {
+            "topic": "Returns",
+            "question": "Frequently asked question",
+            "answer": "<p>Share details about the answer to this question.</p>"
+          }
+        },
+        "question_4hjqwG": {
+          "type": "question",
+          "settings": {
+            "topic": "Payment",
+            "question": "Frequently asked question",
+            "answer": "<p>Share details about the answer to this question.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "question_z96pKd",
+        "question_7NCtLz",
+        "question_Uxb44a",
+        "question_Pg664x",
+        "question_4hjqwG"
+      ],
+      "name": "FAQ by topics",
+      "settings": {
+        "heading": "FAQ",
+        "heading_size": "h1",
+        "heading_alignment": "center",
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_top_mobile": 30,
+        "padding_bottom": 36,
+        "padding_bottom_mobile": 30
+      }
     }
   },
   "order": [
     "main",
     "rich_text_3rbNc6",
-    "collapsible_content_xQxmmb"
+    "collapsible_content_xQxmmb",
+    "faq_topics_L7L8Wp"
   ]
 }
