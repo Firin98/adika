@@ -823,9 +823,12 @@ a.product__text {
   border-width: var(--popup-border-width);
   box-shadow: var(--popup-shadow-horizontal-offset) var(--popup-shadow-vertical-offset) var(--popup-shadow-blur-radius)
   rgba(var(--color-shadow), var(--popup-shadow-opacity));
-  min-width: 500px;
 }
-
+@media all and (min-width: 600px) {
+  .product-popup-modal__content {
+    min-width: 500px;
+  }
+}
 .product-popup-modal__content.focused {
   box-shadow: 0 0 0 0.3rem rgb(var(--color-background)), 0 0 0.5rem 0.4rem rgba(var(--color-foreground), 0.3),
     var(--popup-shadow-horizontal-offset) var(--popup-shadow-vertical-offset) var(--popup-shadow-blur-radius)
