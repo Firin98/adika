@@ -1,1 +1,121 @@
-{"sections":{"main":{"type":"main-page","disabled":true,"settings":{"padding_top":28,"padding_bottom":28}},"rich_text_3rbNc6":{"type":"rich-text","blocks":{"heading_AcXbzV":{"type":"heading","settings":{"heading":"{{ page.title }}","heading_size":"hxl"}}},"block_order":["heading_AcXbzV"],"name":"t:sections.rich-text.presets.name","settings":{"desktop_content_position":"center","content_alignment":"center","color_scheme":"scheme-35026880-0af1-4623-94b9-d8747e7669a2","full_width":true,"padding_top":44,"padding_top_mobile":36,"padding_bottom":44,"padding_bottom_mobile":36,"banner_type":"banner"}},"image_with_text_ng3geh":{"type":"image-with-text","blocks":{"text_4E9eEM":{"type":"text","settings":{"text":"<p><strong>צרי קשר<\/strong><\/p><p>צוות שירות הלקוחות שלנו עומד לרשותכם: <\/p><p>בשעות הפעילות: ימים א'-ה': 09:00-16:30 <\/p><p>בטלפון: <a href=\"tel:073-7099999\">073-7099999<\/a> <\/p><p>צ'אט בוט באתר <\/p><p>בדוא\"ל: <a href=\"mailto:adika-service@golfco.co.il\">adika-service@golfco.co.il<\/a><\/p><p>WHATSAPP שירות הלקוחות של החברה: 03-8001000<\/p>","text_style":"body"}},"contact_info_NYYK3x":{"type":"contact_info","disabled":true,"settings":{"icon":"phone","title":"כתובת","text":"<p>עובדה מבוססת שדעתו של הקורא תהיה<\/p>"}},"contact_info_j88phB":{"type":"contact_info","disabled":true,"settings":{"icon":"email","title":"דוא\"ל","text":"<p>עובדה מבוססת שדעתו של הקורא תהיה<\/p>"}},"contact_info_RGArEn":{"type":"contact_info","disabled":true,"settings":{"icon":"location","title":"כתובת","text":"<p><strong>צרי קשר<\/strong><\/p><p>צוות שירות הלקוחות שלנו עומד לרשותכם, במספר ערוצים: <\/p><p>בשעות הפעילות: ימים א'-ה': 09:00-16:30 <\/p>"}}},"block_order":["text_4E9eEM","contact_info_NYYK3x","contact_info_j88phB","contact_info_RGArEn"],"custom_css":[".page-width {max-width: 1440px;}"],"name":"t:sections.image-with-text.presets.name","settings":{"image":"shopify:\/\/shop_images\/BANNER_DESK_1920_ADIKA_2_1.png","height":"adapt","desktop_image_width":"medium","layout":"text_first","image_behavior":"none","content_layout":"no-overlap","desktop_content_position":"middle","desktop_content_alignment":"right","mobile_content_alignment":"right","section_color_scheme":"","color_scheme":"","padding_top":56,"padding_top_mobile":46,"padding_bottom":100,"padding_bottom_mobile":30,"banner_type":"contact"}}},"order":["main","rich_text_3rbNc6","image_with_text_ng3geh"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "rich_text_3rbNc6": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_AcXbzV": {
+          "type": "heading",
+          "settings": {
+            "heading": "{{ page.title }}",
+            "heading_size": "hxl"
+          }
+        }
+      },
+      "block_order": [
+        "heading_AcXbzV"
+      ],
+      "name": "t:sections.rich-text.presets.name",
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "scheme-35026880-0af1-4623-94b9-d8747e7669a2",
+        "full_width": true,
+        "padding_top": 44,
+        "padding_top_mobile": 36,
+        "padding_bottom": 44,
+        "padding_bottom_mobile": 36,
+        "banner_type": "banner"
+      }
+    },
+    "image_with_text_ng3geh": {
+      "type": "image-with-text",
+      "blocks": {
+        "text_4E9eEM": {
+          "type": "text",
+          "settings": {
+            "text": "<p><strong>צרי קשר</strong></p><p>צוות שירות הלקוחות שלנו עומד לרשותכם: </p><p>בשעות הפעילות: ימים א'-ה': 09:00-16:30 </p><p>בטלפון: <a href=\"tel:073-7099999\">073-7099999</a> </p><p>צ'אט בוט באתר </p><p>בדוא\"ל: <a href=\"mailto:adika-service@golfco.co.il\">adika-service@golfco.co.il</a></p><p>WHATSAPP שירות הלקוחות של החברה: 03-8001000</p>",
+            "text_style": "body"
+          }
+        },
+        "contact_info_NYYK3x": {
+          "type": "contact_info",
+          "disabled": true,
+          "settings": {
+            "icon": "phone",
+            "title": "כתובת",
+            "text": "<p>עובדה מבוססת שדעתו של הקורא תהיה</p>"
+          }
+        },
+        "contact_info_j88phB": {
+          "type": "contact_info",
+          "disabled": true,
+          "settings": {
+            "icon": "email",
+            "title": "דוא\"ל",
+            "text": "<p>עובדה מבוססת שדעתו של הקורא תהיה</p>"
+          }
+        },
+        "contact_info_RGArEn": {
+          "type": "contact_info",
+          "disabled": true,
+          "settings": {
+            "icon": "location",
+            "title": "כתובת",
+            "text": "<p><strong>צרי קשר</strong></p><p>צוות שירות הלקוחות שלנו עומד לרשותכם, במספר ערוצים: </p><p>בשעות הפעילות: ימים א'-ה': 09:00-16:30 </p>"
+          }
+        }
+      },
+      "block_order": [
+        "text_4E9eEM",
+        "contact_info_NYYK3x",
+        "contact_info_j88phB",
+        "contact_info_RGArEn"
+      ],
+      "custom_css": [
+        ".page-width {max-width: 1440px;}",
+        " {direction: rtl;}"
+      ],
+      "name": "t:sections.image-with-text.presets.name",
+      "settings": {
+        "image": "shopify://shop_images/BANNER_DESK_1920_ADIKA_2_1.png",
+        "height": "adapt",
+        "desktop_image_width": "medium",
+        "layout": "image_first",
+        "image_behavior": "none",
+        "content_layout": "no-overlap",
+        "desktop_content_position": "middle",
+        "desktop_content_alignment": "right",
+        "mobile_content_alignment": "right",
+        "section_color_scheme": "",
+        "color_scheme": "",
+        "padding_top": 56,
+        "padding_top_mobile": 46,
+        "padding_bottom": 100,
+        "padding_bottom_mobile": 30,
+        "banner_type": "contact"
+      }
+    }
+  },
+  "order": [
+    "main",
+    "rich_text_3rbNc6",
+    "image_with_text_ng3geh"
+  ]
+}
