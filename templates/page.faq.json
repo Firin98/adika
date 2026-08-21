@@ -98,9 +98,17 @@
         "question_4hjqwG": {
           "type": "question",
           "settings": {
-            "topic": "Payment",
-            "question": "Frequently asked question",
-            "answer": "<p>Share details about the answer to this question.</p>"
+            "topic": "משלוחים",
+            "question": "מידע על משלוחים",
+            "answer": "<p>לפרטים מלאים בנושא אספקה ומשלוחים בקרו בעמוד \"משלוחים\",<a href=\"https://www.intima-il.co.il/customer-service/delivery/\"> לחצי כאן</a>.</p>"
+          }
+        },
+        "question_y8nMrN": {
+          "type": "question",
+          "settings": {
+            "topic": "החלפות והחזרות",
+            "question": "מידע על החלפות החזרות",
+            "answer": "<p>לפרטים מלאים בנושא אספקה ומשלוחים בקרו בעמוד \"משלוחים\",<a href=\"https://www.intima-il.co.il/customer-service/delivery/\"> לחצי כאן</a>.</p>"
           }
         }
       },
@@ -111,7 +119,8 @@
         "question_7NCtLz",
         "question_Uxb44a",
         "question_Pg664x",
-        "question_4hjqwG"
+        "question_4hjqwG",
+        "question_y8nMrN"
       ],
       "name": "FAQ by topics",
       "settings": {
