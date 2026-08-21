@@ -840,7 +840,20 @@ a.product__text {
     var(--popup-shadow-horizontal-offset) var(--popup-shadow-vertical-offset) var(--popup-shadow-blur-radius)
       rgba(var(--color-shadow), var(--popup-shadow-opacity));
 }
+@media screen and (max-width: 749px) {
+  .product-popup-modal__content {
+    width: max-content;
+    padding: 0 3rem;
+    max-width: 70%;
+    height: max-content;
+    max-height: 70svh;
+    padding-bottom: 50px;
+  }
 
+  .product-media-modal__dialog .global-media-settings--no-shadow {
+    overflow: visible !important;
+  }
+}
 @media screen and (min-width: 750px) {
   .product-popup-modal__content {
     padding-right: 1.5rem;
