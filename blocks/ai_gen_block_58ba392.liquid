@@ -1,0 +1,252 @@
+{% doc %}
+  @prompt
+    Section with 1 centered image. Separate desktop and mobile images.
+    Image size in pixels, paddings top/bottom, mobile settings separate.
+    If desktop image is not set, block is hidden on desktop.
+    If mobile image is not set, block is hidden on mobile.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-centered-image-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    padding-top: {{ block.settings.padding_top }}px;
+    padding-bottom: {{ block.settings.padding_bottom }}px;
+    max-width: 1920px;
+    margin: 0 auto;
+  }
+
+  {% if block.settings.image == blank and block.settings.image_mobile == blank %}
+    {% unless request.design_mode %}
+      .ai-centered-image-{{ ai_gen_id }} {
+        display: none;
+      }
+    {% endunless %}
+  {% elsif block.settings.image == blank %}
+    .ai-centered-image-{{ ai_gen_id }} {
+      display: none;
+    }
+  {% endif %}
+
+  .ai-centered-image-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .ai-centered-image-content-{{ ai_gen_id }} {
+    width: 100%;
+    max-width: {{ block.settings.image_width }}px;
+    width: 1920px;
+    max-width: 1920px;
+  }
+
+  .ai-centered-image-content-{{ ai_gen_id }} img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .ai-centered-image-content-{{ ai_gen_id }} img.ai-centered-image-desktop-{{ ai_gen_id }} {
+    display: block;
+  }
+
+  .ai-centered-image-content-{{ ai_gen_id }} img.ai-centered-image-mobile-{{ ai_gen_id }} {
+    display: none;
+  }
+
+  .ai-centered-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 300px;
+  }
+
+  .ai-centered-image-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    max-width: 500px;
+    max-height: 500px;
+  }
+
+  .ai-centered-image-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-centered-image-{{ ai_gen_id }} {
+      padding-top: {{ block.settings.padding_top_mobile }}px;
+      padding-bottom: {{ block.settings.padding_bottom_mobile }}px;
+    }
+
+    .ai-centered-image-content-{{ ai_gen_id }} {
+      max-width: 100%;
+    }
+
+    {% if block.settings.image != blank and block.settings.image_mobile == blank %}
+      .ai-centered-image-{{ ai_gen_id }} {
+        display: none;
+      }
+    {% elsif block.settings.image == blank and block.settings.image_mobile != blank %}
+      .ai-centered-image-{{ ai_gen_id }} {
+        display: block;
+      }
+    {% endif %}
+
+    {% if block.settings.image_mobile %}
+      .ai-centered-image-content-{{ ai_gen_id }} img.ai-centered-image-desktop-{{ ai_gen_id }} {
+        display: none;
+      }
+
+      .ai-centered-image-content-{{ ai_gen_id }} img.ai-centered-image-mobile-{{ ai_gen_id }} {
+        display: block;
+      }
+    {% endif %}
+  }
+{% endstyle %}
+
+<div class="ai-centered-image-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-centered-image-wrapper-{{ ai_gen_id }}">
+    <div class="ai-centered-image-content-{{ ai_gen_id }}">
+      {% if block.settings.image or block.settings.image_mobile %}
+        {% if block.settings.image %}
+          <img
+            class="ai-centered-image-desktop-{{ ai_gen_id }}"
+            src="{{ block.settings.image | image_url: width: 2000 }}"
+            alt="{{ block.settings.image.alt | escape }}"
+            loading="lazy"
+            width="{{ block.settings.image.width }}"
+            height="{{ block.settings.image.height }}"
+          >
+        {% endif %}
+        {% if block.settings.image_mobile %}
+          <img
+            class="ai-centered-image-mobile-{{ ai_gen_id }}"
+            src="{{ block.settings.image_mobile | image_url: width: 1500 }}"
+            alt="{{ block.settings.image_mobile.alt | escape }}"
+            loading="lazy"
+            width="{{ block.settings.image_mobile.width }}"
+            height="{{ block.settings.image_mobile.height }}"
+          >
+        {% endif %}
+      {% else %}
+        <div class="ai-centered-image-placeholder-{{ ai_gen_id }}">
+          {{ 'image' | placeholder_svg_tag }}
+          <div class="ai-centered-image-empty-state-{{ ai_gen_id }}">
+            Add an image
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Centered image",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Desktop image",
+      "info": "If empty, block is hidden on desktop"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile image",
+      "info": "If empty, block is hidden on mobile"
+    },
+    {
+      "type": "header",
+      "content": "Desktop"
+    },
+    {
+      "type": "range",
+      "id": "image_width",
+      "label": "Image width",
+      "min": 100,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "default": 800
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Mobile"
+    },
+    {
+      "type": "range",
+      "id": "image_width_mobile",
+      "label": "Image width",
+      "min": 100,
+      "max": 750,
+      "step": 50,
+      "unit": "px",
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Padding top",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Padding bottom",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Centered image"
+    }
+  ]
+}
+{% endschema %}

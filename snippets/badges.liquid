@@ -1,0 +1,124 @@
+{%- liquid
+  assign badge_product = card_product | default: product
+
+  # нормализуем теги: убираем регистр, дефисы, подчёркивания и пробелы
+  assign tag_string = badge_product.tags | join: '|' | downcase | replace: '-', '' | replace: '_', '' | replace: ' ', ''
+
+  assign is_back_in_stock = false
+  if tag_string contains 'backinstock'
+    assign is_back_in_stock = true
+  elsif tag_string contains 'restock'
+    assign is_back_in_stock = true
+  elsif tag_string contains 'backinstore'
+    assign is_back_in_stock = true
+  endif
+
+  assign badge_variant = badge_product.selected_or_first_available_variant
+  assign badge_price = badge_variant.price | default: badge_product.price
+  assign badge_compare = badge_variant.compare_at_price | default: badge_product.compare_at_price
+
+  assign discount_percent = 0
+  if badge_compare > badge_price and badge_compare > 0
+    assign discount_percent = badge_compare | minus: badge_price | times: 100 | divided_by: badge_compare
+  endif
+-%}
+
+{%- if badge_product.available == false -%}
+  <span
+    id="Badge-{{ section_id }}-{{ badge_product.id }}"
+    class="badge badge--bottom-left color-{{ settings.sold_out_badge_color_scheme }}"
+  >
+    <span>{{- 'products.product.sold_out' | t -}}</span>
+  </span>
+
+{%- elsif is_back_in_stock -%}
+  <span
+    id="Badge-{{ section_id }}-{{ badge_product.id }}"
+    class="badge badge--bottom-left badge--back-in-stock color-{{ settings.sale_badge_color_scheme }}"
+  >
+    <span>Back in stock</span>
+  </span>
+
+{%- elsif discount_percent > 0 -%}
+  <span
+    id="Badge-{{ section_id }}-{{ badge_product.id }}"
+    class="badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}"
+  >
+    <span>{{ discount_percent }}% OFF</span>
+  </span>
+{%- endif -%}
+{% comment %} start code badge by product{% endcomment %}
+{% if card_product.metafields.custom.megaobjects_badges.value != blank %}
+  {% assign badges_product = card_product.metafields.custom.megaobjects_badges.value %}
+  {% for badge_one in badges_product %}
+    <style>
+      .badge[data-label="{{ badge_one.badge_name }}"] ~ .badge[data-label="{{ badge_one.badge_name }}"] {
+        display: none;
+      }
+    </style>
+    <span
+      data-label="{{ badge_one.badge_name }}"
+      style="
+        {% if badge_one.image_label != blank %}
+          padding: 0; background-color: transparent !important;
+        {% else %}
+          {% if badge_one.text_color != blank %} color: {{ badge_one.text_color }} !important; {% endif %}
+          {% if badge_one.background_color != blank %} background-color: {{ badge_one.background_color }} !important; {% endif %}
+        {% endif %}
+        {% if badge_one.is_ltr == true %} direction: ltr !important; {% endif %}
+      "
+      class="badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}"
+    >
+      {%- if badge_one.image_label != blank -%}
+        <img
+          src="{{ badge_one.image_label | image_url: width: 300 }}"
+          alt="{{ badge_one.badge_name }}"
+          loading="lazy"
+          style="display: block; height: auto; height: 100%;object-fit: contain;{% if badge_one.image_label_width != blank %}width: {{ badge_one.image_label_width }}px;{% else %}width: 50px;{% endif %}"
+        >
+      {%- else -%}
+        {{- badge_one.badge_name -}}
+      {%- endif -%}
+    </span>
+  {% endfor %}
+{% endif %}
+{% comment %}end code badge by product{% endcomment %}
+
+{% comment %} start code badge by collection{% endcomment %}
+{% for c in card_product.collections %}
+  {% if c.metafields.custom.megaobjects_badges.value != blank %}
+    {% assign badges_product = c.metafields.custom.megaobjects_badges.value %}
+    {% for badge_one in badges_product %}
+      <style>
+        .badge[data-label="{{ badge_one.badge_name }}"] ~ .badge[data-label="{{ badge_one.badge_name }}"] {
+          display: none;
+        }
+      </style>
+      <span
+        data-label="{{ badge_one.badge_name }}"
+        style="
+          {% if badge_one.image_label != blank %}
+            padding: 0; background-color: transparent !important;
+          {% else %}
+            {% if badge_one.text_color != blank %} color: {{ badge_one.text_color }} !important; {% endif %}
+            {% if badge_one.background_color != blank %} background-color: {{ badge_one.background_color }} !important; {% endif %}
+          {% endif %}
+          {% if badge_one.is_ltr == true %} direction: ltr !important; {% endif %}
+        "
+        class="badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}"
+      >
+        {%- if badge_one.image_label != blank -%}
+          <img
+            src="{{ badge_one.image_label | image_url: width: 300 }}"
+            alt="{{ badge_one.badge_name }}"
+            loading="lazy"
+            style="display: block; height: auto;  height: 100%;object-fit: contain;{% if badge_one.image_label_width != blank %}width: {{ badge_one.image_label_width }}px;{% else %}width: 50px;{% endif %}"
+          >
+        {%- else -%}
+          {{- badge_one.badge_name -}}
+        {%- endif -%}
+      </span>
+    {% endfor %}
+  {% endif %}
+{% endfor %}
+{% comment %}end code badge by collection{% endcomment %}

@@ -1,0 +1,925 @@
+{%- comment -%}
+  Rich Text Blocks — heading and paragraph content built from reorderable blocks
+  with adjustable spacing between them. Supports RTL (Hebrew) content.
+  Per-block overrides are passed as CSS custom properties, so desktop and mobile
+  values both work from a single inline style attribute.
+  Place this file at /sections/rich-text-blocks.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign st = section.settings
+  assign uid = section.id
+-%}
+
+{% style %}
+  {{ st.heading_font | font_face: font_display: 'swap' }}
+  {{ st.body_font | font_face: font_display: 'swap' }}
+
+  .rtb--{{ uid }} {
+    background-color: {{ st.section_background }};
+    padding-top: {{ st.padding_top }}px;
+    padding-bottom: {{ st.padding_bottom }}px;
+  }
+  .rtb--{{ uid }} .rtb__column {
+    max-width: {{ st.content_max_width }}px;
+    padding-left: 20px;
+    padding-right: 20px;
+    box-sizing: border-box;
+    {% case st.column_position %}
+      {% when 'left' %}margin-right: auto;
+      {% when 'right' %}margin-left: auto;
+      {% else %}margin-left: auto; margin-right: auto;
+    {% endcase %}
+    text-align: {{ st.text_alignment }};
+  }
+
+  .rtb--{{ uid }} .rtb__block {
+    margin-top: var(--sp-above, {{ st.block_spacing }}px);
+  }
+  .rtb--{{ uid }} .rtb__block:first-child {
+    margin-top: 0;
+  }
+  .rtb--{{ uid }} .rtb__block:last-child {
+    margin-bottom: 0;
+  }
+
+  .rtb--{{ uid }} .rtb__heading {
+    font-family: {{ st.heading_font.family }}, {{ st.heading_font.fallback_families }};
+    font-size: var(--fs, {{ st.heading_size_desktop }}px);
+    font-style: {{ st.heading_style }};
+    font-weight: var(--fw, {{ st.heading_weight }});
+    {% if st.heading_uppercase %}text-transform: uppercase;{% endif %}
+    letter-spacing: {{ st.heading_letter_spacing }}px;
+    line-height: var(--lh, {{ st.heading_lh_px }}px);
+    color: var(--c, {{ st.heading_color }});
+    margin: 0;
+    margin-bottom: var(--sp-below, {{ st.heading_margin_bottom }}px);
+  }
+
+  .rtb--{{ uid }} .rtb__paragraph {
+    font-family: {{ st.body_font.family }}, {{ st.body_font.fallback_families }};
+    font-size: var(--fs, {{ st.body_size_desktop }}px);
+    font-weight: var(--fw, {{ st.body_weight }});
+    letter-spacing: {{ st.body_letter_spacing }}px;
+    line-height: var(--lh, {{ st.body_lh_px }}px);
+    color: var(--c, {{ st.body_color }});
+    margin-bottom: var(--sp-below, {{ st.paragraph_margin_bottom }}px);
+  }
+  .rtb--{{ uid }} .rtb__paragraph p { margin: 0 0 {{ st.paragraph_inner_spacing }}px; }
+  .rtb--{{ uid }} .rtb__paragraph p:last-child { margin-bottom: 0; }
+  .rtb--{{ uid }} .rtb__paragraph a { color: inherit; }
+
+  .rtb--{{ uid }} .rtb__divider {
+    border: 0;
+    border-top-width: 1px;
+    border-top-style: solid;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .rtb--{{ uid }} .rtb__column {
+      text-align: {{ st.mobile_text_alignment }};
+    }
+    .rtb--{{ uid }} .rtb__block {
+      margin-top: var(--sp-above, {{ st.block_spacing_mobile }}px);
+    }
+    .rtb--{{ uid }} .rtb__block:first-child {
+      margin-top: 0;
+    }
+    .rtb--{{ uid }} .rtb__heading {
+      font-size: var(--fs-m, {{ st.heading_size_mobile }}px);
+      letter-spacing: {{ st.heading_letter_spacing_mobile }}px;
+      line-height: var(--lh-m, {{ st.heading_lh_mobile_px }}px);
+      margin-bottom: var(--sp-below, {{ st.heading_margin_bottom_mobile }}px);
+    }
+    .rtb--{{ uid }} .rtb__paragraph {
+      font-size: var(--fs-m, {{ st.body_size_mobile }}px);
+      letter-spacing: {{ st.body_letter_spacing_mobile }}px;
+      line-height: var(--lh-m, {{ st.body_lh_mobile_px }}px);
+      margin-bottom: var(--sp-below, {{ st.paragraph_margin_bottom_mobile }}px);
+    }
+    .rtb--{{ uid }} .rtb__paragraph p { margin: 0 0 {{ st.paragraph_inner_spacing_mobile }}px; }
+    .rtb--{{ uid }} .rtb__paragraph p:last-child { margin-bottom: 0; }
+  }
+{% endstyle %}
+
+<div class="rtb rtb--{{ uid }}">
+  <div class="rtb__column" dir="{{ st.text_direction }}">
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign inline = ''
+        if block.settings.custom_spacing
+          assign inline = inline | append: '--sp-above:' | append: block.settings.top_spacing | append: 'px;'
+        endif
+      -%}
+      {%- case block.type -%}
+        {%- when 'heading' -%}
+          {%- liquid
+            if block.settings.custom_size
+              assign inline = inline | append: '--fs:' | append: block.settings.size_desktop | append: 'px;'
+              assign inline = inline | append: '--fs-m:' | append: block.settings.size_mobile | append: 'px;'
+            endif
+            if block.settings.custom_line_height
+              assign inline = inline | append: '--lh:' | append: block.settings.line_height_px | append: 'px;'
+              assign inline = inline | append: '--lh-m:' | append: block.settings.line_height_mobile_px | append: 'px;'
+            endif
+            if block.settings.custom_color
+              assign inline = inline | append: '--c:' | append: block.settings.color | append: ';'
+            endif
+            if block.settings.weight != 'default'
+              assign inline = inline | append: '--fw:' | append: block.settings.weight | append: ';'
+            endif
+            if block.settings.custom_spacing_below
+              assign inline = inline | append: '--sp-below:' | append: block.settings.spacing_below | append: 'px;'
+            endif
+          -%}
+          {%- if block.settings.text != blank -%}
+            <{{ block.settings.heading_tag }}
+              class="rtb__block rtb__heading"
+              {% if inline != '' %}style="{{ inline }}"{% endif %}
+              {{ block.shopify_attributes }}
+            >{{ block.settings.text | escape | newline_to_br }}</{{ block.settings.heading_tag }}>
+          {%- endif -%}
+
+        {%- when 'paragraph' -%}
+          {%- liquid
+            if block.settings.custom_size
+              assign inline = inline | append: '--fs:' | append: block.settings.size_desktop | append: 'px;'
+              assign inline = inline | append: '--fs-m:' | append: block.settings.size_mobile | append: 'px;'
+            endif
+            if block.settings.custom_line_height
+              assign inline = inline | append: '--lh:' | append: block.settings.line_height_px | append: 'px;'
+              assign inline = inline | append: '--lh-m:' | append: block.settings.line_height_mobile_px | append: 'px;'
+            endif
+            if block.settings.custom_color
+              assign inline = inline | append: '--c:' | append: block.settings.color | append: ';'
+            endif
+            if block.settings.weight != 'default'
+              assign inline = inline | append: '--fw:' | append: block.settings.weight | append: ';'
+            endif
+            if block.settings.custom_spacing_below
+              assign inline = inline | append: '--sp-below:' | append: block.settings.spacing_below | append: 'px;'
+            endif
+          -%}
+          {%- if block.settings.text != blank -%}
+            <div
+              class="rtb__block rtb__paragraph"
+              {% if inline != '' %}style="{{ inline }}"{% endif %}
+              {{ block.shopify_attributes }}
+            >{{ block.settings.text }}</div>
+          {%- endif -%}
+
+        {%- when 'spacer' -%}
+          <div
+            class="rtb__block rtb__spacer"
+            style="{{ inline }}height:{{ block.settings.height }}px;"
+            {{ block.shopify_attributes }}
+          ></div>
+
+        {%- when 'divider' -%}
+          <hr
+            class="rtb__block rtb__divider"
+            style="{{ inline }}border-top-color:{{ block.settings.color }};border-top-width:{{ block.settings.thickness }}px;width:{{ block.settings.width }}%;"
+            {{ block.shopify_attributes }}
+          >
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Rich Text Blocks",
+  "tag": "section",
+  "class": "section-rich-text-blocks",
+  "max_blocks": 50,
+  "settings": [
+    { "type": "header", "content": "Layout" },
+    {
+      "type": "range",
+      "id": "content_max_width",
+      "label": "Content max width",
+      "min": 400,
+      "max": 1200,
+      "step": 25,
+      "unit": "px",
+      "default": 800
+    },
+    {
+      "type": "select",
+      "id": "column_position",
+      "label": "Column position",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "text_direction",
+      "label": "Text direction",
+      "options": [
+        { "value": "rtl", "label": "RTL (Hebrew)" },
+        { "value": "ltr", "label": "LTR" }
+      ],
+      "default": "rtl"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "right"
+    },
+    { "type": "header", "content": "Section" },
+    {
+      "type": "color",
+      "id": "section_background",
+      "label": "Section background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top spacing",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom spacing",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    { "type": "header", "content": "Spacing between blocks" },
+    {
+      "type": "range",
+      "id": "block_spacing",
+      "label": "Block spacing (desktop)",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "block_spacing_mobile",
+      "label": "Block spacing (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "paragraph_inner_spacing",
+      "label": "Paragraph spacing inside a block (desktop)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "paragraph_inner_spacing_mobile",
+      "label": "Paragraph spacing inside a block (mobile)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    { "type": "header", "content": "Heading typography" },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Heading font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "select",
+      "id": "heading_style",
+      "label": "Style",
+      "options": [
+        { "value": "normal", "label": "Normal" },
+        { "value": "italic", "label": "Italic" }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_uppercase",
+      "label": "Uppercase",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Weight",
+      "options": [
+        { "value": "300", "label": "300" },
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" },
+        { "value": "800", "label": "800" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color",
+      "default": "#111111"
+    },
+    { "type": "header", "content": "Heading — desktop" },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Font size",
+      "min": 12,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "heading_lh_px",
+      "label": "Line height",
+      "min": 14,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "heading_letter_spacing",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom",
+      "label": "Space below heading",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    { "type": "header", "content": "Heading — mobile" },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Font size",
+      "min": 12,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "heading_lh_mobile_px",
+      "label": "Line height",
+      "min": 14,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "heading_letter_spacing_mobile",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom_mobile",
+      "label": "Space below heading",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    { "type": "header", "content": "Paragraph typography" },
+    {
+      "type": "font_picker",
+      "id": "body_font",
+      "label": "Paragraph font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "select",
+      "id": "body_weight",
+      "label": "Weight",
+      "options": [
+        { "value": "300", "label": "300" },
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Color",
+      "default": "#111111"
+    },
+    { "type": "header", "content": "Paragraph — desktop" },
+    {
+      "type": "range",
+      "id": "body_size_desktop",
+      "label": "Font size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "body_lh_px",
+      "label": "Line height",
+      "min": 14,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "body_letter_spacing",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 3,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "paragraph_margin_bottom",
+      "label": "Space below paragraph block",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    { "type": "header", "content": "Paragraph — mobile" },
+    {
+      "type": "range",
+      "id": "body_size_mobile",
+      "label": "Font size",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "body_lh_mobile_px",
+      "label": "Line height",
+      "min": 14,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "body_letter_spacing_mobile",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 3,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "paragraph_margin_bottom_mobile",
+      "label": "Space below paragraph block",
+      "min": 0,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    { "type": "header", "content": "Mobile layout" },
+    {
+      "type": "select",
+      "id": "mobile_text_alignment",
+      "label": "Alignment (mobile)",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "right"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "Heading",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Heading text",
+          "default": "אותיות קטנות אבל חשובות אז תשקיעי ותקראי:"
+        },
+        {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "HTML tag (SEO)",
+          "options": [
+            { "value": "h2", "label": "H2" },
+            { "value": "h3", "label": "H3" },
+            { "value": "h4", "label": "H4" },
+            { "value": "p", "label": "P (plain)" }
+          ],
+          "default": "h3"
+        },
+        {
+          "type": "select",
+          "id": "weight",
+          "label": "Weight override",
+          "options": [
+            { "value": "default", "label": "Use section setting" },
+            { "value": "400", "label": "400" },
+            { "value": "500", "label": "500" },
+            { "value": "600", "label": "600" },
+            { "value": "700", "label": "700" },
+            { "value": "800", "label": "800" }
+          ],
+          "default": "default"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_size",
+          "label": "Override font size",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "size_desktop",
+          "label": "Custom size (desktop)",
+          "min": 12,
+          "max": 72,
+          "step": 2,
+          "unit": "px",
+          "default": 24
+        },
+        {
+          "type": "range",
+          "id": "size_mobile",
+          "label": "Custom size (mobile)",
+          "min": 12,
+          "max": 48,
+          "step": 2,
+          "unit": "px",
+          "default": 20
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_line_height",
+          "label": "Override line height",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "line_height_px",
+          "label": "Custom line height (desktop)",
+          "min": 14,
+          "max": 80,
+          "step": 2,
+          "unit": "px",
+          "default": 24
+        },
+        {
+          "type": "range",
+          "id": "line_height_mobile_px",
+          "label": "Custom line height (mobile)",
+          "min": 14,
+          "max": 80,
+          "step": 2,
+          "unit": "px",
+          "default": 24
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_color",
+          "label": "Override color",
+          "default": false
+        },
+        {
+          "type": "color",
+          "id": "color",
+          "label": "Custom color",
+          "default": "#111111"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_spacing",
+          "label": "Override spacing above this block",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "top_spacing",
+          "label": "Custom spacing above",
+          "min": 0,
+          "max": 120,
+          "step": 4,
+          "unit": "px",
+          "default": 40
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_spacing_below",
+          "label": "Override spacing below this block",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "spacing_below",
+          "label": "Custom spacing below",
+          "min": 0,
+          "max": 120,
+          "step": 4,
+          "unit": "px",
+          "default": 16
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "name": "Paragraph",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "Text",
+          "default": "<p>ההרשמה מאפשרת ואינה מבטיחה רכישת כרטיסים להופעה – בהתאם למלאי הקיים. הלינק לרכישה הינו אישי ואינו ניתן להעברה. שימו לב – לא ניתן לרכוש כרטיסים בדרך אחרת.</p>"
+        },
+        {
+          "type": "select",
+          "id": "weight",
+          "label": "Weight override",
+          "options": [
+            { "value": "default", "label": "Use section setting" },
+            { "value": "300", "label": "300" },
+            { "value": "400", "label": "400" },
+            { "value": "500", "label": "500" },
+            { "value": "600", "label": "600" },
+            { "value": "700", "label": "700" }
+          ],
+          "default": "default"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_size",
+          "label": "Override font size",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "size_desktop",
+          "label": "Custom size (desktop)",
+          "min": 12,
+          "max": 32,
+          "step": 1,
+          "unit": "px",
+          "default": 15
+        },
+        {
+          "type": "range",
+          "id": "size_mobile",
+          "label": "Custom size (mobile)",
+          "min": 12,
+          "max": 28,
+          "step": 1,
+          "unit": "px",
+          "default": 14
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_line_height",
+          "label": "Override line height",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "line_height_px",
+          "label": "Custom line height (desktop)",
+          "min": 14,
+          "max": 60,
+          "step": 2,
+          "unit": "px",
+          "default": 26
+        },
+        {
+          "type": "range",
+          "id": "line_height_mobile_px",
+          "label": "Custom line height (mobile)",
+          "min": 14,
+          "max": 60,
+          "step": 2,
+          "unit": "px",
+          "default": 24
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_color",
+          "label": "Override color",
+          "default": false
+        },
+        {
+          "type": "color",
+          "id": "color",
+          "label": "Custom color",
+          "default": "#111111"
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_spacing",
+          "label": "Override spacing above this block",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "top_spacing",
+          "label": "Custom spacing above",
+          "min": 0,
+          "max": 120,
+          "step": 4,
+          "unit": "px",
+          "default": 40
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_spacing_below",
+          "label": "Override spacing below this block",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "spacing_below",
+          "label": "Custom spacing below",
+          "min": 0,
+          "max": 120,
+          "step": 4,
+          "unit": "px",
+          "default": 16
+        }
+      ]
+    },
+    {
+      "type": "spacer",
+      "name": "Spacer",
+      "settings": [
+        {
+          "type": "range",
+          "id": "height",
+          "label": "Height",
+          "min": 4,
+          "max": 200,
+          "step": 4,
+          "unit": "px",
+          "default": 40
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_spacing",
+          "label": "Override spacing above this block",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "top_spacing",
+          "label": "Custom spacing above",
+          "min": 0,
+          "max": 120,
+          "step": 4,
+          "unit": "px",
+          "default": 0
+        }
+      ]
+    },
+    {
+      "type": "divider",
+      "name": "Divider",
+      "settings": [
+        {
+          "type": "color",
+          "id": "color",
+          "label": "Line color",
+          "default": "#E0E0E0"
+        },
+        {
+          "type": "range",
+          "id": "thickness",
+          "label": "Thickness",
+          "min": 1,
+          "max": 8,
+          "step": 1,
+          "unit": "px",
+          "default": 1
+        },
+        {
+          "type": "range",
+          "id": "width",
+          "label": "Width",
+          "min": 10,
+          "max": 100,
+          "step": 5,
+          "unit": "%",
+          "default": 100
+        },
+        {
+          "type": "checkbox",
+          "id": "custom_spacing",
+          "label": "Override spacing above this block",
+          "default": false
+        },
+        {
+          "type": "range",
+          "id": "top_spacing",
+          "label": "Custom spacing above",
+          "min": 0,
+          "max": 120,
+          "step": 4,
+          "unit": "px",
+          "default": 24
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rich Text Blocks",
+      "blocks": [
+        {
+          "type": "heading",
+          "settings": {
+            "text": "אותיות קטנות אבל חשובות אז תשקיעי ותקראי:"
+          }
+        },
+        {
+          "type": "paragraph",
+          "settings": {
+            "text": "<p>ההרשמה מאפשרת ואינה מבטיחה רכישת כרטיסים להופעה – בהתאם למלאי הקיים – ועד גמר המלאי. הלינק לרכישה הינו אישי ואינו ניתן להעברה. שימו לב – לא ניתן לרכוש כרטיסים בדרך אחרת.</p>"
+          }
+        },
+        {
+          "type": "heading",
+          "settings": {
+            "text": "אם הגעת עד כאן...",
+            "custom_spacing": true,
+            "top_spacing": 48
+          }
+        },
+        {
+          "type": "paragraph",
+          "settings": {
+            "text": "<p>אנחנו מתות שתבואי להיות איתנו בהופעה, אבל לא יכולות להבטיח זמינות כרטיסים, מקומות ישיבה, שתשבי ליד החברות או את עצם השלמת הרכישה.</p><p>הכי חייבות אותך שתהיי על זה ברמות, המלאי מוגבל - סומכות עלייך!</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

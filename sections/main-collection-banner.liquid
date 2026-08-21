@@ -1,0 +1,213 @@
+{% comment %}theme-check-disable ImgLazyLoading{% endcomment %}
+{{ 'component-collection-hero.css' | asset_url | stylesheet_tag }}
+{{ 'component-slider.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  @media screen and (max-width: 749px) {
+    .collection-hero--with-image .collection-hero__inner {
+      padding-bottom: calc({{ settings.media_shadow_vertical_offset | at_least: 0 }}px + 2rem);
+      padding-bottom: 0;
+    }
+
+    .collection-hero__link-image {
+      /* width: 89px;
+      height: 137px; */
+    }
+  }
+
+  .collection-hero__link-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign related_collections_metafield_namespace = section.settings.related_collections_metafield_namespace | default: 'custom'
+  assign related_collections_metafield_key = section.settings.related_collections_metafield_key | default: 'related_collections'
+  assign related_collections_metafield = collection.metafields[related_collections_metafield_namespace][related_collections_metafield_key]
+  assign related_collections = blank
+  assign related_collection_single = blank
+  assign show_related_collection_links = false
+
+  if related_collections_metafield != blank
+    if related_collections_metafield.type == 'list.collection_reference'
+      assign related_collections = related_collections_metafield.value
+      assign show_related_collection_links = true
+    elsif related_collections_metafield.type == 'collection_reference'
+      assign related_collection_single = related_collections_metafield.value
+      assign show_related_collection_links = true
+    endif
+  endif
+-%}
+
+<div class="collection-hero{% if section.settings.show_collection_image and collection.image %} collection-hero--with-image{% endif %} color-{{ section.settings.color_scheme }} gradient">
+  <div class="collection-hero__inner page-width {% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+    {%- if section.settings.show_collection_image and collection.image -%}
+      <div class="collection-hero__image-container media gradient">
+        <img
+          srcset="
+            {%- if collection.image.width >= 165 -%}{{ collection.image | image_url: width: 165 }} 165w,{%- endif -%}
+            {%- if collection.image.width >= 360 -%}{{ collection.image | image_url: width: 360 }} 360w,{%- endif -%}
+            {%- if collection.image.width >= 535 -%}{{ collection.image | image_url: width: 535 }} 535w,{%- endif -%}
+            {%- if collection.image.width >= 750 -%}{{ collection.image | image_url: width: 750 }} 750w,{%- endif -%}
+            {%- if collection.image.width >= 1070 -%}{{ collection.image | image_url: width: 1070 }} 1070w,{%- endif -%}
+            {%- if collection.image.width >= 1500 -%}{{ collection.image | image_url: width: 1500 }} 1500w,{%- endif -%}
+            {{ collection.image | image_url }} {{ collection.image.width }}w
+          "
+          src="{{ collection.image | image_url: width: 750 }}"
+          sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 100 | divided_by: 2 }}px, (min-width: 750px) calc(50vw - 130px), calc(50vw - 55px)"
+          alt="{{ collection.image.alt | escape }}"
+          width="{{ collection.image.width }}"
+          height="{{ collection.image.height }}"
+        >
+      </div>
+    {%- endif -%}
+
+    {% if section.settings.show_breadcrumbs %}
+      {% render 'breadcrumbs', collection: collection %}
+    {% endif %}
+
+    <div class="collection-hero__text-wrapper">
+      <h1 class="collection-hero__title center">
+        <span class="visually-hidden">{{ 'sections.collection_template.title' | t }}: </span>
+        {{- collection.title | escape -}}
+      </h1>
+
+      {%- if section.settings.show_collection_description -%}
+        <div class="collection-hero__description rte">{{ collection.description }}</div>
+      {%- endif -%}
+    </div>
+
+    {%- if section.settings.show_related_collection_links and show_related_collection_links -%}
+      <nav class="collection-hero__links" aria-label="Related collections">
+        <div
+          class="swiper collection-hero__links-swiper"
+          id="CollectionHeroLinksSwiper-{{ section.id }}"
+          data-collection-hero-links-swiper
+          dir="rtl"
+        >
+          <div class="swiper-wrapper">
+            {%- if related_collections != blank -%}
+              {%- for related_collection in related_collections -%}
+                {%- if related_collection != blank -%}
+                  <a
+                    class="collection-hero__link swiper-slide js-locked-collection-link{% if related_collection.handle == collection.handle %} is-active{% endif %}"
+                    data-locked-href="{{ related_collection.url }}"
+                    data-related-handle="{{ related_collection.handle }}"
+                    href="{{ related_collection.url }}"
+                  >
+                    {%- if related_collection.metafields.custom.collection_image != blank -%}
+                      {{
+                        related_collection.metafields.custom.collection_image
+                        | image_url: width: 174, height: 269, crop: 'center'
+                        | image_tag:
+                          class: 'collection-hero__link-image',
+                          loading: 'lazy',
+                          alt: related_collection.title
+                      }}
+                    {%- endif -%}
+
+                    <span>
+                      {{- related_collection.title | escape -}}
+                    </span>
+                  </a>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- elsif related_collection_single != blank -%}
+              <a
+                class="collection-hero__link swiper-slide js-locked-collection-link{% if related_collection_single.handle == collection.handle %} is-active{% endif %}"
+                data-locked-href="{{ related_collection_single.url }}"
+                data-related-handle="{{ related_collection_single.handle }}"
+                href="{{ related_collection_single.url }}"
+              >
+                {{- related_collection_single.title | escape -}}
+              </a>
+            {%- endif -%}
+          </div>
+          <div class="swiper-pagination collection-hero__links-swiper-pagination"></div>
+        </div>
+        <div class="slider-buttons collection-hero__links-swiper-buttons">
+          <button
+            type="button"
+            class="slider-button slider-button--prev collection-hero__links-swiper-prev"
+            name="previous"
+            aria-label="{{ 'general.slider.previous_slide' | t }}"
+            aria-controls="CollectionHeroLinksSwiper-{{ section.id }}"
+          >
+            <span class="svg-wrapper">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+          </button>
+          <button
+            type="button"
+            class="slider-button slider-button--next collection-hero__links-swiper-next"
+            name="next"
+            aria-label="{{ 'general.slider.next_slide' | t }}"
+            aria-controls="CollectionHeroLinksSwiper-{{ section.id }}"
+          >
+            <span class="svg-wrapper">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+          </button>
+        </div>
+      </nav>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-collection-banner.name",
+  "class": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_breadcrumbs",
+      "default": true,
+      "label": "Show breadcrumbs"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:sections.main-collection-banner.settings.paragraph.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_related_collection_links",
+      "default": true,
+      "label": "Show related collection links"
+    },
+    {
+      "type": "text",
+      "id": "related_collections_metafield_namespace",
+      "default": "custom",
+      "label": "Related collections metafield namespace"
+    },
+    {
+      "type": "text",
+      "id": "related_collections_metafield_key",
+      "default": "related_collections",
+      "label": "Related collections metafield key"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_description",
+      "default": true,
+      "label": "t:sections.main-collection-banner.settings.show_collection_description.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "default": false,
+      "label": "t:sections.main-collection-banner.settings.show_collection_image.label"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    }
+  ]
+}
+{% endschema %}

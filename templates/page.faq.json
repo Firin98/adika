@@ -1,0 +1,138 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-page",
+      "disabled": true,
+      "settings": {
+        "padding_top": 28,
+        "padding_bottom": 28
+      }
+    },
+    "rich_text_3rbNc6": {
+      "type": "rich-text",
+      "blocks": {
+        "heading_AcXbzV": {
+          "type": "heading",
+          "settings": {
+            "heading": "{{ page.title }}",
+            "heading_size": "hxl"
+          }
+        }
+      },
+      "block_order": [
+        "heading_AcXbzV"
+      ],
+      "name": "t:sections.rich-text.presets.name",
+      "settings": {
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "scheme-35026880-0af1-4623-94b9-d8747e7669a2",
+        "full_width": true,
+        "padding_top": 44,
+        "padding_top_mobile": 36,
+        "padding_bottom": 44,
+        "padding_bottom_mobile": 36,
+        "banner_type": "banner"
+      }
+    },
+    "collapsible_content_xQxmmb": {
+      "type": "collapsible-content",
+      "blocks": {
+        "collapsible_row_YJrewX": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "זוהי עובדה מבוססת שדעתו של",
+            "icon": "none",
+            "row_content": "<p>זוהי עובדה מבוססת שדעתו של<br/>test זוהי עובדה מבוססת שדעתו של Lorem<br/>dfsfsdfזוהי עובדה מבוססת שדעתו של Lorem</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_hQ64Md": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "זוהי עובדה מבוססת שדעתו של",
+            "icon": "none",
+            "row_content": "<p>זוהי עובדה מבוססת שדעתו של<br/>test זוהי עובדה מבוססת שדעתו של Lorem<br/>dfsfsdf זוהי עובדה מבוססת שדעתו של<br/>tes</p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_xxkkWE": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "זוהי עובדה מבוססת שדעתו של",
+            "icon": "none",
+            "row_content": "<p>זוהי עובדה מבוססת שדעתו של<br/>test זוהי עובדה מבוססת שדעתו של Lorem<br/>dfsfsdf זוהי עובדה מבוססת שדעתו של<br/>test זוהי עובדה מבוססת שדעתו של Lorem<br/>sdfsdf זוהי עובדה מבוססת שדעתו של<br/> זוהי עובדה מבוססת שדעתו של Lorem<br/></p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_ncHCra": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "זוהי עובדה מבוססת שדעתו של",
+            "icon": "none",
+            "row_content": "<p>זוהי עובדה מבוססת שדעתו של<br/>test<br/>זוהי עובדה מבוססת שדעתו של Lorem<br/>dfsfsdf<br/>זוהי עובדה מבוססת שדעתו של<br/>test זוהי עובדה מבוססת שדעתו של Lorem<br/>sdfsdf זוהי עובדה מבוססת שדעתו של<br/> והי עובדה מבוססת שדעתו של Lorem<br/></p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_H3rmQi": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "זוהי עובדה מבוססת שדעתו של",
+            "icon": "none",
+            "row_content": "<p>זוהי עובדה מבוססת שדעתו של<br/>test<br/>זוהי עובדה מבוססת שדעתו של Lorem<br/>dfsfsdf<br/>זוהי עובדה מבוססת שדעתו של<br/>test<br/>זוהי עובדה מבוססת שדעתו של Lorem<br/>sdfsdf<br/>זוהי עובדה מבוססת שדעתו של<br/><br/>זוהי עובדה מבוססת שדעתו של Lorem<br/></p>",
+            "page": ""
+          }
+        },
+        "collapsible_row_FtCxX8": {
+          "type": "collapsible_row",
+          "settings": {
+            "heading": "זוהי עובדה מבוססת שדעתו של",
+            "icon": "none",
+            "row_content": "<p>זוהי עובדה מבוססת שדעתו של<br/>test<br/>זוהי עובדה מבוססת שדעתו של Lorem<br/>dfsfsdf<br/>זוהי עובדה מבוססת שדעתו של<br/>test<br/>זוהי עובדה מבוססת שדעתו של Lorem<br/>sdfsdf<br/>זוהי עובדה מבוססת שדעתו של<br/><br/>זוהי עובדה מבוססת שדעתו של Lorem<br/></p>",
+            "page": ""
+          }
+        }
+      },
+      "block_order": [
+        "collapsible_row_YJrewX",
+        "collapsible_row_hQ64Md",
+        "collapsible_row_xxkkWE",
+        "collapsible_row_ncHCra",
+        "collapsible_row_H3rmQi",
+        "collapsible_row_FtCxX8"
+      ],
+      "name": "t:sections.collapsible_content.presets.name",
+      "settings": {
+        "caption": "",
+        "heading": "Frequently Asked Questions",
+        "heading_size": "h2",
+        "heading_alignment": "center",
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+        "layout": "none",
+        "container_color_scheme": "",
+        "color_scheme": "",
+        "open_first_collapsible_row": false,
+        "image_ratio": "adapt",
+        "desktop_layout": "image_second",
+        "padding_top": 114,
+        "padding_top_mobile": 65,
+        "padding_bottom": 100,
+        "padding_bottom_mobile": 50
+      }
+    }
+  },
+  "order": [
+    "main",
+    "rich_text_3rbNc6",
+    "collapsible_content_xQxmmb"
+  ]
+}

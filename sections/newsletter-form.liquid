@@ -1,0 +1,996 @@
+{%- comment -%}
+  Newsletter Signup — RTL-friendly subscription form styled after the reference design.
+  Creates a customer record via the Shopify "customer" form. Shopify only persists the email
+  natively, so first name, last name and phone are written into customer tags
+  ("first_name: X, last_name: Y, phone: Z") by a small script before submit.
+  Place this file at /sections/newsletter-signup.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign st = section.settings
+  assign uid = section.id
+  assign form_id = 'nls-form-' | append: uid
+-%}
+
+{% style %}
+  {{ st.heading_font | font_face: font_display: 'swap' }}
+  {{ st.input_font | font_face: font_display: 'swap' }}
+  {{ st.button_font | font_face: font_display: 'swap' }}
+
+  .nls--{{ uid }} {
+    background-color: {{ st.section_background }};
+    padding-top: {{ st.padding_top }}px;
+    padding-bottom: {{ st.padding_bottom }}px;
+  }
+  .nls--{{ uid }} .nls__box {
+    max-width: {{ st.form_max_width }}px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: {{ st.box_background }};
+    border-radius: {{ st.box_border_radius }}px;
+    padding: {{ st.box_padding }}px;
+    box-sizing: border-box;
+  }
+
+  .nls--{{ uid }} .nls__heading {
+    margin: 0 0 {{ st.heading_margin_bottom }}px;
+    text-align: {{ st.heading_alignment }};
+    font-family: {{ st.heading_font.family }}, {{ st.heading_font.fallback_families }};
+    font-size: {{ st.heading_size_desktop }}px;
+    font-style: {{ st.heading_style }};
+    font-weight: {{ st.heading_weight }};
+    {% if st.heading_uppercase %}text-transform: uppercase;{% endif %}
+    letter-spacing: {{ st.heading_letter_spacing }}px;
+    line-height: {{ st.heading_lh_px }}px;
+    color: {{ st.heading_color }};
+  }
+
+  .nls--{{ uid }} .nls__divider {
+    border: 0;
+    border-top: {{ st.divider_thickness }}px solid {{ st.divider_color }};
+    margin: 0 {% if st.divider_full_width %}-{{ st.box_padding }}px{% else %}0{% endif %} {{ st.divider_margin }}px !important;
+  }
+
+  .nls--{{ uid }} .nls__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ st.field_gap }}px;
+  }
+  .nls--{{ uid }} .nls__input {
+    width: 100%;
+    height: {{ st.input_height }}px;
+    padding: 0 {{ st.input_padding_x }}px;
+    box-sizing: border-box;
+    font-family: {{ st.input_font.family }}, {{ st.input_font.fallback_families }};
+    font-size: {{ st.input_size_desktop }}px;
+    font-weight: {{ st.input_weight }};
+    color: {{ st.input_text_color }};
+    background-color: {{ st.input_background }};
+    border: {{ st.input_border_width }}px solid {{ st.input_border_color }};
+    border-radius: {{ st.input_border_radius }}px;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .nls--{{ uid }} .nls__input::placeholder {
+    color: {{ st.input_placeholder_color }};
+    opacity: 1;
+  }
+  .nls--{{ uid }} .nls__input:focus {
+    border-color: {{ st.input_focus_border_color }};
+    {% if st.input_border_width == 0 %}border-width: 1px; padding: 0 calc({{ st.input_padding_x }}px - 1px);{% endif %}
+  }
+
+  .nls--{{ uid }} .nls__consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: {{ st.consent_margin_top }}px;
+    font-family: {{ st.input_font.family }}, {{ st.input_font.fallback_families }};
+    font-size: {{ st.consent_size_desktop }}px;
+    line-height: {{ st.consent_lh_px }}px;
+    color: {{ st.consent_color }};
+  }
+  .nls--{{ uid }} .nls__consent input[type="checkbox"] {
+    width: {{ st.checkbox_size }}px;
+    height: {{ st.checkbox_size }}px;
+    margin: 2px 0 0;
+    flex-shrink: 0;
+    accent-color: {{ st.checkbox_accent_color }};
+  }
+  .nls--{{ uid }} .nls__consent p { margin: 0; }
+
+  .nls--{{ uid }} .nls__button {
+    display: block;
+    {% if st.button_full_width %}width: 100%;{% else %}width: auto; padding-left: 40px; padding-right: 40px; margin-left: auto; margin-right: auto;{% endif %}
+    height: {{ st.button_height }}px;
+    margin-top: {{ st.button_margin_top }}px;
+    font-family: {{ st.button_font.family }}, {{ st.button_font.fallback_families }};
+    font-size: {{ st.button_size_desktop }}px;
+    font-weight: {{ st.button_weight }};
+    {% if st.button_uppercase %}text-transform: uppercase;{% endif %}
+    letter-spacing: {{ st.button_letter_spacing }}px;
+    color: {{ st.button_text_color }};
+    background-color: {{ st.button_background }};
+    border: 0;
+    border-radius: {{ st.button_border_radius }}px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  .nls--{{ uid }} .nls__button:hover {
+    background-color: {{ st.button_hover_background }};
+  }
+
+  .nls--{{ uid }} .nls__message {
+    margin-top: 14px;
+    font-family: {{ st.input_font.family }}, {{ st.input_font.fallback_families }};
+    font-size: {{ st.message_size }}px;
+    line-height: 1.5;
+  }
+  .nls--{{ uid }} .nls__message--success { color: {{ st.success_color }}; }
+  .nls--{{ uid }} .nls__message--error { color: {{ st.error_color }}; }
+  .nls--{{ uid }} .nls__message[hidden] { display: none; }
+
+  @media screen and (max-width: 749px) {
+    .nls--{{ uid }} {
+      padding-left: {{ st.mobile_side_margin }}px;
+      padding-right: {{ st.mobile_side_margin }}px;
+    }
+    .nls--{{ uid }} .nls__box {
+      padding: {{ st.box_padding_mobile }}px;
+    }
+    .nls--{{ uid }} .nls__heading {
+      font-size: {{ st.heading_size_mobile }}px;
+      line-height: {{ st.heading_lh_mobile_px }}px;
+      margin-bottom: {{ st.heading_margin_bottom_mobile }}px;
+    }
+    {% if st.divider_full_width %}
+    .nls--{{ uid }} .nls__divider {
+      margin-left: -{{ st.box_padding_mobile }}px !important;
+      margin-right: -{{ st.box_padding_mobile }}px !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+    {% endif %}
+    .nls--{{ uid }} .nls__grid {
+      grid-template-columns: {% if st.mobile_columns == '1' %}1fr{% else %}1fr 1fr{% endif %};
+      gap: {{ st.field_gap_mobile }}px;
+    }
+    .nls--{{ uid }} .nls__input {
+      font-size: {{ st.input_size_mobile }}px;
+    }
+    .nls--{{ uid }} .nls__consent {
+      font-size: {{ st.consent_size_mobile }}px;
+      line-height: {{ st.consent_lh_mobile_px }}px;
+    }
+    .nls--{{ uid }} .nls__button {
+      font-size: {{ st.button_size_mobile }}px;
+      margin-top: {{ st.button_margin_top_mobile }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="nls nls--{{ uid }}">
+  <div class="nls__box" dir="{{ st.text_direction }}">
+    {%- if st.heading != blank -%}
+      <h2 class="nls__heading">{{ st.heading | escape }}</h2>
+    {%- endif -%}
+
+    {%- if st.show_divider -%}
+      <hr class="nls__divider">
+    {%- endif -%}
+
+    {% form 'customer', id: form_id %}
+      <input type="hidden" name="contact[tags]" value="{{ st.static_tags | escape }}" data-nls-tags>
+      <input type="hidden" name="return_to" value="{{ request.path }}">
+
+      <div class="nls__grid">
+        {%- if st.show_first_name -%}
+          <input
+            type="text"
+            class="nls__input"
+            placeholder="{{ st.ph_first_name | escape }}{% if st.require_names %} *{% endif %}"
+            autocomplete="given-name"
+            data-nls-field="first_name"
+            {% if st.require_names %}required{% endif %}
+          >
+        {%- endif -%}
+        {%- if st.show_last_name -%}
+          <input
+            type="text"
+            class="nls__input"
+            placeholder="{{ st.ph_last_name | escape }}{% if st.require_names %} *{% endif %}"
+            autocomplete="family-name"
+            data-nls-field="last_name"
+            {% if st.require_names %}required{% endif %}
+          >
+        {%- endif -%}
+        <input
+          type="email"
+          class="nls__input"
+          name="contact[email]"
+          placeholder="{{ st.ph_email | escape }} *"
+          autocomplete="email"
+          required
+        >
+        {%- if st.show_phone -%}
+          <input
+            type="tel"
+            class="nls__input"
+            placeholder="{{ st.ph_phone | escape }}{% if st.require_phone %} *{% endif %}"
+            autocomplete="tel"
+            data-nls-field="phone"
+            {% if st.require_phone %}required{% endif %}
+          >
+        {%- endif -%}
+      </div>
+
+      {%- if st.show_consent -%}
+        <label class="nls__consent">
+          <input type="checkbox" {% if st.consent_required %}required{% endif %}>
+          <span>{{ st.consent_text }}</span>
+        </label>
+      {%- endif -%}
+
+      <button type="submit" class="nls__button">{{ st.button_text | escape }}</button>
+
+      {%- if form.errors -%}
+        <div class="nls__message nls__message--error">{{ form.errors | default_errors }}</div>
+      {%- endif -%}
+
+      <div
+        class="nls__message nls__message--success"
+        data-nls-success
+        {% unless form.posted_successfully %}hidden{% endunless %}
+      >{{ st.success_text | escape }}</div>
+    {% endform %}
+  </div>
+</div>
+
+<script>
+  (function () {
+    var form = document.getElementById({{ form_id | json }});
+    if (!form) return;
+
+    form.addEventListener('submit', function () {
+      var tagsInput = form.querySelector('[data-nls-tags]');
+      if (!tagsInput) return;
+      var tags = [];
+      if (tagsInput.getAttribute('value')) tags.push(tagsInput.getAttribute('value'));
+      form.querySelectorAll('[data-nls-field]').forEach(function (field) {
+        var v = field.value.trim().replace(/,/g, ' ');
+        if (v) tags.push(field.getAttribute('data-nls-field') + ': ' + v);
+      });
+      tagsInput.value = tags.join(', ');
+    });
+
+    if (window.location.search.indexOf('customer_posted=true') !== -1) {
+      var success = form.querySelector('[data-nls-success]');
+      if (success) {
+        success.hidden = false;
+        form.scrollIntoView({ block: 'center' });
+      }
+    }
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Newsletter Signup",
+  "tag": "section",
+  "class": "section-newsletter-signup",
+  "settings": [
+    { "type": "header", "content": "Layout" },
+    {
+      "type": "range",
+      "id": "form_max_width",
+      "label": "Form max width",
+      "min": 400,
+      "max": 1200,
+      "step": 25,
+      "unit": "px",
+      "default": 700
+    },
+    {
+      "type": "select",
+      "id": "text_direction",
+      "label": "Text direction",
+      "options": [
+        { "value": "rtl", "label": "RTL (Hebrew)" },
+        { "value": "ltr", "label": "LTR" }
+      ],
+      "default": "rtl"
+    },
+    {
+      "type": "color",
+      "id": "section_background",
+      "label": "Section background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "box_background",
+      "label": "Form box background",
+      "default": "#F4F4F4"
+    },
+    {
+      "type": "range",
+      "id": "box_padding",
+      "label": "Box padding (desktop)",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "box_padding_mobile",
+      "label": "Box padding (mobile)",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "mobile_side_margin",
+      "label": "Side margin from screen edges (mobile)",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "box_border_radius",
+      "label": "Box corner radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Section top spacing",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Section bottom spacing",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    { "type": "header", "content": "Heading" },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "NEWSLETTER"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "select",
+      "id": "heading_style",
+      "label": "Style",
+      "options": [
+        { "value": "normal", "label": "Normal" },
+        { "value": "italic", "label": "Italic" }
+      ],
+      "default": "normal"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_uppercase",
+      "label": "Uppercase",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Weight",
+      "options": [
+        { "value": "300", "label": "300" },
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Font size (desktop)",
+      "min": 12,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Font size (mobile)",
+      "min": 12,
+      "max": 36,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "heading_letter_spacing",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "heading_lh_px",
+      "label": "Line height (desktop)",
+      "min": 14,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 26
+    },
+    {
+      "type": "range",
+      "id": "heading_lh_mobile_px",
+      "label": "Line height (mobile)",
+      "min": 14,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom",
+      "label": "Space below heading (desktop)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "heading_margin_bottom_mobile",
+      "label": "Space below heading (mobile)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    { "type": "header", "content": "Divider" },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show divider",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "divider_full_width",
+      "label": "Full width (edge to edge of the box)",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Color",
+      "default": "#E0E0E0"
+    },
+    {
+      "type": "range",
+      "id": "divider_thickness",
+      "label": "Thickness",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "divider_margin",
+      "label": "Space below divider",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 24
+    },
+    { "type": "header", "content": "Fields" },
+    {
+      "type": "checkbox",
+      "id": "show_first_name",
+      "label": "Show first name",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_last_name",
+      "label": "Show last name",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone",
+      "label": "Show phone",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "require_names",
+      "label": "Require names",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "require_phone",
+      "label": "Require phone",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "ph_first_name",
+      "label": "First name placeholder",
+      "default": "שם פרטי"
+    },
+    {
+      "type": "text",
+      "id": "ph_last_name",
+      "label": "Last name placeholder",
+      "default": "שם משפחה"
+    },
+    {
+      "type": "text",
+      "id": "ph_email",
+      "label": "Email placeholder",
+      "default": "דוא\"ל"
+    },
+    {
+      "type": "text",
+      "id": "ph_phone",
+      "label": "Phone placeholder",
+      "default": "טלפון"
+    },
+    { "type": "header", "content": "Field styling" },
+    {
+      "type": "font_picker",
+      "id": "input_font",
+      "label": "Input font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "select",
+      "id": "input_weight",
+      "label": "Input weight",
+      "options": [
+        { "value": "300", "label": "300" },
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "input_size_desktop",
+      "label": "Input font size (desktop)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "input_size_mobile",
+      "label": "Input font size (mobile)",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "input_text_color",
+      "label": "Input text color",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "input_placeholder_color",
+      "label": "Placeholder color",
+      "default": "#777777"
+    },
+    {
+      "type": "color",
+      "id": "input_background",
+      "label": "Input background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "input_border_color",
+      "label": "Input border color",
+      "default": "#E0E0E0"
+    },
+    {
+      "type": "color",
+      "id": "input_focus_border_color",
+      "label": "Input border color on focus",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "input_border_width",
+      "label": "Input border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "label": "Input corner radius",
+      "min": 0,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "input_height",
+      "label": "Input height",
+      "min": 32,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 44
+    },
+    {
+      "type": "range",
+      "id": "input_padding_x",
+      "label": "Input side padding",
+      "min": 4,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "field_gap",
+      "label": "Gap between fields (desktop)",
+      "min": 4,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "field_gap_mobile",
+      "label": "Gap between fields (mobile)",
+      "min": 4,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "select",
+      "id": "mobile_columns",
+      "label": "Columns on mobile",
+      "options": [
+        { "value": "1", "label": "1 column" },
+        { "value": "2", "label": "2 columns" }
+      ],
+      "default": "2"
+    },
+    { "type": "header", "content": "Consent checkbox" },
+    {
+      "type": "checkbox",
+      "id": "show_consent",
+      "label": "Show consent checkbox",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "consent_required",
+      "label": "Required",
+      "default": true
+    },
+    {
+      "type": "richtext",
+      "id": "consent_text",
+      "label": "Consent text",
+      "default": "<p>אני מאשר/ת קבלת דיוור פרסומי בהתאם לתנאי השימוש</p>"
+    },
+    {
+      "type": "range",
+      "id": "consent_size_desktop",
+      "label": "Font size (desktop)",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "consent_size_mobile",
+      "label": "Font size (mobile)",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "range",
+      "id": "consent_lh_px",
+      "label": "Line height (desktop)",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "consent_lh_mobile_px",
+      "label": "Line height (mobile)",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "consent_color",
+      "label": "Text color",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "checkbox_size",
+      "label": "Checkbox size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "checkbox_accent_color",
+      "label": "Checkbox accent color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "consent_margin_top",
+      "label": "Space above consent row",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    { "type": "header", "content": "Button" },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "שלח"
+    },
+    {
+      "type": "font_picker",
+      "id": "button_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "select",
+      "id": "button_weight",
+      "label": "Weight",
+      "options": [
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_uppercase",
+      "label": "Uppercase",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "button_size_desktop",
+      "label": "Font size (desktop)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_size_mobile",
+      "label": "Font size (mobile)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "button_letter_spacing",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 4,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Background on hover",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "button_height",
+      "label": "Height",
+      "min": 36,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Corner radius",
+      "min": 0,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "button_full_width",
+      "label": "Full width",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "button_margin_top",
+      "label": "Space above button (desktop)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "button_margin_top_mobile",
+      "label": "Space above button (mobile)",
+      "min": 0,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    { "type": "header", "content": "Data & tags" },
+    {
+      "type": "text",
+      "id": "static_tags",
+      "label": "Static tags (comma-separated)",
+      "info": "Added to every subscriber. Name and phone are appended automatically as tags: first_name: X, last_name: Y, phone: Z",
+      "default": "newsletter"
+    },
+    { "type": "header", "content": "Messages" },
+    {
+      "type": "text",
+      "id": "success_text",
+      "label": "Success message",
+      "default": "תודה על ההרשמה!"
+    },
+    {
+      "type": "color",
+      "id": "success_color",
+      "label": "Success color",
+      "default": "#108043"
+    },
+    {
+      "type": "color",
+      "id": "error_color",
+      "label": "Error color",
+      "default": "#D82C0D"
+    },
+    {
+      "type": "range",
+      "id": "message_size",
+      "label": "Message font size",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    }
+  ],
+  "presets": [
+    {
+      "name": "Newsletter Signup"
+    }
+  ]
+}
+{% endschema %}

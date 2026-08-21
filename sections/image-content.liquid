@@ -1,0 +1,886 @@
+{%- comment -%}
+  Event Split Banner — two-column event announcement section (image + RTL content).
+  Place this file at /sections/event-split-banner.liquid
+{%- endcomment -%}
+
+{%- liquid
+  assign st = section.settings
+  assign uid = section.id
+
+  if st.heading_rtl
+    assign heading_dir = 'rtl'
+  else
+    assign heading_dir = 'ltr'
+  endif
+
+  if st.text_direction == 'rtl'
+    case st.content_text_alignment
+      when 'right'
+        assign icon_justify = 'flex-start'
+      when 'left'
+        assign icon_justify = 'flex-end'
+      else
+        assign icon_justify = 'center'
+    endcase
+  else
+    case st.content_text_alignment
+      when 'right'
+        assign icon_justify = 'flex-end'
+      when 'left'
+        assign icon_justify = 'flex-start'
+      else
+        assign icon_justify = 'center'
+    endcase
+  endif
+-%}
+
+{% style %}
+  {{ st.heading_font | font_face: font_display: 'swap' }}
+  {{ st.subheading_font | font_face: font_display: 'swap' }}
+  {{ st.body_font | font_face: font_display: 'swap' }}
+  {{ st.icon_label_font | font_face: font_display: 'swap' }}
+  {{ st.price_font | font_face: font_display: 'swap' }}
+
+  .esb--{{ uid }} {
+    background-color: {{ st.section_background }};
+    padding-top: {{ st.padding_top }}px;
+    padding-bottom: {{ st.padding_bottom }}px;
+  }
+  .esb--{{ uid }} .esb__inner {
+    display: flex;
+    align-items: {% if st.image_full_height %}stretch{% else %}center{% endif %};
+    gap: {{ st.column_gap }}px;
+    {% unless st.full_width %}
+      max-width: {{ st.max_width }}px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 20px;
+      padding-right: 20px;
+    {% endunless %}
+    {% if st.image_position == 'left' %}flex-direction: row-reverse;{% endif %}
+  }
+  .esb--{{ uid }} .esb__content {
+    flex: 0 0 {{ st.content_column_width }}%;
+    max-width: {{ st.content_column_width }}%;
+    text-align: {{ st.content_text_alignment }};
+  }
+  .esb--{{ uid }} .esb__media {
+    flex: 1 1 0;
+    min-width: 0;
+    position: relative;
+  }
+  .esb--{{ uid }} .esb__media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: {{ st.image_border_radius }}px;
+    {% case st.image_ratio %}
+      {% when 'portrait-3-4' %}aspect-ratio: 3 / 4; object-fit: cover;
+      {% when 'portrait-2-3' %}aspect-ratio: 2 / 3; object-fit: cover;
+      {% when 'square' %}aspect-ratio: 1 / 1; object-fit: cover;
+    {% endcase %}
+    {% if st.image_full_height %}
+      position: absolute;
+      inset: 0;
+      height: 100%;
+      object-fit: cover;
+      aspect-ratio: auto;
+    {% endif %}
+  }
+  .esb--{{ uid }} .esb__media .esb__placeholder {
+    width: 100%;
+    height: 100%;
+    background: #f4f4f4;
+    border-radius: {{ st.image_border_radius }}px;
+  }
+
+  .esb--{{ uid }} .esb__heading--mobile {
+    display: none;
+  }
+
+  .esb--{{ uid }} .esb__heading {
+    margin: 0;
+    font-family: {{ st.heading_font.family }}, {{ st.heading_font.fallback_families }};
+    font-size: {{ st.heading_size_desktop }}px;
+    font-style: {{ st.heading_style }};
+    font-weight: {{ st.heading_weight }};
+    {% if st.heading_uppercase %}text-transform: uppercase;{% endif %}
+    letter-spacing: {{ st.heading_letter_spacing }}px;
+    line-height: {{ st.heading_line_height }};
+    color: {{ st.heading_color }};
+  }
+
+  .esb--{{ uid }} .esb__subheading {
+    margin-top: {{ st.subheading_top_margin }}px;
+    font-family: {{ st.subheading_font.family }}, {{ st.subheading_font.fallback_families }};
+    font-size: {{ st.subheading_size }}px;
+    font-weight: {{ st.subheading_weight }};
+    color: {{ st.subheading_color }};
+    line-height: 1.5;
+  }
+
+  .esb--{{ uid }} .esb__body {
+    margin-top: {{ st.body_top_margin }}px;
+    font-family: {{ st.body_font.family }}, {{ st.body_font.fallback_families }};
+    font-size: {{ st.body_size }}px;
+    font-weight: {{ st.body_weight }};
+    line-height: {{ st.body_line_height }};
+    color: {{ st.body_color }};
+  }
+  .esb--{{ uid }} .esb__body p { margin: 0 0 0.6em; }
+  .esb--{{ uid }} .esb__body p:last-child { margin-bottom: 0; }
+
+  .esb--{{ uid }} .esb__icon-row {
+    margin-top: {{ st.icon_row_top_margin }}px;
+    display: flex;
+    align-items: center;
+    justify-content: {{ icon_justify }};
+    gap: {{ st.icon_gap }}px;
+  }
+  .esb--{{ uid }} .esb__icon {
+    width: {{ st.icon_size }}px;
+    height: {{ st.icon_size }}px;
+    object-fit: contain;
+    flex-shrink: 0;
+    {% if st.icon_round %}border-radius: 50%;{% endif %}
+    order: {% if st.icon_placement == 'before' %}0{% else %}2{% endif %};
+  }
+  .esb--{{ uid }} .esb__icon-label {
+    order: 1;
+    font-family: {{ st.icon_label_font.family }}, {{ st.icon_label_font.fallback_families }};
+    font-size: {{ st.icon_label_size }}px;
+    font-weight: {{ st.icon_label_weight }};
+    color: {{ st.icon_label_color }};
+  }
+
+  .esb--{{ uid }} .esb__price-box {
+    margin-top: {{ st.price_box_top_margin }}px;
+    {% if st.price_box_width == 'full' %}
+      display: block;
+      width: 100%;
+    {% else %}
+      display: inline-block;
+    {% endif %}
+    background-color: {{ st.price_box_background }};
+    color: {{ st.price_box_text_color }};
+    border-radius: {{ st.price_box_border_radius }}px;
+    padding: {{ st.price_box_padding }}px;
+    font-family: {{ st.price_font.family }}, {{ st.price_font.fallback_families }};
+    font-size: {{ st.price_size }}px;
+    font-weight: {{ st.price_weight }};
+    line-height: {{ st.price_line_height }};
+    box-sizing: border-box;
+  }
+  .esb--{{ uid }} .esb__price-line { display: block; }
+  .esb--{{ uid }} .esb__price-line--bold { font-weight: 700; }
+
+  @media screen and (max-width: 749px) {
+    .esb--{{ uid }} {
+      padding-top: {{ st.padding_top_mobile }}px;
+      padding-bottom: {{ st.padding_bottom_mobile }}px;
+    }
+    .esb--{{ uid }} .esb__inner {
+      flex-direction: column;
+      gap: {{ st.column_gap | divided_by: 2 | at_least: 16 }}px;
+    }
+    .esb--{{ uid }} .esb__content {
+      flex-basis: auto;
+      max-width: 100%;
+      width: 100%;
+      text-align: {{ st.mobile_content_alignment }};
+      order: {% if st.mobile_stack_order == 'image_first' %}2{% else %}1{% endif %};
+    }
+    .esb--{{ uid }} .esb__media {
+      width: 100%;
+      order: {% if st.mobile_stack_order == 'image_first' %}1{% else %}2{% endif %};
+    }
+    .esb--{{ uid }} .esb__media img {
+      position: static;
+      height: auto;
+    }
+    .esb--{{ uid }} .esb__heading {
+      font-size: {{ st.heading_size_mobile }}px;
+    }
+    .esb--{{ uid }} .esb__heading--desktop {
+      display: none;
+    }
+    .esb--{{ uid }} .esb__heading--mobile {
+      display: block;
+      order: 0;
+      width: 100%;
+      text-align: {{ st.mobile_content_alignment }};
+      text-align: center;
+    }
+    .esb--{{ uid }} .esb__icon-row {
+      justify-content: {% if st.mobile_content_alignment == 'center' %}center{% elsif st.mobile_content_alignment == 'right' %}{% if st.text_direction == 'rtl' %}flex-start{% else %}flex-end{% endif %}{% else %}{% if st.text_direction == 'rtl' %}flex-end{% else %}flex-start{% endif %}{% endif %};
+    }
+  }
+{% endstyle %}
+
+<div class="esb esb--{{ uid }}">
+  <div class="esb__inner">
+    {%- if st.heading != blank -%}
+      <h2 class="esb__heading esb__heading--mobile" dir="{{ heading_dir }}">{{ st.heading | escape | newline_to_br }}</h2>
+    {%- endif -%}
+    <div class="esb__content" dir="{{ st.text_direction }}">
+      {%- if st.heading != blank -%}
+        <h2 class="esb__heading esb__heading--desktop" dir="{{ heading_dir }}">{{ st.heading | escape | newline_to_br }}</h2>
+      {%- endif -%}
+
+      {%- if st.date_text != blank or st.subheading != blank -%}
+        <div class="esb__subheading">
+          {%- if st.date_text != blank -%}<div>{{ st.date_text | escape }}</div>{%- endif -%}
+          {%- if st.subheading != blank -%}<div>{{ st.subheading | escape }}</div>{%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if st.body_text != blank -%}
+        <div class="esb__body">{{ st.body_text }}</div>
+      {%- endif -%}
+
+      {%- if st.icon_image != blank or st.icon_label != blank -%}
+        <div class="esb__icon-row">
+          {%- if st.icon_image != blank -%}
+            {{ st.icon_image | image_url: width: 160 | image_tag: class: 'esb__icon', alt: st.icon_label | escape }}
+          {%- endif -%}
+          {%- if st.icon_label != blank -%}
+            <span class="esb__icon-label">{{ st.icon_label | escape }}</span>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- if section.blocks.size > 0 -%}
+        <div class="esb__price-box">
+          {%- for block in section.blocks -%}
+            <span
+              class="esb__price-line{% if block.settings.line_bold %} esb__price-line--bold{% endif %}"
+              {{ block.shopify_attributes }}
+            >{{ block.settings.line_text | escape }}</span>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="esb__media">
+      {%- if st.main_image != blank -%}
+        {{ st.main_image | image_url: width: 1500 | image_tag: loading: 'lazy', widths: '375, 550, 750, 1100, 1500' }}
+      {%- else -%}
+        <div class="esb__placeholder">{{ 'image' | placeholder_svg_tag }}</div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Event Split Banner",
+  "tag": "section",
+  "class": "section-event-split-banner",
+  "max_blocks": 12,
+  "settings": [
+    { "type": "header", "content": "Layout" },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "Image position (desktop)",
+      "options": [
+        { "value": "right", "label": "Right" },
+        { "value": "left", "label": "Left" }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "range",
+      "id": "content_column_width",
+      "label": "Content column width",
+      "min": 30,
+      "max": 70,
+      "step": 5,
+      "unit": "%",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column gap",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "select",
+      "id": "text_direction",
+      "label": "Text direction",
+      "options": [
+        { "value": "rtl", "label": "RTL (Hebrew)" },
+        { "value": "ltr", "label": "LTR" }
+      ],
+      "default": "rtl"
+    },
+    {
+      "type": "select",
+      "id": "content_text_alignment",
+      "label": "Text alignment",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "right"
+    },
+    { "type": "header", "content": "Section" },
+    {
+      "type": "color",
+      "id": "section_background",
+      "label": "Section background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width (when not full width)",
+      "min": 900,
+      "max": 1800,
+      "step": 50,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "Top spacing (desktop)",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "Bottom spacing (desktop)",
+      "min": 0,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Top spacing (mobile)",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Bottom spacing (mobile)",
+      "min": 0,
+      "max": 120,
+      "step": 2,
+      "unit": "px",
+      "default": 40
+    },
+    { "type": "header", "content": "Image" },
+    {
+      "type": "image_picker",
+      "id": "main_image",
+      "label": "Image"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "adapt", "label": "Adapt to image" },
+        { "value": "portrait-3-4", "label": "Portrait 3:4" },
+        { "value": "portrait-2-3", "label": "Portrait 2:3" },
+        { "value": "square", "label": "Square" }
+      ],
+      "default": "adapt"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "image_full_height",
+      "label": "Stretch to content height",
+      "default": false
+    },
+    { "type": "header", "content": "Heading" },
+    {
+      "type": "textarea",
+      "id": "heading",
+      "label": "Heading (one line per row)",
+      "default": "GUESS WHO'S BACK?\nADIKA.\nAND WE'RE BRINGING ODEYA WITH US"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_rtl",
+      "label": "Heading RTL direction",
+      "info": "Off = LTR (for English headings inside an RTL section)",
+      "default": false
+    },
+    {
+      "type": "font_picker",
+      "id": "heading_font",
+      "label": "Heading font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Size (desktop)",
+      "min": 16,
+      "max": 72,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Size (mobile)",
+      "min": 14,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 22
+    },
+    {
+      "type": "select",
+      "id": "heading_style",
+      "label": "Style",
+      "options": [
+        { "value": "normal", "label": "Normal" },
+        { "value": "italic", "label": "Italic" }
+      ],
+      "default": "italic"
+    },
+    {
+      "type": "checkbox",
+      "id": "heading_uppercase",
+      "label": "Uppercase",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "heading_weight",
+      "label": "Weight",
+      "options": [
+        { "value": "300", "label": "300" },
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "range",
+      "id": "heading_letter_spacing",
+      "label": "Letter spacing",
+      "min": 0,
+      "max": 5,
+      "step": 0.5,
+      "unit": "px",
+      "default": 0.5
+    },
+    {
+      "type": "range",
+      "id": "heading_line_height",
+      "label": "Line height",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "default": 1.4
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#111111"
+    },
+    { "type": "header", "content": "Date & subheading" },
+    {
+      "type": "text",
+      "id": "date_text",
+      "label": "Date",
+      "default": "29.8"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "אודיה LIVE במנורה"
+    },
+    {
+      "type": "font_picker",
+      "id": "subheading_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "subheading_size",
+      "label": "Size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "subheading_weight",
+      "label": "Weight",
+      "options": [
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "color",
+      "id": "subheading_color",
+      "label": "Color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "subheading_top_margin",
+      "label": "Top spacing",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    { "type": "header", "content": "Body text" },
+    {
+      "type": "richtext",
+      "id": "body_text",
+      "label": "Text",
+      "default": "<p>חייבת להיות איתנו שם? הירשמי לדיוור של עדיקה וקבלי מאיתנו סמס עם לינק אישי המקנה אפשרות לרכישה של עד 4 כרטיסים להופעה.</p>"
+    },
+    {
+      "type": "font_picker",
+      "id": "body_font",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "body_size",
+      "label": "Size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "body_line_height",
+      "label": "Line height",
+      "min": 1.2,
+      "max": 2.2,
+      "step": 0.1,
+      "default": 1.7
+    },
+    {
+      "type": "select",
+      "id": "body_weight",
+      "label": "Weight",
+      "options": [
+        { "value": "300", "label": "300" },
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" }
+      ],
+      "default": "400"
+    },
+    {
+      "type": "color",
+      "id": "body_color",
+      "label": "Color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "body_top_margin",
+      "label": "Top spacing",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    { "type": "header", "content": "Icon & label" },
+    {
+      "type": "image_picker",
+      "id": "icon_image",
+      "label": "Icon"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Icon size",
+      "min": 16,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "default": 36
+    },
+    {
+      "type": "checkbox",
+      "id": "icon_round",
+      "label": "Round icon",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "icon_placement",
+      "label": "Icon placement",
+      "options": [
+        { "value": "before", "label": "Before text" },
+        { "value": "after", "label": "After text" }
+      ],
+      "default": "after"
+    },
+    {
+      "type": "range",
+      "id": "icon_gap",
+      "label": "Gap from text",
+      "min": 4,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "text",
+      "id": "icon_label",
+      "label": "Icon label",
+      "default": "כמה עולה?"
+    },
+    {
+      "type": "font_picker",
+      "id": "icon_label_font",
+      "label": "Label font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "icon_label_size",
+      "label": "Label size",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "select",
+      "id": "icon_label_weight",
+      "label": "Label weight",
+      "options": [
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" },
+        { "value": "800", "label": "800" }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "color",
+      "id": "icon_label_color",
+      "label": "Label color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "icon_row_top_margin",
+      "label": "Top spacing",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    { "type": "header", "content": "Price box" },
+    {
+      "type": "color",
+      "id": "price_box_background",
+      "label": "Box background",
+      "default": "#FBE9EA"
+    },
+    {
+      "type": "color",
+      "id": "price_box_text_color",
+      "label": "Text color",
+      "default": "#111111"
+    },
+    {
+      "type": "range",
+      "id": "price_box_border_radius",
+      "label": "Corner radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "price_box_padding",
+      "label": "Inner padding",
+      "min": 8,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "price_box_width",
+      "label": "Box width",
+      "options": [
+        { "value": "fit", "label": "Fit content" },
+        { "value": "full", "label": "Full column width" }
+      ],
+      "default": "fit"
+    },
+    {
+      "type": "range",
+      "id": "price_box_top_margin",
+      "label": "Top spacing",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "font_picker",
+      "id": "price_font",
+      "label": "Price font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "price_size",
+      "label": "Text size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "price_line_height",
+      "label": "Line height",
+      "min": 1.2,
+      "max": 2.4,
+      "step": 0.1,
+      "default": 1.8
+    },
+    {
+      "type": "select",
+      "id": "price_weight",
+      "label": "Weight",
+      "options": [
+        { "value": "400", "label": "400" },
+        { "value": "500", "label": "500" },
+        { "value": "600", "label": "600" },
+        { "value": "700", "label": "700" }
+      ],
+      "default": "400"
+    },
+    { "type": "header", "content": "Mobile" },
+    {
+      "type": "select",
+      "id": "mobile_stack_order",
+      "label": "Stack order (mobile)",
+      "options": [
+        { "value": "image_first", "label": "Image first" },
+        { "value": "content_first", "label": "Content first" }
+      ],
+      "default": "image_first"
+    },
+    {
+      "type": "select",
+      "id": "mobile_content_alignment",
+      "label": "Alignment (mobile)",
+      "options": [
+        { "value": "left", "label": "Left" },
+        { "value": "center", "label": "Center" },
+        { "value": "right", "label": "Right" }
+      ],
+      "default": "right"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "price_line",
+      "name": "Price line",
+      "settings": [
+        {
+          "type": "text",
+          "id": "line_text",
+          "label": "Line text",
+          "default": "VIP 399 ₪ – למכורות"
+        },
+        {
+          "type": "checkbox",
+          "id": "line_bold",
+          "label": "Bold line",
+          "default": false
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Event Split Banner",
+      "blocks": [
+        {
+          "type": "price_line",
+          "settings": { "line_text": "VIP 399 ₪ – למכורות" }
+        },
+        {
+          "type": "price_line",
+          "settings": { "line_text": "אולם – 269 ₪" }
+        },
+        {
+          "type": "price_line",
+          "settings": { "line_text": "יציע – 199 ₪" }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,169 @@
+{% doc %}
+  @prompt
+    I need section with strip of text, with option change background of color full section. Also must be options for typography of text for mobile and desktop separate also color of text.
+    Amd must be options for top and bottom paddings separate mobile and desktop.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-text-strip-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding-top: {{ block.settings.padding_top_mobile }}px;
+    padding-bottom: {{ block.settings.padding_bottom_mobile }}px;
+  }
+
+  .ai-text-strip-container-{{ ai_gen_id }} {
+    text-align: center;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .ai-text-strip-text-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.font_size_mobile }}px;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    .ai-text-strip-{{ ai_gen_id }} {
+      padding-top: {{ block.settings.padding_top_desktop }}px;
+      padding-bottom: {{ block.settings.padding_bottom_desktop }}px;
+    }
+
+    .ai-text-strip-text-{{ ai_gen_id }} {
+      font-size: {{ block.settings.font_size_desktop }}px;
+    }
+  }
+{% endstyle %}
+
+<text-strip-{{ ai_gen_id }} class="ai-text-strip-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-text-strip-container-{{ ai_gen_id }}">
+    {% if block.settings.text != blank %}
+      <p class="ai-text-strip-text-{{ ai_gen_id }}">{{ block.settings.text }}</p>
+    {% else %}
+      <p class="ai-text-strip-text-{{ ai_gen_id }}">Add your text here</p>
+    {% endif %}
+  </div>
+</text-strip-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class TextStrip{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+    }
+
+    customElements.define('text-strip-{{ ai_gen_id }}', TextStrip{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Text strip",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "Welcome to our store"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "label": "Font size (mobile)",
+      "min": 12,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "font_size_desktop",
+      "label": "Font size (desktop)",
+      "min": 12,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "label": "Top padding (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Bottom padding (mobile)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "padding_top_desktop",
+      "label": "Top padding (desktop)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Bottom padding (desktop)",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Text strip"
+    }
+  ]
+}
+{% endschema %}

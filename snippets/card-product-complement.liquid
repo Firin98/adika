@@ -1,0 +1,407 @@
+{% comment %}
+  Renders a complementary product card with size select and inline add-to-cart.
+
+  Accepts:
+  - card_product: {Object} Product Liquid object (optional)
+  - media_aspect_ratio: {String} "square" or "portrait". Default is "square" (optional)
+  - show_secondary_image: {Boolean} Default: false (optional)
+  - lazy_load: {Boolean} Default: true (optional)
+  - skip_styles: {Boolean} Default: false (optional)
+  - quick_add: {String} "standard", "button", or "none"
+  - section_id: {String} The ID of the section that contains this card.
+  - horizontal_class: {Boolean} Default: false (optional)
+  - horizontal_quick_add: {Boolean} Default: false (optional)
+  - placeholder_image: {String} Default: 'product-apparel-2' (optional)
+{% endcomment %}
+
+{%- unless skip_styles -%}
+  {{ 'component-price.css' | asset_url | stylesheet_tag }}
+  {{ 'component-product-variant-picker.css' | asset_url | stylesheet_tag }}
+
+  {% style %}
+    .complement-card__info {
+      display: grid;
+      gap: 0.5rem;
+    }
+
+    .complement-card__actions {
+      display: grid;
+      gap: 0.8rem;
+      margin-top: 6px;
+      align-items: center;
+    }
+
+    .complement-card__actions .select {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .complement-card__actions .product-form__input--dropdown {
+      margin: 0;
+      min-width: 0;
+    }
+
+    .complement-card__actions .select__select {
+      font-size: 1.4rem;
+      min-height: 3.1rem;
+      height: 31px;
+      padding: 0 10px;
+      display: flex;
+      direction: rtl;
+    }
+    .complement-card__actions .svg-wrapper {
+      left: 1.5rem !important;
+      right: auto !important;
+   }
+
+    .complement-card__actions .quick-add__submit {
+      flex: 0 0 auto;
+      width: auto;
+      min-width: 3.6rem;
+      min-height: 3.6rem;
+      padding: 0 1rem;
+    }
+
+    .complement-card__color {
+      margin: 0;
+      font-size: 1.4rem;
+    }
+
+    .complement-card .card__information-sizes {
+      display: none;
+    }
+
+    
+    @media (max-width: 749px) {
+      
+      .complement-card__actions .select__select {
+        font-size: 1.2rem;
+      }
+    }
+  {% endstyle %}
+{%- endunless -%}
+
+{%- if card_product and card_product != empty -%}
+  {%- liquid
+    assign complement_form_id = 'complement-' | append: section_id | append: '-' | append: card_product.id
+    assign selected_variant = card_product.selected_or_first_available_variant
+    assign card_size_option = blank
+    assign selected_size_value = blank
+    assign card_color_option = blank
+    assign card_color_value = blank
+
+    for option in card_product.options_with_values
+      assign option_name_downcase = option.name | downcase
+      if option_name_downcase contains 'size' or option_name_downcase contains 'מידה' or option_name_downcase contains 'מיד'
+        assign card_size_option = option
+        if option.position == 1
+          assign selected_size_value = selected_variant.option1
+        elsif option.position == 2
+          assign selected_size_value = selected_variant.option2
+        elsif option.position == 3
+          assign selected_size_value = selected_variant.option3
+        endif
+      elsif option_name_downcase contains 'color' or option_name_downcase contains 'colour' or option_name_downcase contains 'צבע'
+        assign card_color_option = option
+        if option.position == 1
+          assign card_color_value = selected_variant.option1
+        elsif option.position == 2
+          assign card_color_value = selected_variant.option2
+        elsif option.position == 3
+          assign card_color_value = selected_variant.option3
+        endif
+      endif
+    endfor
+
+    assign ratio = 1
+    if card_product.featured_media and media_aspect_ratio == 'portrait'
+      assign ratio = 0.738
+    elsif card_product.featured_media and media_aspect_ratio == 'adapt'
+      assign ratio = card_product.featured_media.aspect_ratio
+    endif
+    if ratio == 0 or ratio == null
+      assign ratio = 1
+    endif
+  -%}
+
+  <div
+    class="card-wrapper product-card-wrapper complement-card underline-links-hover"
+    id="complement-card-{{ card_product.id }}-{{ section_id }}"
+  >
+    <div
+      class="
+        card card--{{ settings.card_style }}
+        {% if card_product.featured_media %} card--media{% else %} card--text{% endif %}
+        {% if settings.card_style == 'card' %} color-{{ settings.card_color_scheme }} gradient{% endif %}
+        {% if horizontal_class %} card--horizontal{% endif %}
+      "
+      style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
+    >
+      <div
+        class="card__inner {% if settings.card_style == 'standard' %}color-{{ settings.card_color_scheme }} gradient{% endif %}{% if card_product.featured_media or settings.card_style == 'standard' %} ratio{% endif %}"
+        style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
+      >
+        {%- if card_product.featured_media -%}
+          <div class="card__media">
+            <div class="media media--transparent media--hover-effect">
+              <a
+                href="{{ card_product.url }}"
+                class="full-unstyled-link"
+                aria-label="{{ card_product.title | escape }}"
+              ></a>
+              <img
+                srcset="
+                  {%- if card_product.featured_media.width >= 165 -%}{{ card_product.featured_media | image_url: width: 165 }} 165w,{%- endif -%}
+                  {%- if card_product.featured_media.width >= 360 -%}{{ card_product.featured_media | image_url: width: 360 }} 360w,{%- endif -%}
+                  {%- if card_product.featured_media.width >= 533 -%}{{ card_product.featured_media | image_url: width: 533 }} 533w,{%- endif -%}
+                  {{ card_product.featured_media | image_url }} {{ card_product.featured_media.width }}w
+                "
+                src="{{ card_product.featured_media | image_url: width: 533 }}"
+                sizes="116px"
+                alt="{{ card_product.featured_media.alt | default: card_product.title | escape }}"
+                class="motion-reduce"
+                {% unless lazy_load == false %}
+                  loading="lazy"
+                {% endunless %}
+                width="{{ card_product.featured_media.width }}"
+                height="{{ card_product.featured_media.height }}"
+              >
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="card__content">
+        <div class="card-information complement-card__info card-information--grid">
+          <h3
+            class="card__heading{% if card_product.featured_media or settings.card_style == 'standard' %} h5{% endif %}"
+            id="title-{{ section_id }}-{{ card_product.id }}"
+          >
+            <a
+              href="{{ card_product.url }}"
+              id="CardLink-{{ section_id }}-{{ card_product.id }}"
+              class="full-unstyled-link"
+            >
+              {{ card_product.title | escape }}
+            </a>
+          </h3>
+
+          {% render 'price',
+            product: card_product,
+            show_badges: false,
+            price_class: '',
+            show_compare_at_price: true,
+            use_variant: true
+          %}
+
+          {%- if card_color_value != blank -%}
+            <p class="complement-card__color caption">
+              {{ card_color_value | escape }} צבע:
+            </p>
+          {%- endif -%}
+
+          {%- if quick_add != 'none' -%}
+            <product-form data-section-id="{{ section_id }}">
+              {%- form 'product',
+                card_product,
+                id: complement_form_id,
+                class: 'form complement-card__form',
+                novalidate: 'novalidate',
+                data-type: 'add-to-cart-form'
+              -%}
+                <div class="complement-card__actions">
+                {%- if card_size_option != blank -%}
+                  <div class="product-form__input product-form__input--dropdown complement-card__size">
+                    <label
+                      class="form__label visually-hidden"
+                      for="ComplementSize-{{ section_id }}-{{ card_product.id }}"
+                    >
+                      {{ card_size_option.name }}
+                    </label>
+                    <div class="select">
+                      <select
+                        id="ComplementSize-{{ section_id }}-{{ card_product.id }}"
+                        name="id"
+                        class="select__select complement-card__size-select"
+                        data-complement-size-select
+                        aria-label="{{ card_size_option.name | escape }}"
+                      >
+                        {%- for value in card_size_option.values -%}
+                          {%- liquid
+                            if value.name != blank
+                              assign size_value_text = value.name | strip
+                            else
+                              assign size_value_text = value | strip
+                            endif
+
+                            assign size_variant = blank
+                            for variant in card_product.variants
+                              assign variant_matches = true
+                              if card_size_option.position == 1
+                                unless variant.option1 == size_value_text
+                                  assign variant_matches = false
+                                endunless
+                              elsif card_size_option.position == 2
+                                unless variant.option2 == size_value_text
+                                  assign variant_matches = false
+                                endunless
+                              elsif card_size_option.position == 3
+                                unless variant.option3 == size_value_text
+                                  assign variant_matches = false
+                                endunless
+                              endif
+                              if variant_matches and card_size_option.position != 1 and variant.option1 != selected_variant.option1
+                                assign variant_matches = false
+                              endif
+                              if variant_matches and card_size_option.position != 2 and variant.option2 != selected_variant.option2
+                                assign variant_matches = false
+                              endif
+                              if variant_matches and card_size_option.position != 3 and variant.option3 != selected_variant.option3
+                                assign variant_matches = false
+                              endif
+                              if variant_matches
+                                assign size_variant = variant
+                                break
+                              endif
+                            endfor
+                          -%}
+                          {%- if size_variant != blank -%}
+                            <option
+                              value="{{ size_variant.id }}"
+                              {% if size_variant.available == false %}
+                                disabled
+                              {% endif %}
+                              {% if value.selected or size_value_text == selected_size_value %}
+                                selected
+                              {% endif %}
+                            >
+                              {{ size_value_text -}}
+                              {%- unless size_variant.available %}
+                                — {{ 'products.product.sold_out' | t -}}
+                              {%- endunless %}
+                            </option>
+                          {%- endif -%}
+                        {%- endfor -%}
+                      </select>
+                      <span class="svg-wrapper">
+                        {{- 'icon-caret.svg' | inline_asset_content -}}
+                      </span>
+                    </div>
+                  </div>
+                {%- else -%}
+                  <input
+                    type="hidden"
+                    name="id"
+                    value="{{ selected_variant.id }}"
+                    class="product-variant-id"
+                    data-complement-variant-id
+                    {% if selected_variant.available == false %}
+                      disabled
+                    {% endif %}
+                  >
+                {%- endif -%}
+
+                  <button
+                    id="{{ complement_form_id }}-submit"
+                    type="submit"
+                    name="add"
+                    class="quick-add__submit button button--secondary{% if horizontal_quick_add %} card--horizontal__quick-add{% endif %}"
+                    aria-labelledby="{{ complement_form_id }}-submit title-{{ section_id }}-{{ card_product.id }}"
+                    aria-live="polite"
+                    data-sold-out-message="true"
+                    {% if selected_variant.available == false %}
+                      disabled
+                    {% endif %}
+                  >
+                    <span class="visually-hidden">
+                      {%- if selected_variant.available -%}
+                        {{ 'products.product.add_to_cart' | t }}
+                      {%- else -%}
+                        {{ 'products.product.sold_out' | t }}
+                      {%- endif -%}
+                    </span>
+                    <span class="sold-out-message hidden">
+                      {{ 'products.product.sold_out' | t }}
+                    </span>
+                    {%- if horizontal_quick_add -%}
+                      {% comment %} <span class="icon-wrap">
+                        {{- 'icon-cart.svg' | inline_asset_content -}}
+                      </span> {% endcomment %}
+                      הוסף לעגלה
+                    {%- else -%}
+                      {% comment %} <span class="svg-wrapper">
+                        {{- 'icon-cart.svg' | inline_asset_content -}}
+                      </span> {% endcomment %}
+                      הוסף לעגלה  
+                    {%- endif -%}
+                    {%- render 'loading-spinner' -%}
+                  </button>
+                </div>
+              {%- endform -%}
+            </product-form>
+
+            {%- if card_size_option != blank -%}
+              <script>
+                (function () {
+                  const card = document.getElementById('complement-card-{{ card_product.id }}-{{ section_id }}');
+                  if (!card) return;
+
+                  const select = card.querySelector('[data-complement-size-select]');
+                  const button = card.querySelector('[type="submit"]');
+                  if (!select || !button) return;
+
+                  const syncButtonState = () => {
+                    const option = select.selectedOptions[0];
+                    const isAvailable = Boolean(option && !option.disabled);
+
+                    button.disabled = !isAvailable;
+                    button.querySelector('.sold-out-message')?.classList.toggle('hidden', isAvailable);
+                  };
+
+                  select.addEventListener('change', syncButtonState);
+                  syncButtonState();
+                })();
+              </script>
+            {%- endif -%}
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  </div>
+{%- else -%}
+  {%- liquid
+    assign ratio = 1
+    assign placeholder = true
+    if media_aspect_ratio == 'portrait'
+      assign ratio = 0.8
+    endif
+  -%}
+  <div class="card-wrapper product-card-wrapper complement-card underline-links-hover">
+    <div
+      class="card card--{{ settings.card_style }}{% if settings.card_style == 'card' %} color-{{ settings.card_color_scheme }} gradient{% endif %}"
+      style="--ratio-percent: {{ 1 | divided_by: ratio | times: 100 }}%;"
+    >
+      <div class="card__inner{% if settings.card_style == 'standard' %} color-{{ settings.card_color_scheme }} gradient{% endif %} ratio">
+        <div class="card__media">
+          <div class="media media--transparent">
+            {%- if placeholder_image -%}
+              {{ placeholder_image | placeholder_svg_tag: 'placeholder-svg' }}
+            {%- else -%}
+              {{ 'product-apparel-2' | placeholder_svg_tag: 'placeholder-svg' }}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="card__content">
+        <div class="card-information complement-card__info">
+          <h3 class="card__heading card__heading--placeholder{% if settings.card_style == 'standard' %} h5{% endif %}">
+            <a role="link" aria-disabled="true" class="full-unstyled-link">
+              {{ 'onboarding.product_title' | t }}
+            </a>
+          </h3>
+          {% render 'price', placeholder: placeholder, show_compare_at_price: true %}
+        </div>
+      </div>
+    </div>
+  </div>
+{%- endif -%}

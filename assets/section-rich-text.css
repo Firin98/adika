@@ -1,0 +1,167 @@
+.rich-text {
+  z-index: 1;
+}
+
+.rich-text__wrapper {
+  display: flex;
+  justify-content: center;
+  width: calc(100% - 4rem / var(--font-body-scale));
+}
+
+.rich-text:not(.rich-text--full-width) .rich-text__wrapper {
+  margin: auto;
+  width: calc(100% - 8rem / var(--font-body-scale));
+}
+
+.rich-text__blocks {
+  width: 100%;
+}
+
+@media screen and (min-width: 750px) {
+  .rich-text__wrapper {
+    width: 100%;
+  }
+
+  .rich-text__wrapper--left {
+    justify-content: flex-start;
+  }
+
+  .rich-text__wrapper--right {
+    justify-content: flex-end;
+  }
+
+  .rich-text__blocks {
+    max-width: 50rem;
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .rich-text__blocks {
+    max-width: 78rem;
+  }
+}
+
+.rich-text__blocks * {
+  overflow-wrap: break-word;
+}
+
+.rich-text__blocks > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.rich-text__blocks > * + * {
+  margin-top: 2rem;
+}
+
+.rich-text__blocks > * + a {
+  margin-top: 3rem;
+}
+
+.rich-text__buttons {
+  display: inline-flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+  max-width: 45rem;
+  word-break: break-word;
+}
+
+.rich-text__buttons--multiple > * {
+  flex-grow: 1;
+  min-width: 22rem;
+}
+
+.rich-text__buttons + .rich-text__buttons {
+  margin-top: 1rem;
+}
+
+.rich-text__blocks.left .rich-text__buttons {
+  justify-content: flex-start;
+}
+
+.rich-text__blocks.right .rich-text__buttons {
+  justify-content: flex-end;
+}
+
+
+
+.rich-text--about .rich-text__blocks {
+  text-align: right;
+    direction: rtl;
+    display: grid;
+    grid-template-columns: 266px 1fr;
+    justify-content: center;
+    column-gap: 45px;
+    row-gap: 5px;
+    max-width: 78rem; 
+}
+.rich-text--about .rich-text__blocks .rich-text__heading.h2 {
+  text-align: right;
+  width: auto;
+  max-width: max-content;
+  margin-right: auto;
+  padding-left: 0; 
+  direction: rtl !important;
+}
+.rich-text--about .rich-text__blocks .rich-text__text {
+  margin: 5px 0 0;
+  line-height: 1.6;
+}
+.rich-text--about .rich-text__blocks .rich-text__text h2 {
+  font-size: 24px;
+ 
+}
+
+
+
+.rich-text--banner .rich-text__heading.hxl {
+  font-size: 64px;
+  font-weight: 300;
+  font-style: italic;
+  text-transform: uppercase;
+}
+
+
+
+
+@media screen and (max-width: 749px) {
+  .rich-text--about .rich-text__blocks .rich-text__heading.h2 {
+    margin-right: 0;
+    text-align: right;
+    align-self: flex-start;
+  }
+  .rich-text--about .rich-text__blocks .rich-text__text h2 {
+    font-size: 20px;
+    margin-top: 20px;
+    letter-spacing: 0;
+  }
+  .rich-text--about .rich-text__blocks {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+  }
+  .rich-text--about .rich-text__blocks .rich-text__heading.h2 {
+    font-size: 20px;
+  }
+  .rich-text--about .rich-text__blocks .rich-text__text {
+    font-size: 14px;
+    text-align: right;
+    align-self: flex-start;
+  }
+  .rich-text--about .rich-text__wrapper {
+    width: calc(100% - 0rem / var(--font-body-scale));
+  }
+  .rich-text--about .rich-text__blocks .rich-text__text {
+    line-height: 1.55;
+  }
+
+    
+  .rich-text--banner .rich-text__heading.hxl {
+    font-size: 24px;
+  }
+
+}
+

@@ -1,0 +1,309 @@
+<style>
+  .breadcrumbs {
+    margin: 0 0 2em;
+  }
+
+  .breadcrumbs__list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+
+    direction: rtl;
+  }
+  .collection-hero__inner .breadcrumbs__list.breadcrumbs__list--shadow::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    left: 0%;
+    top: 15px;
+    height: 0;
+    background: #ffffffad;
+    border-radius: 50%;
+    box-shadow: 0px 0px 35px 18px #ffffff;
+    z-index: -1;
+  }
+
+  .breadcrumbs__item {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    color: #A2A2A2;
+  }
+  .breadcrumbs__item:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 1;
+    color: #000;
+  }
+
+  .breadcrumbs__item + .breadcrumbs__item {
+    padding-left: 0;
+    padding-right: 20px;
+  }
+
+  .breadcrumbs__item + .breadcrumbs__item::before {
+    content: '❯';
+    {% comment %} content: '/'; {% endcomment %}
+    display: block;
+    font-size: 12px;
+    position: absolute;
+    left: auto;
+    right: 5px;
+    vertical-align: middle;
+    color: #000;
+    top: 0px;
+    left: auto;
+    right: 6px;
+    vertical-align: middle;
+    color: #A2A2A2;
+    font-size: 12px;
+
+    top: 0px;
+    line-height: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+
+
+  .main-product .breadcrumbs {
+    margin: 1.6rem 0 1.4rem;
+  }
+
+  .main-product .breadcrumbs__list {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0;
+    overflow: hidden;
+    direction: ltr;
+  }
+
+
+  .main-product .breadcrumbs__item + .breadcrumbs__item {
+    padding-left: 30px;
+    padding-right: 0;
+  }
+
+  .main-product .breadcrumbs__item + .breadcrumbs__item::before {
+    left: 12px;
+    right: auto;
+    vertical-align: middle;
+    {% comment %} color: #A2A2A2; {% endcomment %}
+    top: 2px;
+    font-size: 12px;
+    line-height: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .breadcrumbs__item a,
+  .breadcrumbs__link {
+    text-decoration: none;
+    color: #A2A2A2;
+    color: inherit;
+    text-transform: none;
+    font-size: 12px;
+    letter-spacing: 0;
+  }
+
+  .breadcrumbs__link[aria-current="page"] {
+    font-weight: normal;
+    text-decoration: none;
+  }
+
+  .breadcrumbs__link[aria-current="page"]:hover,
+  .breadcrumbs__link[aria-current="page"]:focus {
+    text-decoration: none;
+  }
+
+  .collection-hero .breadcrumbs {
+    margin-top: 17px;
+    margin-bottom: 0;
+
+  }
+  .collection-hero .breadcrumbs__list {
+    display: grid;
+    grid-template-columns: auto auto;
+    direction: rtl;
+    display: flex;
+  }
+
+  .collection-hero .breadcrumbs__list {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0;
+    overflow: hidden;
+  }
+
+  .collection-hero .breadcrumbs__item,
+  .collection-hero .breadcrumbs__link {
+    color: #A2A2A2;
+    font-size: 10px;
+    line-height: normal;
+  }
+
+  .collection-hero .breadcrumbs__item:last-child,
+  .collection-hero .breadcrumbs__link[aria-current='page'] {
+    color: #A2A2A2;
+    font-weight: 400;
+  }
+
+  @media screen and (min-width: 750px) {
+
+    .collection-hero .breadcrumbs__link,
+    .breadcrumbs__item a,
+    .breadcrumbs__link {
+      font-size: 12px;
+    }
+    .collection-hero .breadcrumbs__item,
+    .collection-hero .breadcrumbs__link {
+      font-size: 12px;
+    }
+  }
+  @media screen and (min-width: 990px) {
+    .collection-hero .breadcrumbs {
+      margin-top: 10px;
+      margin-bottom: 0;
+
+    }
+
+    .breadcrumbs__item + .breadcrumbs__item {
+      padding-left: 0;
+      padding-right: 30px;
+    }
+    .breadcrumbs__item + .breadcrumbs__item::before {
+      right: 12px;
+          top: 4px;
+    }
+
+    .main-product .breadcrumbs {
+      margin-top: 20px;
+      margin-bottom: 37px;
+    }
+  }
+</style>
+
+{%- unless template == 'index' or template == 'cart' or template == 'list-collections' or template == '404' -%}
+  {%- assign t = template | split: '.' | first -%}
+
+  <nav
+    class="breadcrumbs"
+    role="navigation"
+    aria-label="breadcrumbs"
+  >
+    <ol class="breadcrumbs__list {% if section.settings.show_shadow %} breadcrumbs__list--shadow {% endif %}">
+      <li class="breadcrumbs__item">
+        <a class="breadcrumbs__link" href="/">Home</a>
+      </li>
+      {%- case t -%}
+        {%- when 'page' -%}
+          <li class="breadcrumbs__item">
+            <a
+              class="breadcrumbs__link"
+              href="{{ page.url }}"
+              aria-current="page"
+            >
+              {{- page.title -}}
+            </a>
+          </li>
+        {%- when 'product' -%}
+          {%- if collection.url -%}
+            <li class="breadcrumbs__item">
+              {{ collection.title | link_to: collection.url }}
+            </li>
+          {%- endif -%}
+          <li class="breadcrumbs__item">
+            <a
+              class="breadcrumbs__link"
+              href="{{ product.url }}"
+              aria-current="page"
+            >
+              {{- product.title -}}
+            </a>
+          </li>
+        {%- when 'collection' and collection.handle -%}
+
+
+          {%- if current_tags -%}
+            <li class="breadcrumbs__item">
+              {{ collection.title | link_to: collection.url }}
+            </li>
+            <li class="breadcrumbs__item">
+              {%- capture tag_url -%}{{ collection.url }}/{{ current_tags | join: "+"}}{%- endcapture -%}
+              <a
+                class="breadcrumbs__link"
+                href="{{ tag_url }}"
+                aria-current="page"
+              >
+                {{- current_tags | join: ' + ' -}}
+              </a>
+            </li>
+          {%- else -%}
+            <li class="breadcrumbs__item">
+              <a
+                class="breadcrumbs__link"
+                href="{{ collection.url }}"
+                aria-current="page"
+              >
+                {% comment %} {{- collection.title -}} {% endcomment %}
+                {{- collection.title | escape -}}
+              </a>
+            </li>
+          {%- endif -%}
+        {%- when 'blog' -%}
+          {%- if current_tags -%}
+            <li class="breadcrumbs__item">
+              {{ blog.title | link_to: blog.url }}
+            </li>
+            <li class="breadcrumbs__item">
+              {%- capture tag_url -%}{{blog.url}}/tagged/{{ current_tags | join: "+" }}{%- endcapture -%}
+              <a
+                class="breadcrumbs__link"
+                href="{{ tag_url }}"
+                aria-current="page"
+              >
+                {{- current_tags | join: ' + ' -}}
+              </a>
+            </li>
+          {%- else -%}
+            <li class="breadcrumbs__item">
+              <a
+                class="breadcrumbs__link"
+                href="{{ blog.url }}"
+                aria-current="page"
+              >
+                {{- blog.title -}}
+              </a>
+            </li>
+          {%- endif -%}
+        {%- when 'article' -%}
+          <li class="breadcrumbs__item">
+            {{ blog.title | link_to: blog.url }}
+          </li>
+          {% comment %}
+            <li class="breadcrumbs__item">
+              <a
+                class="breadcrumbs__link"
+                href="{{ article.url }}"
+                aria-current="page">{{ article.title }}</a>
+            </li>
+          {% endcomment %}
+        {%- else -%}
+          <li class="breadcrumbs__item">
+            <a
+              class="breadcrumbs__link"
+              href="{{ request.path }}"
+              aria-current="page"
+            >
+              {{- page_title -}}
+            </a>
+          </li>
+      {%- endcase -%}
+    </ol>
+  </nav>
+{%- endunless -%}

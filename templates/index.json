@@ -1,0 +1,309 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "image_banner": {
+      "type": "image-banner",
+      "settings": {
+        "image": "shopify://shop_images/BANNER_DESK_1920_ADIKA_1.png",
+        "global_url": "shopify://collections/all",
+        "image_overlay_opacity": 0,
+        "image_height": "adapt",
+        "desktop_content_position": "bottom-center",
+        "show_text_box": false,
+        "is_container": false,
+        "show_line_separator": false,
+        "desktop_content_alignment": "center",
+        "desktop_justify_content": "center",
+        "color_scheme": "scheme-3",
+        "image_behavior": "none",
+        "mobile_content_alignment": "center",
+        "mobile_content_position": "bottom",
+        "stack_images_on_mobile": false,
+        "show_text_below": false,
+        "button_label_1": "",
+        "button_link_1": "",
+        "button_style_secondary_1": false,
+        "button_style_link_1": false,
+        "banner_type": "default",
+        "is_container_2": false,
+        "margin_top": 0,
+        "margin_top_mobile": 0,
+        "max_width": 0,
+        "is_sensea_hero": false
+      }
+    },
+    "slideshow_plus_jFgVBi": {
+      "type": "slideshow-plus",
+      "blocks": {
+        "slide_qp6jpb": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/BANNER_DESK_1920_ADIKA_1.png",
+            "enable_video_looping": true,
+            "heading": "",
+            "heading_size": "h1",
+            "heading_font_size_desktop": 0,
+            "heading_font_size_mobile": 0,
+            "heading_font": "default",
+            "is_heading_uppercase": false,
+            "heading_shadow": false,
+            "subheading": "",
+            "subheading_font_size_desktop": 0,
+            "subheading_font_size_mobile": 0,
+            "subheading_shadow": false,
+            "button_label": "",
+            "link": "",
+            "button_style_secondary": false,
+            "box_align": "middle-center",
+            "vertical_shift": 0,
+            "vertical_shift_desktop": 0,
+            "gorizontal_shift": 0,
+            "gorizontal_shift_desktop": 0,
+            "show_text_box": true,
+            "text_alignment": "center",
+            "image_overlay_opacity": 0,
+            "color_scheme": "scheme-1",
+            "text_alignment_mobile": "center",
+            "mobile_content_position": "middle",
+            "banner_link": "shopify://collections/all"
+          }
+        },
+        "slide_NXYncE": {
+          "type": "slide",
+          "settings": {
+            "enable_video_looping": true,
+            "video": "shopify://files/videos/10233506-hd_1920_1080_30fps.mp4",
+            "heading": "Video slide",
+            "heading_size": "h1",
+            "heading_font_size_desktop": 0,
+            "heading_font_size_mobile": 0,
+            "heading_font": "default",
+            "is_heading_uppercase": false,
+            "heading_shadow": false,
+            "subheading": "Tell your brand's story through images",
+            "subheading_font_size_desktop": 0,
+            "subheading_font_size_mobile": 0,
+            "subheading_shadow": false,
+            "button_label": "",
+            "link": "",
+            "button_style_secondary": false,
+            "box_align": "middle-center",
+            "vertical_shift": 0,
+            "vertical_shift_desktop": 0,
+            "gorizontal_shift": 0,
+            "gorizontal_shift_desktop": 0,
+            "show_text_box": false,
+            "text_alignment": "center",
+            "image_overlay_opacity": 0,
+            "color_scheme": "scheme-4",
+            "text_alignment_mobile": "center",
+            "mobile_content_position": "middle",
+            "banner_link": "shopify://collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "slide_qp6jpb",
+        "slide_NXYncE"
+      ],
+      "disabled": true,
+      "name": "Slideshow Plus",
+      "settings": {
+        "first_block_on_page": false,
+        "layout": "full_bleed",
+        "slide_height": "adapt_image",
+        "slider_visual": "dots",
+        "is_slider_visual_outside": false,
+        "auto_rotate": false,
+        "change_slides_speed": 7,
+        "image_behavior": "none",
+        "show_text_below": false,
+        "is_same_content_position_mobile": true,
+        "accessibility_info": "Slideshow about our brand",
+        "is_bottom_arrow": false
+      }
+    },
+    "multicolumn_eJEh6f": {
+      "type": "multicolumn",
+      "blocks": {
+        "column_bhkHfK": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/Rectangle_2_23.png",
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": "shopify://collections/all"
+          }
+        },
+        "column_iw9Urj": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/Rectangle_3_13.png",
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": "shopify://collections/all"
+          }
+        },
+        "column_TNFk6N": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/Rectangle_4_9.png",
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": "shopify://collections/all"
+          }
+        },
+        "column_TA4KGA": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/Rectangle_5_8.png",
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": "shopify://collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "column_bhkHfK",
+        "column_iw9Urj",
+        "column_TNFk6N",
+        "column_TA4KGA"
+      ],
+      "name": "t:sections.multicolumn.presets.name",
+      "settings": {
+        "title": "",
+        "heading_size": "h1",
+        "image_width": "full",
+        "image_ratio": "portrait",
+        "button_label": "",
+        "button_link": "",
+        "columns_desktop": 4,
+        "column_alignment": "center",
+        "background_style": "none",
+        "color_scheme": "",
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 30,
+        "padding_top_mobile": 20,
+        "padding_bottom": 30,
+        "padding_bottom_mobile": 30,
+        "banner_type": "default"
+      }
+    },
+    "featured_collection": {
+      "type": "featured-collection",
+      "settings": {
+        "collection": "all",
+        "products_to_show": 8,
+        "title": "חדש",
+        "heading_size": "h1",
+        "heading_alignment": "center",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "columns_desktop": 4,
+        "enable_desktop_slider": true,
+        "full_width": false,
+        "show_view_all": false,
+        "view_all_style": "solid",
+        "color_scheme": "scheme-1",
+        "image_ratio": "portrait",
+        "image_display_mode": "slider",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "standard",
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "padding_top": 36,
+        "padding_top_mobile": 10,
+        "padding_bottom": 52,
+        "padding_bottom_mobile": 24
+      }
+    },
+    "image_banner_9TcxKP": {
+      "type": "image-banner",
+      "settings": {
+        "image": "shopify://shop_images/BANNER_DESK_1920_ADIKA_2.png",
+        "global_url": "shopify://collections/all",
+        "image_overlay_opacity": 0,
+        "image_height": "adapt",
+        "desktop_content_position": "bottom-center",
+        "show_text_box": false,
+        "is_container": false,
+        "show_line_separator": false,
+        "desktop_content_alignment": "center",
+        "desktop_justify_content": "center",
+        "color_scheme": "scheme-3",
+        "image_behavior": "none",
+        "mobile_content_alignment": "center",
+        "mobile_content_position": "bottom",
+        "stack_images_on_mobile": false,
+        "show_text_below": false,
+        "button_label_1": "",
+        "button_link_1": "",
+        "button_style_secondary_1": false,
+        "button_style_link_1": false,
+        "banner_type": "default",
+        "is_container_2": false,
+        "margin_top": 0,
+        "margin_top_mobile": 0,
+        "max_width": 0,
+        "is_sensea_hero": false
+      }
+    },
+    "featured_collection_rhRtaE": {
+      "type": "featured-collection",
+      "settings": {
+        "collection": "all",
+        "products_to_show": 8,
+        "title": "Best Seller",
+        "heading_size": "h1",
+        "heading_alignment": "center",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "columns_desktop": 4,
+        "enable_desktop_slider": true,
+        "full_width": false,
+        "show_view_all": false,
+        "view_all_style": "solid",
+        "color_scheme": "scheme-1",
+        "image_ratio": "portrait",
+        "image_display_mode": "slider",
+        "image_shape": "default",
+        "show_secondary_image": false,
+        "show_vendor": false,
+        "show_rating": false,
+        "quick_add": "standard",
+        "columns_mobile": "2",
+        "swipe_on_mobile": true,
+        "padding_top": 70,
+        "padding_top_mobile": 39,
+        "padding_bottom": 52,
+        "padding_bottom_mobile": 24
+      }
+    }
+  },
+  "order": [
+    "image_banner",
+    "slideshow_plus_jFgVBi",
+    "multicolumn_eJEh6f",
+    "featured_collection",
+    "image_banner_9TcxKP",
+    "featured_collection_rhRtaE"
+  ]
+}

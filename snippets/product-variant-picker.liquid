@@ -1,0 +1,159 @@
+{% comment %}
+  Renders product variant-picker
+
+  Accepts:
+  - product: {Object} product object.
+  - block: {Object} passing the block information.
+  - product_form_id: {String} Id of the product form to which the variant picker is associated.
+  Usage:
+  {% render 'product-variant-picker', product: product, block: block, product_form_id: product_form_id %}
+{% endcomment %}
+{%- unless product.has_only_default_variant -%}
+  <variant-selects
+    id="variant-selects-{{ section.id }}"
+    data-section="{{ section.id }}"
+    data-product-handle="{{ product.handle }}"
+    data-product-title="{{ product.title | escape }}"
+    data-product-id="{{ product.id }}"
+    data-currency-code="{{ cart.currency.iso_code }}"
+    {% # theme-check-disable %}
+    data-selected-price-amount="{{ product.selected_or_first_available_variant.price | default: 0 | money_amount | escape }}"
+    {% # theme-check-enable %}
+    {{ block.shopify_attributes }}
+  >
+    {%- for option in product.options_with_values -%}
+      {%- liquid
+        assign swatch_count = option.values | map: 'swatch' | compact | size
+        assign picker_type = block.settings.picker_type
+
+        if swatch_count > 0 and block.settings.swatch_shape != 'none'
+          if block.settings.picker_type == 'dropdown'
+            assign picker_type = 'swatch_dropdown'
+          else
+            assign picker_type = 'swatch'
+          endif
+        endif
+
+        assign option_name_downcase = option.name | downcase
+        if option_name_downcase == 'color' or option_name_downcase == 'colour'
+          assign option_label = 'בחירת צבע:'
+        elsif option_name_downcase == 'size'
+          assign option_label = 'בחירת מידה:'
+        else
+          assign option_label = option.name | append: ':'
+        endif
+
+        assign show_size_guide = false
+        if option_name_downcase == 'size' and block.settings.enable_size_guide and block.settings.size_guide_page != blank
+          assign show_size_guide = true
+        endif
+      -%}
+      {%- if picker_type == 'swatch' -%}
+        <fieldset class="js product-form__input product-form__input--swatch">
+          <legend class="form__label{% if show_size_guide %} product-form__label-with-size-guide{% endif %}">
+            <span>{{ option_label }}</span>
+            {%- if show_size_guide -%}
+              <modal-opener
+                class="product-popup-modal__opener product-form__size-guide"
+                data-modal="#SizeGuideModal-{{ block.id }}"
+              >
+                <button
+                  id="SizeGuide-{{ block.id }}"
+                  class="product-popup-modal__button link"
+                  type="button"
+                  aria-haspopup="dialog"
+                >
+                  {{ block.settings.size_guide_text | default: block.settings.size_guide_page.title | escape }}
+                </button>
+              </modal-opener>
+            {%- endif -%}
+          </legend>
+          {% render 'product-variant-options',
+            product: product,
+            option: option,
+            block: block,
+            picker_type: picker_type
+          %}
+        </fieldset>
+      {%- elsif picker_type == 'button' -%}
+        <fieldset class="js product-form__input product-form__input--pill">
+          <legend class="form__label{% if show_size_guide %} product-form__label-with-size-guide{% endif %}">
+            <span>{{ option_label }}</span>
+            {%- if show_size_guide -%}
+              <modal-opener
+                class="product-popup-modal__opener product-form__size-guide"
+                data-modal="#SizeGuideModal-{{ block.id }}"
+              >
+                <button
+                  id="SizeGuide-{{ block.id }}"
+                  class="product-popup-modal__button link"
+                  type="button"
+                  aria-haspopup="dialog"
+                >
+                  {{ block.settings.size_guide_text | default: block.settings.size_guide_page.title | escape }}
+                </button>
+              </modal-opener>
+            {%- endif -%}
+          </legend>
+          {% render 'product-variant-options',
+            product: product,
+            option: option,
+            block: block,
+            picker_type: picker_type
+          %}
+        </fieldset>
+      {%- else -%}
+        <div class="product-form__input product-form__input--dropdown">
+          <label class="form__label{% if show_size_guide %} product-form__label-with-size-guide{% endif %}" for="Option-{{ section.id }}-{{ forloop.index0 }}">
+            <span>{{ option_label }}</span>
+            {%- if show_size_guide -%}
+              <modal-opener
+                class="product-popup-modal__opener product-form__size-guide"
+                data-modal="#SizeGuideModal-{{ block.id }}"
+              >
+                <button
+                  id="SizeGuide-{{ block.id }}"
+                  class="product-popup-modal__button link"
+                  type="button"
+                  aria-haspopup="dialog"
+                >
+                  {{ block.settings.size_guide_text | default: block.settings.size_guide_page.title | escape }}
+                </button>
+              </modal-opener>
+            {%- endif -%}
+          </label>
+          <div class="select">
+            {%- if picker_type == 'swatch_dropdown' -%}
+              <span
+                data-selected-value
+                class="dropdown-swatch"
+              >
+                {% render 'swatch', swatch: option.selected_value.swatch, shape: block.settings.swatch_shape %}
+              </span>
+            {%- endif -%}
+            <select
+              id="Option-{{ section.id }}-{{ forloop.index0 }}"
+              class="select__select"
+              name="options[{{ option.name | escape }}]"
+              form="{{ product_form_id }}"
+            >
+              {% render 'product-variant-options',
+                product: product,
+                option: option,
+                block: block,
+                picker_type: picker_type
+              %}
+            </select>
+            <span class="svg-wrapper">
+              {{- 'icon-caret.svg' | inline_asset_content -}}
+            </span>
+          </div>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
+
+    <script type="application/json" data-selected-variant>
+      {{ product.selected_or_first_available_variant | json }}
+    </script>
+  </variant-selects>
+{%- endunless -%}
