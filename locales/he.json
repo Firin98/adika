@@ -673,7 +673,7 @@
         "free_total_label": "חינם",
         "pickup_label": "איסוף עצמי",
         "shipping_label": "משלוח",
-        "vat_label_html": ".",
+        "vat_label_html": "כולל {{ amount }} מע״מ",
         "calculating_shipping": "מחשב...",
         "shipping_default_value": "מחושב בשלב הבא של תהליך הרכישה",
         "discount_order_stacking": {
