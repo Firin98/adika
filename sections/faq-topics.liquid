@@ -1,0 +1,364 @@
+{{ 'component-accordion.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top_mobile }}px;
+    padding-bottom: {{ section.settings.padding_bottom_mobile }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+
+  .faq-topics__header {
+    margin-bottom: 3rem;
+  }
+
+  .faq-topics__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media screen and (min-width: 750px) {
+    .faq-topics__grid {
+      grid-template-columns: 25rem 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+  }
+
+  .faq-topics__nav {
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.5rem;
+  }
+
+  .faq-topics__nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media screen and (min-width: 750px) {
+    .faq-topics__nav {
+      flex-direction: column;
+      overflow-x: visible;
+      padding-bottom: 0;
+      position: sticky;
+      top: 2rem;
+    }
+  }
+
+  .faq-topics__nav-button {
+    display: block;
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+    background: none;
+    border: none;
+    border-inline-start: 2px solid rgba(var(--color-foreground), 0.08);
+    color: rgba(var(--color-foreground), 0.75);
+    font-size: 1.5rem;
+    text-align: start;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color var(--duration-short) ease, border-color var(--duration-short) ease,
+      background-color var(--duration-short) ease;
+  }
+
+  .faq-topics__nav-button:hover {
+    color: rgb(var(--color-foreground));
+  }
+
+  .faq-topics__nav-button.is-active {
+    color: rgb(var(--color-foreground));
+    border-inline-start-color: rgb(var(--color-foreground));
+    background-color: rgba(var(--color-foreground), 0.04);
+    font-weight: 600;
+  }
+
+  @media screen and (max-width: 749px) {
+    .faq-topics__nav-button {
+      width: auto;
+      border: 1px solid rgba(var(--color-foreground), 0.15);
+      border-radius: 3rem;
+      padding: 0.8rem 1.6rem;
+    }
+
+    .faq-topics__nav-button.is-active {
+      background-color: rgb(var(--color-foreground));
+      color: rgb(var(--color-background));
+      border-color: rgb(var(--color-foreground));
+    }
+  }
+
+  .faq-topics__panel[hidden] {
+    display: none;
+  }
+
+  .faq-topics__panel .accordion:first-child {
+    margin-top: 0;
+  }
+{%- endstyle -%}
+
+{%- liquid
+  comment
+    Собираем уникальные темы в порядке первого появления.
+    Разделитель '|||' — просто маловероятная в названии темы строка.
+  endcomment
+  assign topics_raw = ''
+  for block in section.blocks
+    assign topic_name = block.settings.topic | strip
+    if topic_name == blank
+      assign topic_name = 'General'
+    endif
+    assign topics_raw = topics_raw | append: topic_name | append: '|||'
+  endfor
+  assign topics = topics_raw | split: '|||' | uniq
+-%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="page-width section-{{ section.id }}-padding">
+    {%- if section.settings.heading != blank -%}
+      <div class="faq-topics__header" style="text-align: {{ section.settings.heading_alignment }};">
+        <h2 class="inline-richtext {{ section.settings.heading_size }}">{{ section.settings.heading }}</h2>
+      </div>
+    {%- endif -%}
+
+    <faq-topics class="faq-topics__grid">
+      <nav class="faq-topics__nav" role="tablist" aria-label="{{ section.settings.heading | strip_html | default: 'FAQ' | escape }}">
+        {%- for topic in topics -%}
+          <button
+            type="button"
+            class="faq-topics__nav-button{% if forloop.first %} is-active{% endif %}"
+            data-topic-index="{{ forloop.index0 }}"
+            role="tab"
+            id="FaqTab-{{ section.id }}-{{ forloop.index0 }}"
+            aria-controls="FaqPanel-{{ section.id }}-{{ forloop.index0 }}"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+          >
+            {{ topic | escape }}
+          </button>
+        {%- endfor -%}
+      </nav>
+
+      <div class="faq-topics__panels">
+        {%- for topic in topics -%}
+          <div
+            class="faq-topics__panel"
+            data-topic-index="{{ forloop.index0 }}"
+            role="tabpanel"
+            id="FaqPanel-{{ section.id }}-{{ forloop.index0 }}"
+            aria-labelledby="FaqTab-{{ section.id }}-{{ forloop.index0 }}"
+            {% unless forloop.first %}hidden{% endunless %}
+          >
+            {%- for block in section.blocks -%}
+              {%- liquid
+                assign block_topic = block.settings.topic | strip
+                if block_topic == blank
+                  assign block_topic = 'General'
+                endif
+              -%}
+              {%- if block_topic == topic -%}
+                <div class="accordion" data-block-id="{{ block.id }}" {{ block.shopify_attributes }}>
+                  <details id="Details-{{ block.id }}-{{ section.id }}">
+                    <summary id="Summary-{{ block.id }}-{{ section.id }}">
+                      <h3 class="accordion__title inline-richtext h4">
+                        {{ block.settings.question | escape }}
+                      </h3>
+                      {{- 'icon-caret.svg' | inline_asset_content -}}
+                    </summary>
+                    <div
+                      class="accordion__content rte"
+                      role="region"
+                      aria-labelledby="Summary-{{ block.id }}-{{ section.id }}"
+                    >
+                      {{ block.settings.answer }}
+                    </div>
+                  </details>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    </faq-topics>
+  </div>
+</div>
+
+<script>
+  if (!customElements.get('faq-topics')) {
+    class FaqTopics extends HTMLElement {
+      connectedCallback() {
+        this.buttons = Array.from(this.querySelectorAll('.faq-topics__nav-button'));
+        this.panels = Array.from(this.querySelectorAll('.faq-topics__panel'));
+        this.buttons.forEach((button) => {
+          button.addEventListener('click', () => this.selectTopic(button.dataset.topicIndex));
+        });
+      }
+
+      selectTopic(index) {
+        this.buttons.forEach((button) => {
+          const isActive = button.dataset.topicIndex === index;
+          button.classList.toggle('is-active', isActive);
+          button.setAttribute('aria-selected', isActive);
+        });
+        this.panels.forEach((panel) => {
+          panel.hidden = panel.dataset.topicIndex !== index;
+        });
+      }
+
+      showBlock(blockId) {
+        const accordion = this.querySelector(`.accordion[data-block-id="${blockId}"]`);
+        if (!accordion) return;
+        const panel = accordion.closest('.faq-topics__panel');
+        this.selectTopic(panel.dataset.topicIndex);
+        accordion.querySelector('details').open = true;
+      }
+    }
+    customElements.define('faq-topics', FaqTopics);
+
+    if (window.Shopify && window.Shopify.designMode) {
+      document.addEventListener('shopify:block:select', (event) => {
+        const faq = event.target.closest('faq-topics') || event.target.querySelector('faq-topics');
+        const accordion = event.target.closest('.accordion[data-block-id]');
+        if (faq && accordion) faq.showBlock(accordion.dataset.blockId);
+      });
+    }
+  }
+</script>
+
+{% schema %}
+{
+  "name": "FAQ by topics",
+  "tag": "section",
+  "class": "section",
+  "max_blocks": 50,
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "FAQ"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        { "value": "h2", "label": "t:sections.all.heading_size.options__1.label" },
+        { "value": "h1", "label": "t:sections.all.heading_size.options__2.label" },
+        { "value": "h0", "label": "t:sections.all.heading_size.options__3.label" }
+      ],
+      "default": "h1",
+      "label": "t:sections.all.heading_size.label"
+    },
+    {
+      "type": "select",
+      "id": "heading_alignment",
+      "label": "Heading alignment",
+      "options": [
+        { "value": "start", "label": "Start" },
+        { "value": "center", "label": "Center" },
+        { "value": "end", "label": "End" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 114,
+      "step": 2,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_top_mobile",
+      "min": 0,
+      "max": 65,
+      "step": 1,
+      "unit": "px",
+      "label": "Top padding mobile",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "min": 0,
+      "max": 65,
+      "step": 1,
+      "unit": "px",
+      "label": "Bottom padding mobile",
+      "default": 30
+    }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "topic",
+          "label": "Topic name",
+          "info": "Questions with the same topic name are grouped together. The topic list is built automatically.",
+          "default": "General"
+        },
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Frequently asked question"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Answer",
+          "default": "<p>Share details about the answer to this question.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ by topics",
+      "blocks": [
+        { "type": "question", "settings": { "topic": "Shipping" } },
+        { "type": "question", "settings": { "topic": "Shipping" } },
+        { "type": "question", "settings": { "topic": "Returns" } },
+        { "type": "question", "settings": { "topic": "Returns" } },
+        { "type": "question", "settings": { "topic": "Payment" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
