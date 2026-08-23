@@ -15,7 +15,7 @@
     },
     "multicolumn_VekHjy": {
       "type": "multicolumn",
-     "blocks": {
+      "blocks": {
         "column_bhkHfK": {
           "type": "column",
           "settings": {
@@ -45,23 +45,12 @@
             "link_label": "",
             "link": "shopify://collections/all"
           }
-        },
-        "column_TA4KGA": {
-          "type": "column",
-          "settings": {
-            "image": "shopify://shop_images/CAT_comfy.jpg",
-            "title": "",
-            "text": "",
-            "link_label": "",
-            "link": "shopify://collections/all"
-          }
         }
       },
       "block_order": [
         "column_bhkHfK",
         "column_iw9Urj",
-        "column_TNFk6N",
-        "column_TA4KGA"
+        "column_TNFk6N"
       ],
       "name": "t:sections.multicolumn.presets.name",
       "settings": {
@@ -71,7 +60,7 @@
         "image_ratio": "portrait",
         "button_label": "",
         "button_link": "",
-        "columns_desktop": 4,
+        "columns_desktop": 3,
         "column_alignment": "center",
         "background_style": "none",
         "color_scheme": "",
