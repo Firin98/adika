@@ -1162,6 +1162,15 @@ function cardSizePickerRefresh(wrapper, fieldset) {
   }
 }
 
+function cardSizeToggleBusy(toggle, busy) {
+  if (!toggle) return;
+  toggle.classList.toggle("loading", busy);
+  toggle.disabled = busy;
+  toggle.setAttribute("aria-busy", busy ? "true" : "false");
+  var spinner = toggle.querySelector(".loading__spinner");
+  if (spinner) spinner.classList.toggle("hidden", !busy);
+}
+
 function cardSizePickerAddToCart(wrapper, toggle, variantId) {
   var cart = document.querySelector("cart-notification") || document.querySelector("cart-drawer");
   var formData = new FormData();
@@ -1186,7 +1195,13 @@ function cardSizePickerAddToCart(wrapper, toggle, variantId) {
   delete config.headers["Content-Type"];
   config.body = formData;
 
-  if (toggle) toggle.classList.add("loading");
+  // Полоску убираем сразу, чтобы вернувшаяся кнопка показала крутилку,
+  // а не крутилась под уехавшим элементом.
+  wrapper.classList.remove("is-sizes-open");
+  if (toggle) toggle.setAttribute("aria-expanded", "false");
+
+  wrapper.dataset.cartBusy = "true";
+  cardSizeToggleBusy(toggle, true);
 
   return fetch(window.routes ? window.routes.cart_add_url : "/cart/add.js", config)
     .then(function (response) {
@@ -1207,9 +1222,8 @@ function cardSizePickerAddToCart(wrapper, toggle, variantId) {
       /* молча: карточка остаётся в прежнем состоянии */
     })
     .finally(function () {
-      if (toggle) toggle.classList.remove("loading");
-      wrapper.classList.remove("is-sizes-open");
-      if (toggle) toggle.setAttribute("aria-expanded", "false");
+      delete wrapper.dataset.cartBusy;
+      cardSizeToggleBusy(toggle, false);
     });
 }
 
@@ -1231,6 +1245,7 @@ function initCardSizePickers(root) {
       toggle.addEventListener("click", function (event) {
         event.preventDefault();
         event.stopPropagation();
+        if (wrapper.dataset.cartBusy === "true") return;
         var open = !wrapper.classList.contains("is-sizes-open");
         // одновременно открыта только одна карточка
         var others = document.querySelectorAll(".card-wrapper.is-sizes-open");
@@ -1249,6 +1264,11 @@ function initCardSizePickers(root) {
     fieldset.addEventListener("click", function (event) {
       var label = event.target.closest("label");
       if (!label) return;
+      if (wrapper.dataset.cartBusy === "true") {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
       var input = fieldset.querySelector("#" + CSS.escape(label.getAttribute("for")));
       if (!input || input.disabled) {
         event.preventDefault();
