@@ -3249,7 +3249,7 @@ details-disclosure > details {
   align-items: stretch;
   gap: 7px;
   width: max-content;
-  max-width: 100%;
+  max-width: calc(100% - 10px);
   top: auto;
   right: auto;
   bottom: auto;
@@ -3259,27 +3259,27 @@ details-disclosure > details {
 
 .card__badges--top-left,
 #MainContent .card__badges--top-left {
-  top: 0;
-  left: 0;
+  top: 5px;
+  left: 5px;
 }
 
 .card__badges--top-right,
 #MainContent .card__badges--top-right {
-  top: 0;
-  right: 0;
+  top: 5px;
+  right: 5px;
 }
 
 .card__badges--bottom-left,
 #MainContent .card__badges--bottom-left {
-  bottom: 0;
-  left: 0;
+  bottom: 5px;
+  left: 5px;
   flex-direction: column-reverse;
 }
 
 .card__badges--bottom-right,
 #MainContent .card__badges--bottom-right {
-  bottom: 0;
-  right: 0;
+  bottom: 5px;
+  right: 5px;
   flex-direction: column-reverse;
 }
 
@@ -3299,6 +3299,18 @@ details-disclosure > details {
 
 .card__badges > .badge {
   pointer-events: auto;
+}
+
+/* Скругление именно наших бейджей.
+   Тема глушит радиус правилами #MainContent .card__badge .badge (base.css)
+   и #MainContent product-info .card__badge .badge (section-main-product.css),
+   поэтому селекторы ниже подобраны так, чтобы перебить оба по специфичности.
+   Бейджи блога и страниц поиска (тоже .card__badge, но без .card__badges)
+   намеренно остаются как были. */
+.card__badges > .badge,
+#MainContent .card__badges.card__badge > .badge,
+#MainContent product-info .card__badges.card__badge > .badge {
+  border-radius: 5px;
 }
 .gradient {
   background: rgb(var(--color-background));
