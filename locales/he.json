@@ -959,7 +959,8 @@
       }
     },
     "navigation_and_structure": {
-      "contact_link": "פרטי התקשרות"
+      "contact_link": "פרטי התקשרות",
+      "orders_link_label": "הזמנה"
     },
     "order_details": {
       "contact_information": "פרטי התקשרות"
