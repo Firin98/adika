@@ -546,61 +546,22 @@
                 <div class="select">
                   {%- assign sort_by = results.sort_by | default: results.default_sort_by -%}
                   <select
-                    name="sort_by"
-                    class="facet-filters__sort select__select caption-large"
-                    id="SortBy"
-                    aria-describedby="a11y-refresh-page-message"
-                  >
-                    <option value="" disabled selected>מיון</option>
-                    <option
-                      value="best-selling"
-                      {% if sort_by == 'best-selling' %}
-                        selected="selected"
-                      {% endif %}
-                    >
-                      Best Selling
-                    </option>
-                    <option
-                      value="manual"
-                      {% if sort_by == 'manual' %}
-                        selected="selected"
-                      {% endif %}
-                    >
-                      Featured
-                    </option>
-                    <option
-                      value="price-ascending"
-                      {% if sort_by == 'price-ascending' %}
-                        selected="selected"
-                      {% endif %}
-                    >
-                      Price: Low to High
-                    </option>
-                    <option
-                      value="price-descending"
-                      {% if sort_by == 'price-descending' %}
-                        selected="selected"
-                      {% endif %}
-                    >
-                      Price: High to Low
-                    </option>
-                    <option
-                      value="created-ascending"
-                      {% if sort_by == 'created-ascending' %}
-                        selected="selected"
-                      {% endif %}
-                    >
-                      Date: Old to New
-                    </option>
-                    <option
-                      value="created-descending"
-                      {% if sort_by == 'created-descending' %}
-                        selected="selected"
-                      {% endif %}
-                    >
-                      Date: New to Old
-                    </option>
-                  </select>
+                          name="sort_by"
+                          class="select__select"
+                          id="SortBy-mobile"
+                          aria-describedby="a11y-refresh-page-message"
+                        >
+                          {%- for option in results.sort_options -%}
+                            <option
+                              value="{{ option.value | escape }}"
+                              {% if option.value == sort_by %}
+                                selected="selected"
+                              {% endif %}
+                            >
+                              {{ option.name | escape }}
+                            </option>
+                          {%- endfor -%}
+                        </select>
                   <span class="svg-wrapper">
                     {{- 'icon-caret.svg' | inline_asset_content -}}
                   </span>
