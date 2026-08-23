@@ -1312,8 +1312,8 @@
       {
         "type": "image_picker",
         "id": "social_facebook_icon",
-        "label": "Facebook — своя иконка",
-        "info": "Если не загружена, показывается стандартная иконка темы"
+        "label": "Facebook custom icon",
+        "info": "Leave empty to use the theme's default icon"
       },
       {
         "type": "text",
@@ -1324,8 +1324,8 @@
       {
         "type": "image_picker",
         "id": "social_instagram_icon",
-        "label": "Instagram — своя иконка",
-        "info": "Если не загружена, показывается стандартная иконка темы"
+        "label": "Instagram custom icon",
+        "info": "Leave empty to use the theme's default icon"
       },
       {
         "type": "text",
@@ -1336,8 +1336,8 @@
       {
         "type": "image_picker",
         "id": "social_youtube_icon",
-        "label": "YouTube — своя иконка",
-        "info": "Если не загружена, показывается стандартная иконка темы"
+        "label": "YouTube custom icon",
+        "info": "Leave empty to use the theme's default icon"
       },
       {
         "type": "text",
@@ -1348,8 +1348,8 @@
       {
         "type": "image_picker",
         "id": "social_tiktok_icon",
-        "label": "TikTok — своя иконка",
-        "info": "Если не загружена, показывается стандартная иконка темы"
+        "label": "TikTok custom icon",
+        "info": "Leave empty to use the theme's default icon"
       },
       {
         "type": "text",
@@ -1360,8 +1360,8 @@
       {
         "type": "image_picker",
         "id": "social_twitter_icon",
-        "label": "X (Twitter) — своя иконка",
-        "info": "Если не загружена, показывается стандартная иконка темы"
+        "label": "X (Twitter) custom icon",
+        "info": "Leave empty to use the theme's default icon"
       },
       {
         "type": "text",
@@ -1372,8 +1372,8 @@
       {
         "type": "image_picker",
         "id": "social_snapchat_icon",
-        "label": "Snapchat — своя иконка",
-        "info": "Если не загружена, показывается стандартная иконка темы"
+        "label": "Snapchat custom icon",
+        "info": "Leave empty to use the theme's default icon"
       },
       {
         "type": "text",
@@ -1384,8 +1384,8 @@
       {
         "type": "image_picker",
         "id": "social_pinterest_icon",
-        "label": "Pinterest — своя иконка",
-        "info": "Если не загружена, показывается стандартная иконка темы"
+        "label": "Pinterest custom icon",
+        "info": "Leave empty to use the theme's default icon"
       },
       {
         "type": "text",
@@ -1396,8 +1396,8 @@
       {
         "type": "image_picker",
         "id": "social_tumblr_icon",
-        "label": "Tumblr — своя иконка",
-        "info": "Если не загружена, показывается стандартная иконка темы"
+        "label": "Tumblr custom icon",
+        "info": "Leave empty to use the theme's default icon"
       },
       {
         "type": "text",
@@ -1408,8 +1408,8 @@
       {
         "type": "image_picker",
         "id": "social_vimeo_icon",
-        "label": "Vimeo — своя иконка",
-        "info": "Если не загружена, показывается стандартная иконка темы"
+        "label": "Vimeo custom icon",
+        "info": "Leave empty to use the theme's default icon"
       },
       {
         "type": "range",
@@ -1419,8 +1419,8 @@
         "step": 2,
         "unit": "px",
         "default": 22,
-        "label": "Высота своих иконок",
-        "info": "На стандартные иконки темы не влияет"
+        "label": "Custom icon height",
+        "info": "Applies to uploaded icons only, not to the theme's default ones"
       }
     ]
   },

@@ -31,9 +31,9 @@
   /* transform: scale(1.07); */
 }
 
-/* Своя иконка соцсети, загруженная в настройках темы.
-   Высота приходит инлайном из settings.social_icon_width,
-   ширина считается по пропорции — логотипы редко квадратные. */
+/* Custom social icon uploaded in the theme settings.
+   Height comes inline from settings.social_icon_width; width is left to the
+   aspect ratio, since social logos are rarely square. */
 .list-social__icon {
   display: block;
   width: auto;
