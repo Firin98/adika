@@ -845,7 +845,7 @@ a.active-facets__button.focused .active-facets__button-inner {
 }
 
 .js .disclosure-has-popup:not(.menu-opening) .mobile-facets__inner {
-  transform: translateX(-100%);
+  transform: translateX(100%);
 }
 
 .mobile-facets__header {
