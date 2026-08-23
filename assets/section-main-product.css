@@ -1552,7 +1552,7 @@ a.product__text {
     border: none;
   }
 }
-#MainContent product-info .card__badge {
+#MainContent product-info .card__badge:not(.card__badges) {
   position: absolute;
   top: 0;
   left: 0;
@@ -1561,6 +1561,6 @@ a.product__text {
   gap: 7px;
   right: auto;
 }
-#MainContent product-info .card__badge .badge {
+#MainContent product-info .card__badge:not(.card__badges) .badge {
   border-radius: 0;
 }

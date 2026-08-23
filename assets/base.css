@@ -3219,7 +3219,7 @@ details-disclosure > details {
   text-transform: uppercase;
   width: max-content;
 }
-#MainContent .card__badge {
+#MainContent .card__badge:not(.card__badges) {
   position: absolute;
   top: 0;
   left: 0;
@@ -3228,7 +3228,7 @@ details-disclosure > details {
   gap: 7px;
   right: auto;
 }
-#MainContent .card__badge .badge {
+#MainContent .card__badge:not(.card__badges) .badge {
   border-radius: 0;
 }
 
@@ -3236,9 +3236,12 @@ details-disclosure > details {
    Бейджи по углам карточки.
    Контейнер каждого угла выводит snippets/badges.liquid.
    Класс .card__badge на контейнере сохранён намеренно — от него
-   наследуются размеры/паддинги самих .badge в component-card.css,
-   поэтому здесь мы только перебиваем жёсткую привязку к top/left выше.
-   Специфичность совпадает с #MainContent .card__badge, побеждает порядок.
+   наследуются размеры/паддинги самих .badge в component-card.css.
+   Старые правила темы, которые прибивали контейнер в левый верхний угол
+   (#MainContent .card__badge выше и #MainContent product-info .card__badge
+   в section-main-product.css), получили :not(.card__badges) — они больше
+   не бьются с этим блоком по специфичности и продолжают работать для
+   бейджей блога и поиска, которые используют старую разметку.
    ------------------------------------------------------------------ */
 .card__badges,
 #MainContent .card__badges {
@@ -3302,15 +3305,10 @@ details-disclosure > details {
 }
 
 /* Скругление именно наших бейджей.
-   Тема глушит радиус правилами #MainContent .card__badge .badge (base.css)
-   и #MainContent product-info .card__badge .badge (section-main-product.css),
-   поэтому селекторы ниже подобраны так, чтобы перебить оба по специфичности.
    Бейджи блога и страниц поиска (тоже .card__badge, но без .card__badges)
    намеренно остаются как были. */
-.card__badges > .badge,
-#MainContent .card__badges.card__badge > .badge,
-#MainContent product-info .card__badges.card__badge > .badge {
-  border-radius: 5px;
+.card__badges > .badge {
+  border-radius: 3px;
 }
 .gradient {
   background: rgb(var(--color-background));
