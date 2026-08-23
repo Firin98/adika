@@ -910,7 +910,8 @@
         "price_ascending": "מחיר, נמוך לגבוה",
         "price_descending": "מחיר, גבוה לנמוך",
         "date_ascending": "תאריך, ישן לחדש",
-        "date_descending": "תאריך, חדש לישן"
+        "date_descending": "תאריך, חדש לישן",
+        "most_relevant": "הרלוונטיים ביותר"
       }
     },
     "filters": {
