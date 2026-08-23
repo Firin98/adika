@@ -1,22 +1,39 @@
 {% comment %}
   Renders social icons.
+
+  Иконку каждой соцсети можно загрузить в настройках темы
+  (Social media -> «<сеть> — своя иконка»). Если картинка загружена,
+  показывается она; если нет — стандартная иконка/подпись темы.
+  Высота своих иконок задаётся настройкой social_icon_width.
+
   Accepts:
   - class: {String} a class to be added to the <ul> element (optional).
 
   Usage:
-  {% render 'social-icons',
+  {% render 'social-icons-text',
     class: 'my-class'
   %}
 {% endcomment %}
+
+{%- assign social_icon_height = settings.social_icon_width | default: 22 -%}
 
 <ul class="list-unstyled list-social{% if class %} {{ class}}{% endif %}" role="list">
   {%- if settings.social_instagram_link != blank -%}
     <li class="list-social__item">
       <a href="{{ settings.social_instagram_link }}" class="link list-social__link">
-          {% comment %} <span class="svg-wrapper">
-            {{- 'icon-instagram.svg' | inline_asset_content -}}
-          </span> {% endcomment %}
-        instagram
+        {%- if settings.social_instagram_icon != blank -%}
+          <img
+            src="{{ settings.social_instagram_icon | image_url: width: 160 }}"
+            alt="{{ 'general.social.links.instagram' | t | escape }}"
+            width="{{ settings.social_instagram_icon.width }}"
+            height="{{ settings.social_instagram_icon.height }}"
+            loading="lazy"
+            class="list-social__icon"
+            style="height: {{ social_icon_height }}px;"
+          >
+        {%- else -%}
+          instagram
+        {%- endif -%}
         <span class="visually-hidden">{{ 'general.social.links.instagram' | t }}</span>
       </a>
     </li>
@@ -24,10 +41,19 @@
   {%- if settings.social_facebook_link != blank -%}
     <li class="list-social__item">
       <a href="{{ settings.social_facebook_link }}" class="link list-social__link">
-        {% comment %} <span class="svg-wrapper">
-          {{- 'icon-facebook.svg' | inline_asset_content -}}
-        </span> {% endcomment %}
-        facebook
+        {%- if settings.social_facebook_icon != blank -%}
+          <img
+            src="{{ settings.social_facebook_icon | image_url: width: 160 }}"
+            alt="{{ 'general.social.links.facebook' | t | escape }}"
+            width="{{ settings.social_facebook_icon.width }}"
+            height="{{ settings.social_facebook_icon.height }}"
+            loading="lazy"
+            class="list-social__icon"
+            style="height: {{ social_icon_height }}px;"
+          >
+        {%- else -%}
+          facebook
+        {%- endif -%}
         <span class="visually-hidden">{{ 'general.social.links.facebook' | t }}</span>
       </a>
     </li>
@@ -35,10 +61,19 @@
   {%- if settings.social_youtube_link != blank -%}
     <li class="list-social__item">
       <a href="{{ settings.social_youtube_link }}" class="link list-social__link">
-        {% comment %} <span class="svg-wrapper">
-          {{- 'icon-youtube.svg' | inline_asset_content -}}
-        </span> {% endcomment %}
-        YOUTUBE
+        {%- if settings.social_youtube_icon != blank -%}
+          <img
+            src="{{ settings.social_youtube_icon | image_url: width: 160 }}"
+            alt="{{ 'general.social.links.youtube' | t | escape }}"
+            width="{{ settings.social_youtube_icon.width }}"
+            height="{{ settings.social_youtube_icon.height }}"
+            loading="lazy"
+            class="list-social__icon"
+            style="height: {{ social_icon_height }}px;"
+          >
+        {%- else -%}
+          YOUTUBE
+        {%- endif -%}
         <span class="visually-hidden">{{ 'general.social.links.youtube' | t }}</span>
       </a>
     </li>
@@ -46,10 +81,19 @@
   {%- if settings.social_tiktok_link != blank -%}
     <li class="list-social__item">
       <a href="{{ settings.social_tiktok_link }}" class="link list-social__link">
-        {% comment %} <span class="svg-wrapper">
-          {{- 'icon-tiktok.svg' | inline_asset_content -}}
-        </span> {% endcomment %}
-        TikTok
+        {%- if settings.social_tiktok_icon != blank -%}
+          <img
+            src="{{ settings.social_tiktok_icon | image_url: width: 160 }}"
+            alt="{{ 'general.social.links.tiktok' | t | escape }}"
+            width="{{ settings.social_tiktok_icon.width }}"
+            height="{{ settings.social_tiktok_icon.height }}"
+            loading="lazy"
+            class="list-social__icon"
+            style="height: {{ social_icon_height }}px;"
+          >
+        {%- else -%}
+          TikTok
+        {%- endif -%}
         <span class="visually-hidden">{{ 'general.social.links.tiktok' | t }}</span>
       </a>
     </li>
@@ -57,10 +101,19 @@
   {%- if settings.social_twitter_link != blank -%}
     <li class="list-social__item">
       <a href="{{ settings.social_twitter_link }}" class="link list-social__link">
-        {% comment %} <span class="svg-wrapper">
-          {{- 'icon-twitter.svg' | inline_asset_content -}}
-        </span> {% endcomment %}
-        TWITTER
+        {%- if settings.social_twitter_icon != blank -%}
+          <img
+            src="{{ settings.social_twitter_icon | image_url: width: 160 }}"
+            alt="{{ 'general.social.links.twitter' | t | escape }}"
+            width="{{ settings.social_twitter_icon.width }}"
+            height="{{ settings.social_twitter_icon.height }}"
+            loading="lazy"
+            class="list-social__icon"
+            style="height: {{ social_icon_height }}px;"
+          >
+        {%- else -%}
+          TWITTER
+        {%- endif -%}
         <span class="visually-hidden">{{ 'general.social.links.twitter' | t }}</span>
       </a>
     </li>
@@ -68,10 +121,19 @@
   {%- if settings.social_pinterest_link != blank -%}
     <li class="list-social__item">
       <a href="{{ settings.social_pinterest_link }}" class="link list-social__link">
-        {% comment %} <span class="svg-wrapper">
-          {{- 'icon-pinterest.svg' | inline_asset_content -}}
-        </span> {% endcomment %}
-        PINTEREST
+        {%- if settings.social_pinterest_icon != blank -%}
+          <img
+            src="{{ settings.social_pinterest_icon | image_url: width: 160 }}"
+            alt="{{ 'general.social.links.pinterest' | t | escape }}"
+            width="{{ settings.social_pinterest_icon.width }}"
+            height="{{ settings.social_pinterest_icon.height }}"
+            loading="lazy"
+            class="list-social__icon"
+            style="height: {{ social_icon_height }}px;"
+          >
+        {%- else -%}
+          PINTEREST
+        {%- endif -%}
         <span class="visually-hidden">{{ 'general.social.links.pinterest' | t }}</span>
       </a>
     </li>
@@ -79,10 +141,19 @@
   {%- if settings.social_snapchat_link != blank -%}
     <li class="list-social__item">
       <a href="{{ settings.social_snapchat_link }}" class="link list-social__link">
-        {% comment %} <span class="svg-wrapper">
-          {{- 'icon-snapchat.svg' | inline_asset_content -}}
-        </span> {% endcomment %}
-        SNAPCHAT
+        {%- if settings.social_snapchat_icon != blank -%}
+          <img
+            src="{{ settings.social_snapchat_icon | image_url: width: 160 }}"
+            alt="{{ 'general.social.links.snapchat' | t | escape }}"
+            width="{{ settings.social_snapchat_icon.width }}"
+            height="{{ settings.social_snapchat_icon.height }}"
+            loading="lazy"
+            class="list-social__icon"
+            style="height: {{ social_icon_height }}px;"
+          >
+        {%- else -%}
+          SNAPCHAT
+        {%- endif -%}
         <span class="visually-hidden">{{ 'general.social.links.snapchat' | t }}</span>
       </a>
     </li>
@@ -90,10 +161,19 @@
   {%- if settings.social_tumblr_link != blank -%}
     <li class="list-social__item">
       <a href="{{ settings.social_tumblr_link }}" class="link list-social__link">
-        {% comment %} <span class="svg-wrapper">
-          {{- 'icon-tumblr.svg' | inline_asset_content -}}
-        </span> {% endcomment %}
-        TUMBLR
+        {%- if settings.social_tumblr_icon != blank -%}
+          <img
+            src="{{ settings.social_tumblr_icon | image_url: width: 160 }}"
+            alt="{{ 'general.social.links.tumblr' | t | escape }}"
+            width="{{ settings.social_tumblr_icon.width }}"
+            height="{{ settings.social_tumblr_icon.height }}"
+            loading="lazy"
+            class="list-social__icon"
+            style="height: {{ social_icon_height }}px;"
+          >
+        {%- else -%}
+          TUMBLR
+        {%- endif -%}
         <span class="visually-hidden">{{ 'general.social.links.tumblr' | t }}</span>
       </a>
     </li>
@@ -101,10 +181,19 @@
   {%- if settings.social_vimeo_link != blank -%}
     <li class="list-social__item">
       <a href="{{ settings.social_vimeo_link }}" class="link list-social__link">
-        {% comment %} <span class="svg-wrapper">
-          {{- 'icon-vimeo.svg' | inline_asset_content -}}
-        </span> {% endcomment %}
-        VIMEO
+        {%- if settings.social_vimeo_icon != blank -%}
+          <img
+            src="{{ settings.social_vimeo_icon | image_url: width: 160 }}"
+            alt="{{ 'general.social.links.vimeo' | t | escape }}"
+            width="{{ settings.social_vimeo_icon.width }}"
+            height="{{ settings.social_vimeo_icon.height }}"
+            loading="lazy"
+            class="list-social__icon"
+            style="height: {{ social_icon_height }}px;"
+          >
+        {%- else -%}
+          VIMEO
+        {%- endif -%}
         <span class="visually-hidden">{{ 'general.social.links.vimeo' | t }}</span>
       </a>
     </li>
