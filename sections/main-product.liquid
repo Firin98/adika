@@ -100,6 +100,8 @@
                     {{- block.settings.text -}}
                   </p>
                 {%- when 'title' -%}
+                  {%- comment -%}Бейдж с position = under-image: над заголовком товара{%- endcomment -%}
+                  {% render 'badges', card_product: product, section_id: section.id, only: 'under-image' %}
                   <div class="product__title" {{ block.shopify_attributes }}>
                     <h1>{{ product.title | escape }}</h1>
                     <a href="{{ product.url }}" class="product__title">

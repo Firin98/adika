@@ -3310,6 +3310,49 @@ details-disclosure > details {
 .card__badges > .badge {
   border-radius: 3px;
 }
+
+/* ------------------------------------------------------------------
+   Бейдж под изображением (position = under-image в метаобъекте).
+   Рисуется отдельным вызовом badges.liquid с параметром only:
+   на карточке — первым элементом .card__information над заголовком,
+   на странице товара — над h1 в блоке 'title'.
+   В отличие от углов, это обычный блок в потоке, без absolute.
+   ------------------------------------------------------------------ */
+:root {
+  /* Pantone 705 C — фон по умолчанию для бейджа под изображением.
+     Цвет, выбранный в метаобъекте, приходит инлайном с !important и перебивает это. */
+  --badge-under-image-background: #f5dadf;
+  --badge-under-image-foreground: #1f1f1f;
+}
+
+.card__badges--under-image,
+#MainContent .card__badges--under-image {
+  position: static;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 0.6rem;
+  gap: 0;
+  pointer-events: auto;
+  /* прижимаем к начальному краю строки: в RTL это правый край, в LTR — левый,
+     так бейдж встаёт по той же стороне, что заголовок и цена */
+  text-align: start;
+}
+
+.card__badges--under-image > .badge {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 0 4px;
+  background-color: var(--badge-under-image-background);
+  border-color: transparent;
+  color: var(--badge-under-image-foreground);
+}
+
+.card__badges--under-image > .badge img {
+  /* картиночный бейдж под изображением — без розовой подложки */
+  background-color: transparent;
+}
+
 .gradient {
   background: rgb(var(--color-background));
   background: var(--gradient-background);

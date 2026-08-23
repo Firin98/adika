@@ -8,7 +8,7 @@
     2. Пользовательские бейджи из метаобъектов custom.megaobjects_badges
        (метаполе товара + метаполя всех его коллекций).
        Угол каждого берётся из поля метаобъекта `position`
-       со значениями: top left / top right / bottom left / bottom right.
+       со значениями: top left / top right / bottom left / bottom right / under-image.
        Если поле пустое или заполнено чем-то другим — бейдж уходит в левый верхний угол.
 
   Дубли по badge_name убираются на уровне Liquid. Раньше это делал <style>-хак
@@ -19,6 +19,10 @@
     card_product - товар (обязательно)
     section_id   - id секции, для уникальных id элементов (необязательно)
     badge_id     - префикс id штатного бейджа, по умолчанию 'Badge' (необязательно)
+    only         - если 'under-image', рисуются ТОЛЬКО бейджи с position = under-image,
+                   обычным блоком в потоке (на карточке — над заголовком,
+                   на странице товара — над h1). Без этого параметра рисуются
+                   четыре угла и штатные бейджи темы, а under-image пропускается.
 
   Позиционирование углов — .card__badges--* в assets/base.css.
   Якорем служит ближайший position: relative предок:
@@ -29,7 +33,9 @@
   assign badge_product = card_product | default: product
   assign badge_id_prefix = badge_id | default: 'Badge'
 
-  assign allowed_positions = 'top left,top right,bottom left,bottom right' | split: ','
+  # Все допустимые значения поля position в метаобъекте.
+  # 'under image' — не угол: такой бейдж рисуется в потоке, отдельным вызовом сниппета.
+  assign allowed_positions = 'top left,top right,bottom left,bottom right,under image' | split: ','
 
   # Угол по умолчанию: сюда попадают штатные бейджи темы и все метаобъекты,
   # у которых поле position не заполнено.
@@ -41,6 +47,16 @@
   unless allowed_positions contains default_position
     assign default_position = 'top left'
   endunless
+
+  # Что рисует этот конкретный вызов:
+  #   only: 'under-image' — только бейджи под изображением (блок в потоке, без absolute);
+  #   без only            — четыре угла поверх картинки плюс штатные бейджи темы.
+  assign only_position = only | default: '' | downcase | strip | replace: '-', ' ' | replace: '_', ' '
+  if only_position != blank
+    assign render_positions = only_position | split: '~'
+  else
+    assign render_positions = 'top left,top right,bottom left,bottom right' | split: ','
+  endif
 
   # нормализуем теги: убираем регистр, дефисы, подчёркивания и пробелы
   assign tag_string = badge_product.tags | join: '|' | downcase | replace: '-', '' | replace: '_', '' | replace: ' ', ''
@@ -71,13 +87,13 @@
   assign rendered_names = ''
 -%}
 
-{%- for corner in allowed_positions -%}
+{%- for corner in render_positions -%}
   {%- assign corner_class = corner | replace: ' ', '-' -%}
 
   {%- capture corner_content -%}
 
-    {%- comment -%}Штатные бейджи темы — только в углу из настроек темы{%- endcomment -%}
-    {%- if corner == default_position -%}
+    {%- comment -%}Штатные бейджи темы — только в углу по умолчанию и только в «угловом» вызове{%- endcomment -%}
+    {%- if only_position == blank and corner == default_position -%}
       {%- if badge_product.available == false -%}
         <span
           id="{{ badge_id_prefix }}-{{ section_id }}-{{ badge_product.id }}"

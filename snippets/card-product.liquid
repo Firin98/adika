@@ -540,6 +540,12 @@
       </div>
       <div class="card__content">
         <div class="card__information">
+          {%- comment -%}Бейдж с position = under-image: под картинкой, над заголовком{%- endcomment -%}
+          {% render 'badges',
+            card_product: card_product,
+            section_id: section_id,
+            only: 'under-image'
+          %}
           <div class="card-information card-information--grid 1111">
             {%- if show_swatches -%}
               {% assign visible_swatch_limit = 4 %}
