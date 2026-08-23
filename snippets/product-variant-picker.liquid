@@ -22,6 +22,9 @@
     {{ block.shopify_attributes }}
   >
     {%- for option in product.options_with_values -%}
+      {%- comment -%} TEMP DEBUG: удалить после проверки свотчей {%- endcomment -%}
+      <!-- swatch-debug "{{ option.name }}":
+        {%- for value in option.values %} {{ value }}=[color:{{ value.swatch.color | default: 'null' }} image:{% if value.swatch.image %}yes{% else %}null{% endif %}]{% endfor %} -->
       {%- liquid
         assign swatch_count = option.values | map: 'swatch' | compact | size
         assign picker_type = block.settings.picker_type

@@ -3231,6 +3231,75 @@ details-disclosure > details {
 #MainContent .card__badge .badge {
   border-radius: 0;
 }
+
+/* ------------------------------------------------------------------
+   Бейджи по углам карточки.
+   Контейнер каждого угла выводит snippets/badges.liquid.
+   Класс .card__badge на контейнере сохранён намеренно — от него
+   наследуются размеры/паддинги самих .badge в component-card.css,
+   поэтому здесь мы только перебиваем жёсткую привязку к top/left выше.
+   Специфичность совпадает с #MainContent .card__badge, побеждает порядок.
+   ------------------------------------------------------------------ */
+.card__badges,
+#MainContent .card__badges {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 7px;
+  width: max-content;
+  max-width: 100%;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  pointer-events: none;
+}
+
+.card__badges--top-left,
+#MainContent .card__badges--top-left {
+  top: 0;
+  left: 0;
+}
+
+.card__badges--top-right,
+#MainContent .card__badges--top-right {
+  top: 0;
+  right: 0;
+}
+
+.card__badges--bottom-left,
+#MainContent .card__badges--bottom-left {
+  bottom: 0;
+  left: 0;
+  flex-direction: column-reverse;
+}
+
+.card__badges--bottom-right,
+#MainContent .card__badges--bottom-right {
+  bottom: 0;
+  right: 0;
+  flex-direction: column-reverse;
+}
+
+/* Прижимаем бейджи к нужному краю физическими auto-марджинами,
+   чтобы результат не зависел от direction: rtl/ltr страницы. */
+.card__badges--top-left > .badge,
+.card__badges--bottom-left > .badge {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.card__badges--top-right > .badge,
+.card__badges--bottom-right > .badge {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.card__badges > .badge {
+  pointer-events: auto;
+}
 .gradient {
   background: rgb(var(--color-background));
   background: var(--gradient-background);

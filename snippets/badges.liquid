@@ -1,5 +1,41 @@
+{%- comment -%}
+  Бейджи товара — единственный источник бейджей для карточки товара и для галереи
+  на странице товара.
+
+  Что выводит:
+    1. Штатные бейджи темы: «нет в наличии» / «вернулся в продажу» / «-N%».
+       Их угол берётся из настройки темы settings.badge_position.
+    2. Пользовательские бейджи из метаобъектов custom.megaobjects_badges
+       (метаполе товара + метаполя всех его коллекций).
+       Угол каждого берётся из поля метаобъекта `position`
+       со значениями: top left / top right / bottom left / bottom right.
+       Если поле пустое или заполнено чем-то другим — берётся settings.badge_position.
+
+  Дубли по badge_name убираются на уровне Liquid. Раньше это делал <style>-хак
+  с соседним селектором `~`, который при выводе бейджей в разные углы перестаёт
+  работать в принципе (у бейджей больше нет общего родителя).
+
+  Параметры:
+    card_product - товар (обязательно)
+    section_id   - id секции, для уникальных id элементов (необязательно)
+    badge_id     - префикс id штатного бейджа, по умолчанию 'Badge' (необязательно)
+
+  Позиционирование углов — .card__badges--* в assets/base.css.
+  Якорем служит ближайший position: relative предок:
+  .card__inner.ratio / .card__content на карточке, slider-component в галерее.
+{%- endcomment -%}
+
 {%- liquid
   assign badge_product = card_product | default: product
+  assign badge_id_prefix = badge_id | default: 'Badge'
+
+  assign allowed_positions = 'top left,top right,bottom left,bottom right' | split: ','
+
+  # угол по умолчанию — из настроек темы
+  assign default_position = settings.badge_position | default: 'top left' | downcase | strip | replace: '-', ' ' | replace: '_', ' '
+  unless allowed_positions contains default_position
+    assign default_position = 'top left'
+  endunless
 
   # нормализуем теги: убираем регистр, дефисы, подчёркивания и пробелы
   assign tag_string = badge_product.tags | join: '|' | downcase | replace: '-', '' | replace: '_', '' | replace: ' ', ''
@@ -13,112 +49,101 @@
     assign is_back_in_stock = true
   endif
 
+  # скидка: сначала по выбранному варианту, если он не уценён — по товару целиком
   assign badge_variant = badge_product.selected_or_first_available_variant
   assign badge_price = badge_variant.price | default: badge_product.price
   assign badge_compare = badge_variant.compare_at_price | default: badge_product.compare_at_price
+  if badge_compare <= badge_price
+    assign badge_price = badge_product.price_min
+    assign badge_compare = badge_product.compare_at_price_min
+  endif
 
   assign discount_percent = 0
   if badge_compare > badge_price and badge_compare > 0
     assign discount_percent = badge_compare | minus: badge_price | times: 100 | divided_by: badge_compare
   endif
+
+  assign rendered_names = ''
 -%}
 
-{%- if badge_product.available == false -%}
-  <span
-    id="Badge-{{ section_id }}-{{ badge_product.id }}"
-    class="badge badge--bottom-left color-{{ settings.sold_out_badge_color_scheme }}"
-  >
-    <span>{{- 'products.product.sold_out' | t -}}</span>
-  </span>
+{%- for corner in allowed_positions -%}
+  {%- assign corner_class = corner | replace: ' ', '-' -%}
 
-{%- elsif is_back_in_stock -%}
-  <span
-    id="Badge-{{ section_id }}-{{ badge_product.id }}"
-    class="badge badge--bottom-left badge--back-in-stock color-{{ settings.sale_badge_color_scheme }}"
-  >
-    <span>Back in stock</span>
-  </span>
+  {%- capture corner_content -%}
 
-{%- elsif discount_percent > 0 -%}
-  <span
-    id="Badge-{{ section_id }}-{{ badge_product.id }}"
-    class="badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}"
-  >
-    <span>{{ discount_percent }}% OFF</span>
-  </span>
-{%- endif -%}
-{% comment %} start code badge by product{% endcomment %}
-{% if card_product.metafields.custom.megaobjects_badges.value != blank %}
-  {% assign badges_product = card_product.metafields.custom.megaobjects_badges.value %}
-  {% for badge_one in badges_product %}
-    <style>
-      .badge[data-label="{{ badge_one.badge_name }}"] ~ .badge[data-label="{{ badge_one.badge_name }}"] {
-        display: none;
-      }
-    </style>
-    <span
-      data-label="{{ badge_one.badge_name }}"
-      style="
-        {% if badge_one.image_label != blank %}
-          padding: 0; background-color: transparent !important;
-        {% else %}
-          {% if badge_one.text_color != blank %} color: {{ badge_one.text_color }} !important; {% endif %}
-          {% if badge_one.background_color != blank %} background-color: {{ badge_one.background_color }} !important; {% endif %}
-        {% endif %}
-        {% if badge_one.is_ltr == true %} direction: ltr !important; {% endif %}
-      "
-      class="badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}"
-    >
-      {%- if badge_one.image_label != blank -%}
-        <img
-          src="{{ badge_one.image_label | image_url: width: 300 }}"
-          alt="{{ badge_one.badge_name }}"
-          loading="lazy"
-          style="display: block; height: auto; height: 100%;object-fit: contain;{% if badge_one.image_label_width != blank %}width: {{ badge_one.image_label_width }}px;{% else %}width: 50px;{% endif %}"
+    {%- comment -%}Штатные бейджи темы — только в углу из настроек темы{%- endcomment -%}
+    {%- if corner == default_position -%}
+      {%- if badge_product.available == false -%}
+        <span
+          id="{{ badge_id_prefix }}-{{ section_id }}-{{ badge_product.id }}"
+          class="badge badge--{{ corner_class }} color-{{ settings.sold_out_badge_color_scheme }}"
         >
-      {%- else -%}
-        {{- badge_one.badge_name -}}
-      {%- endif -%}
-    </span>
-  {% endfor %}
-{% endif %}
-{% comment %}end code badge by product{% endcomment %}
+          <span>{{- 'products.product.sold_out' | t -}}</span>
+        </span>
 
-{% comment %} start code badge by collection{% endcomment %}
-{% for c in card_product.collections %}
-  {% if c.metafields.custom.megaobjects_badges.value != blank %}
-    {% assign badges_product = c.metafields.custom.megaobjects_badges.value %}
-    {% for badge_one in badges_product %}
-      <style>
-        .badge[data-label="{{ badge_one.badge_name }}"] ~ .badge[data-label="{{ badge_one.badge_name }}"] {
-          display: none;
-        }
-      </style>
-      <span
-        data-label="{{ badge_one.badge_name }}"
-        style="
-          {% if badge_one.image_label != blank %}
-            padding: 0; background-color: transparent !important;
-          {% else %}
-            {% if badge_one.text_color != blank %} color: {{ badge_one.text_color }} !important; {% endif %}
-            {% if badge_one.background_color != blank %} background-color: {{ badge_one.background_color }} !important; {% endif %}
-          {% endif %}
-          {% if badge_one.is_ltr == true %} direction: ltr !important; {% endif %}
-        "
-        class="badge badge--bottom-left color-{{ settings.sale_badge_color_scheme }}"
-      >
-        {%- if badge_one.image_label != blank -%}
-          <img
-            src="{{ badge_one.image_label | image_url: width: 300 }}"
-            alt="{{ badge_one.badge_name }}"
-            loading="lazy"
-            style="display: block; height: auto;  height: 100%;object-fit: contain;{% if badge_one.image_label_width != blank %}width: {{ badge_one.image_label_width }}px;{% else %}width: 50px;{% endif %}"
-          >
-        {%- else -%}
-          {{- badge_one.badge_name -}}
+      {%- elsif is_back_in_stock -%}
+        <span
+          id="{{ badge_id_prefix }}-{{ section_id }}-{{ badge_product.id }}"
+          class="badge badge--{{ corner_class }} badge--back-in-stock color-{{ settings.sale_badge_color_scheme }}"
+        >
+          <span>Back in stock</span>
+        </span>
+
+      {%- elsif discount_percent > 0 -%}
+        <span
+          id="{{ badge_id_prefix }}-{{ section_id }}-{{ badge_product.id }}"
+          class="badge badge--{{ corner_class }} color-{{ settings.sale_badge_color_scheme }}"
+        >
+          <span>{{ discount_percent }}% OFF</span>
+        </span>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- comment -%}Пользовательские бейджи из метаполя товара{%- endcomment -%}
+    {%- for badge_one in badge_product.metafields.custom.megaobjects_badges.value -%}
+      {%- liquid
+        assign badge_name = badge_one.badge_name | strip
+        assign badge_corner = badge_one.position | default: badge_one.badge_position | default: badge_one.align | default: default_position
+        assign badge_corner = badge_corner | downcase | strip | replace: '-', ' ' | replace: '_', ' '
+        unless allowed_positions contains badge_corner
+          assign badge_corner = default_position
+        endunless
+        assign name_key = '<<' | append: badge_name | downcase | append: '>>'
+      -%}
+      {%- if badge_name != blank and badge_corner == corner -%}
+        {%- unless rendered_names contains name_key -%}
+          {%- assign rendered_names = rendered_names | append: name_key -%}
+          {%- render 'badge-item', badge_one: badge_one, badge_name: badge_name, corner_class: corner_class -%}
+        {%- endunless -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- comment -%}Пользовательские бейджи из метаполей коллекций товара{%- endcomment -%}
+    {%- for badge_collection in badge_product.collections -%}
+      {%- for badge_one in badge_collection.metafields.custom.megaobjects_badges.value -%}
+        {%- liquid
+          assign badge_name = badge_one.badge_name | strip
+          assign badge_corner = badge_one.position | default: badge_one.badge_position | default: badge_one.align | default: default_position
+          assign badge_corner = badge_corner | downcase | strip | replace: '-', ' ' | replace: '_', ' '
+          unless allowed_positions contains badge_corner
+            assign badge_corner = default_position
+          endunless
+          assign name_key = '<<' | append: badge_name | downcase | append: '>>'
+        -%}
+        {%- if badge_name != blank and badge_corner == corner -%}
+          {%- unless rendered_names contains name_key -%}
+            {%- assign rendered_names = rendered_names | append: name_key -%}
+            {%- render 'badge-item', badge_one: badge_one, badge_name: badge_name, corner_class: corner_class -%}
+          {%- endunless -%}
         {%- endif -%}
-      </span>
-    {% endfor %}
-  {% endif %}
-{% endfor %}
-{% comment %}end code badge by collection{% endcomment %}
+      {%- endfor -%}
+    {%- endfor -%}
+  {%- endcapture -%}
+
+  {%- assign corner_trimmed = corner_content | strip -%}
+  {%- if corner_trimmed != blank -%}
+    <div class="card__badge card__badges card__badges--{{ corner_class }}">
+      {{- corner_content -}}
+    </div>
+  {%- endif -%}
+{%- endfor -%}

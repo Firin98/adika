@@ -53,9 +53,7 @@
 >
   <div id="GalleryStatus-{{ section.id }}" class="visually-hidden" role="status"></div>
   <slider-component id="GalleryViewer-{{ section.id }}" class="slider-mobile-gutter">
-    <div class="card__badge {{ settings.badge_position }}">
-      {% render 'badges', card_product: product %}
-    </div>
+    {% render 'badges', card_product: product, section_id: section.id %}
     <a class="skip-to-content-link button visually-hidden quick-add-hidden" href="#ProductInfo-{{ section.id }}">
       {{ 'accessibility.skip_to_product_info' | t }}
     </a>
