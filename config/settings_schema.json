@@ -1412,6 +1412,19 @@
         "info": "Leave empty to use the theme's default icon"
       },
       {
+        "type": "text",
+        "id": "social_whatsapp_number",
+        "label": "WhatsApp number",
+        "info": "International format, digits only. Country code required, no plus sign, spaces, dashes or brackets. Example: 972501234567",
+        "placeholder": "972501234567"
+      },
+      {
+        "type": "image_picker",
+        "id": "social_whatsapp_icon",
+        "label": "WhatsApp custom icon",
+        "info": "Leave empty to use the theme's default icon"
+      },
+      {
         "type": "range",
         "id": "social_icon_width",
         "min": 12,

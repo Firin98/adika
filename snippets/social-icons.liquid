@@ -16,6 +16,20 @@
 {% endcomment %}
 
 {%- assign social_icon_height = settings.social_icon_width | default: 22 -%}
+{%- comment -%}
+  wa.me accepts digits only: international format, no plus sign, spaces,
+  dashes or brackets. Merchants type the number however they like, so it is
+  normalised here instead of relying on the setting being clean.
+{%- endcomment -%}
+{%- assign whatsapp_number = settings.social_whatsapp_number
+  | remove: '+'
+  | remove: ' '
+  | remove: '-'
+  | remove: '('
+  | remove: ')'
+  | remove: '.'
+  | strip
+-%}
 
 <ul class="list-unstyled list-social{% if class %} {{ class}}{% endif %}" role="list">
   {%- if settings.social_facebook_link != blank -%}
@@ -213,6 +227,33 @@
           </span>
         {%- endif -%}
         <span class="visually-hidden">{{ 'general.social.links.vimeo' | t }}</span>
+      </a>
+    </li>
+  {%- endif -%}
+  {%- if whatsapp_number != blank -%}
+    <li class="list-social__item">
+      <a
+        href="https://wa.me/{{ whatsapp_number }}"
+        class="link list-social__link"
+        target="_blank"
+        rel="noopener"
+      >
+        {%- if settings.social_whatsapp_icon != blank -%}
+          <img
+            src="{{ settings.social_whatsapp_icon | image_url: width: 160 }}"
+            alt="WhatsApp"
+            width="{{ settings.social_whatsapp_icon.width }}"
+            height="{{ settings.social_whatsapp_icon.height }}"
+            loading="lazy"
+            class="list-social__icon"
+            style="height: {{ social_icon_height }}px;"
+          >
+        {%- else -%}
+          <span class="svg-wrapper">
+            {{- 'icon-whatsapp.svg' | inline_asset_content -}}
+          </span>
+        {%- endif -%}
+        <span class="visually-hidden">WhatsApp</span>
       </a>
     </li>
   {%- endif -%}
