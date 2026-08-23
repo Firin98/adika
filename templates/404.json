@@ -15,58 +15,72 @@
     },
     "multicolumn_VekHjy": {
       "type": "multicolumn",
-      "blocks": {
-        "column_YVhWMG": {
+     "blocks": {
+        "column_bhkHfK": {
           "type": "column",
           "settings": {
-            "title": "Column",
-            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
+            "image": "shopify://shop_images/CAT_set.jpg",
+            "title": "",
+            "text": "",
             "link_label": "",
-            "link": ""
+            "link": "shopify://collections/all"
           }
         },
-        "column_AjtEBz": {
+        "column_iw9Urj": {
           "type": "column",
           "settings": {
-            "title": "Column",
-            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
+            "image": "shopify://shop_images/CAT_top.jpg",
+            "title": "",
+            "text": "",
             "link_label": "",
-            "link": ""
+            "link": "shopify://collections/all"
           }
         },
-        "column_p9Prn9": {
+        "column_TNFk6N": {
           "type": "column",
           "settings": {
-            "title": "Column",
-            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>",
+            "image": "shopify://shop_images/CAT_trends.jpg",
+            "title": "",
+            "text": "",
             "link_label": "",
-            "link": ""
+            "link": "shopify://collections/all"
+          }
+        },
+        "column_TA4KGA": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/CAT_comfy.jpg",
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": "shopify://collections/all"
           }
         }
       },
       "block_order": [
-        "column_YVhWMG",
-        "column_AjtEBz",
-        "column_p9Prn9"
+        "column_bhkHfK",
+        "column_iw9Urj",
+        "column_TNFk6N",
+        "column_TA4KGA"
       ],
       "name": "t:sections.multicolumn.presets.name",
       "settings": {
-        "title": "Multicolumn",
+        "title": "",
         "heading_size": "h1",
         "image_width": "full",
-        "image_ratio": "adapt",
-        "button_label": "Button label",
+        "image_ratio": "portrait",
+        "button_label": "",
         "button_link": "",
-        "columns_desktop": 3,
-        "column_alignment": "left",
-        "background_style": "primary",
+        "columns_desktop": 4,
+        "column_alignment": "center",
+        "background_style": "none",
         "color_scheme": "",
-        "columns_mobile": "1",
+        "columns_mobile": "2",
         "swipe_on_mobile": false,
-        "padding_top": 70,
-        "padding_top_mobile": 50,
-        "padding_bottom": 70,
-        "padding_bottom_mobile": 50,
+        "padding_top": 30,
+        "padding_top_mobile": 20,
+        "padding_bottom": 30,
+        "padding_bottom_mobile": 30,
         "banner_type": "default"
       }
     }
