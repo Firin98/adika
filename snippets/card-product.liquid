@@ -70,7 +70,13 @@
             {%- if use_media_slider -%}
               <div
                 class="slider--card swiper"
-                {% comment %} dir="rtl" {% endcomment %}
+                {%- comment -%}
+                  dir задан явно, а не унаследован. На странице коллекции RTL приходил
+                  из template-collection.css (.product-grid-container .grid.product-grid),
+                  но в featured-collection этой обёртки нет, и Swiper инициализировался
+                  как LTR: слайды ехали в другую сторону, прогресс-бар заполнялся слева.
+                {%- endcomment -%}
+                dir="rtl"
                 data-product-card-slider
               >
                 <div class="swiper-wrapper">
