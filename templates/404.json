@@ -47,7 +47,7 @@
           "type": "column",
           "settings": {
             "image": "shopify://shop_images/CAT_best_sellers.jpg",
-            "title": "<strong>SHOP NOW</strong>",
+            "title": "<strong>SHOP NOW >></strong>",
             "text": "",
             "link_label": "",
             "link": "shopify://collections/all"
@@ -57,7 +57,7 @@
           "type": "column",
           "settings": {
             "image": "shopify://shop_images/CAT_adika_odeya.jpg",
-            "title": "<strong>SHOP NOW</strong>",
+            "title": "<strong>SHOP NOW >> </strong>",
             "text": "",
             "link_label": "",
             "link": "shopify://collections/all"
@@ -67,7 +67,7 @@
           "type": "column",
           "settings": {
             "image": "shopify://shop_images/CAT_new_in.jpg",
-            "title": "<strong>SHOP NOW</strong>",
+            "title": "<strong>SHOP NOW >></strong>",
             "text": "",
             "link_label": "",
             "link": "shopify://collections/all"
