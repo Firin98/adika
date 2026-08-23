@@ -12,7 +12,8 @@
     "image_banner": {
       "type": "image-banner",
       "settings": {
-        "image": "shopify://shop_images/BANNER_DESK_1920_ADIKA_1.png",
+        "image": "shopify://shop_images/adika_desk_banner_1.jpg",
+        "image_mobile": "shopify://shop_images/adika_mob_banner_1.jpg",
         "global_url": "shopify://collections/all",
         "image_overlay_opacity": 0,
         "image_height": "adapt",
@@ -137,7 +138,7 @@
         "column_bhkHfK": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_2_23.png",
+            "image": "shopify://shop_images/CAT_set.jpg",
             "title": "",
             "text": "",
             "link_label": "",
@@ -147,7 +148,7 @@
         "column_iw9Urj": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_3_13.png",
+            "image": "shopify://shop_images/CAT_top.jpg",
             "title": "",
             "text": "",
             "link_label": "",
@@ -157,7 +158,7 @@
         "column_TNFk6N": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_4_9.png",
+            "image": "shopify://shop_images/CAT_trends.jpg",
             "title": "",
             "text": "",
             "link_label": "",
@@ -167,7 +168,7 @@
         "column_TA4KGA": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/Rectangle_5_8.png",
+            "image": "shopify://shop_images/CAT_comfy.jpg",
             "title": "",
             "text": "",
             "link_label": "",
@@ -237,7 +238,8 @@
     "image_banner_9TcxKP": {
       "type": "image-banner",
       "settings": {
-        "image": "shopify://shop_images/BANNER_DESK_1920_ADIKA_2.png",
+        "image": "shopify://shop_images/adika_desk_banner_2.jpg",
+        "image_mobile": "shopify://shop_images/adika_mob_banner_2.jpg",
         "global_url": "shopify://collections/all",
         "image_overlay_opacity": 0,
         "image_height": "adapt",

@@ -951,12 +951,17 @@
   "customer_accounts": {
     "orders": {
       "order_list": {
-        "filter_title": "סינון"
+        "filter_title": "סינון",
+        "column_headers": {
+          "order": "הזמנה"
+        }
       },
       "order_status": {
         "confirmed_title": "ההזמנה שלך מאושרת",
         "confirmed_description_pickup": " יישלח אליך אימייל כשההזמנה שלך תהיה מוכנה לאיסוף"
-      }
+      },
+      "list_title": "הזמנה",
+      "list_title_with_pending_orders": "הזמנה"
     },
     "navigation_and_structure": {
       "contact_link": "פרטי התקשרות",
