@@ -205,6 +205,17 @@
           %}
 
           {%- liquid
+            # позиция опции цвета нужна, чтобы по выбранному свотчу и нажатому
+            # размеру однозначно найти вариант для добавления в корзину
+            assign card_color_option = blank
+            for option in card_product.options_with_values
+              assign color_name_downcase = option.name | downcase
+              if color_name_downcase contains 'color' or color_name_downcase contains 'colour' or color_name_downcase contains 'צבע'
+                assign card_color_option = option
+                break
+              endif
+            endfor
+
             assign card_size_option = blank
             assign selected_size_value = blank
             for option in card_product.options_with_values
@@ -223,8 +234,45 @@
             endfor
           -%}
           {%- if card_size_option != blank -%}
-            <div class="card__information-sizes no-js-hidden" aria-label="{{ card_size_option.name | escape }}">
-              <fieldset class="js product-form__input product-form__input--pill" data-card-size-picker>
+            {%- comment -%}
+              Кнопка-корзина внизу картинки. Только мобильный (CSS-медиазапрос,
+              см. .card__sizes-toggle в component-card.css): по тапу выезжает
+              полоска размеров. На десктопе полоска по-прежнему появляется
+              при наведении на карточку, кнопка там скрыта.
+            {%- endcomment -%}
+            <button
+              type="button"
+              class="card__sizes-toggle no-js-hidden"
+              aria-expanded="false"
+              aria-controls="CardSizes-{{ section_id }}-{{ card_product.id }}"
+              aria-label="{{ 'products.product.choose_options' | t }}"
+              data-card-sizes-toggle
+            >
+              <span class="svg-wrapper">
+                {{- 'icon-cart.svg' | inline_asset_content -}}
+              </span>
+              {%- render 'loading-spinner' -%}
+            </button>
+
+            <div
+              id="CardSizes-{{ section_id }}-{{ card_product.id }}"
+              class="card__information-sizes no-js-hidden"
+              aria-label="{{ card_size_option.name | escape }}"
+            >
+              <fieldset
+                class="js product-form__input product-form__input--pill"
+                data-card-size-picker
+                data-size-position="{{ card_size_option.position }}"
+                {% if card_color_option != blank %}
+                  data-color-position="{{ card_color_option.position }}"
+                  data-color-input-name="card-color-{{ section_id }}-{{ card_product.id }}"
+                {% endif %}
+                data-variants="[
+                  {%- for card_variant in card_product.variants -%}
+                    {&quot;id&quot;:{{ card_variant.id }},&quot;o&quot;:[{{ card_variant.option1 | json | replace: '"', '&quot;' }},{{ card_variant.option2 | json | replace: '"', '&quot;' }},{{ card_variant.option3 | json | replace: '"', '&quot;' }}],&quot;a&quot;:{{ card_variant.available }}}{%- unless forloop.last -%},{%- endunless -%}
+                  {%- endfor -%}
+                ]"
+              >
                 {%- for value in card_size_option.values -%}
                   {%- assign size_value_text = value | strip -%}
                   {%- assign size_input_id = 'CardSize-'

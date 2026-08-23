@@ -1337,6 +1337,18 @@
   width: 100%;
   height: 100%;
   position: relative;
+  /*
+   * Свайп слайдов внутри карточки на тач-устройствах.
+   * Swiper 8.4.7 вешает класс .swiper-pointer-events (в нём touch-action: pan-y)
+   * только когда тача НЕТ. На телефоне у контейнера остаётся touch-action: auto,
+   * и горизонтальный жест сначала разбирает сам браузер: он ищет ближайшего
+   * прокручиваемого предка и отдаёт свайп ему. На странице коллекции такого
+   * предка нет и всё работает, а в featured-collection карточка лежит внутри
+   * ленты секции (ul.slider с overflow-x: auto) — жест забирает она.
+   * pan-y запрещает браузеру горизонтальную прокрутку в этом поддереве,
+   * вертикальный скролл страницы при этом сохраняется.
+   */
+  touch-action: pan-y;
 }
 
 .slider--card .swiper-pagination-bullet {
@@ -1672,19 +1684,24 @@
   pointer-events: none;
 }
 
-.product-card-wrapper:hover .card__information-sizes,
-.product-card-wrapper:focus-within .card__information-sizes {
+@media (hover: hover) and (pointer: fine) {
+  .product-card-wrapper:hover .card__information-sizes,
+  .product-card-wrapper:focus-within .card__information-sizes {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+}
+
+/* Открыто по клику на кнопку-корзину (класс ставит initCardSizePicker
+   в assets/pm-custom.js). Работает на любой ширине. */
+.product-card-wrapper.is-sizes-open .card--media .card__information-sizes {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
 }
 
 @media screen and (max-width: 989px) {
-  .card--media .card__information-sizes {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-  }
 
   .card__information-sizes .product-form__input--pill {
     gap: 1.8rem;
@@ -2408,4 +2425,105 @@
 .slider--card.is-hover-scrub .swiper-pagination-progressbar .swiper-pagination-progressbar-fill {
   transition-duration: 180ms !important;
   transition-timing-function: ease !important;
+}
+
+
+/* ==========================================================================
+   Кликабельность и мобильная кнопка размеров в карточке товара.
+   ========================================================================== */
+
+/*
+ * .card__heading a::after — невидимая ссылка-оверлей на всю карточку
+ * (component-card.css:357, z-index: 1). Ряд свотчей под неё проваливался,
+ * поэтому клики по цветам не доходили до обработчика change.
+ * Тот же приём, что тема уже применяет к .card__content variant-selects.
+ */
+.card__content .card__swatch-row,
+.card__content .product-form__input--swatch,
+.card__swatch-row {
+  position: relative;
+  z-index: 2;
+}
+
+/* Полоска размеров лежит выше оверлея (z-index: 2 задан у .card--media
+   .card__information-sizes), здесь снимаем только «выключенный» вид:
+   opacity: 0.6 на всём ряду делала размеры похожими на задизейбленные. */
+.card__information-sizes .product-form__input--pill {
+  opacity: 1;
+}
+
+.card__information-sizes .product-form__input--pill label {
+  cursor: pointer;
+  transition: color 0.15s ease, opacity 0.15s ease;
+}
+
+.card__information-sizes .product-form__input--pill input:checked + label {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Кнопка-корзина внизу картинки. Мобильная: на десктопе полоска
+   по-прежнему выезжает по наведению, кнопка там не нужна. */
+.card__sizes-toggle {
+  display: none;
+}
+
+@media screen and (max-width: 989px) {
+  .card--media .card__sizes-toggle {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.92);
+    color: #000;
+    cursor: pointer;
+    opacity: 1;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .card--media .card__sizes-toggle .svg-wrapper {
+    display: block;
+    width: 17px;
+    height: 17px;
+  }
+
+  .card--media .card__sizes-toggle svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Когда полоска выехала, кнопка уходит: полоска занимает её место */
+  .product-card-wrapper.is-sizes-open .card--media .card__sizes-toggle {
+    opacity: 0;
+    transform: translateY(100%);
+    pointer-events: none;
+  }
+
+  .card--media .card__sizes-toggle .loading__spinner {
+    position: absolute;
+    width: 17px;
+    height: 17px;
+  }
+
+  .card--media .card__sizes-toggle:not(.loading) .loading__spinner {
+    display: none;
+  }
+
+  .card--media .card__sizes-toggle.loading .svg-wrapper {
+    visibility: hidden;
+  }
+}
+
+/* Размер, недоступный в выбранном цвете. Класс disabled ставит JS;
+   правило для input.disabled + label уже есть в теме выше. */
+.card__information-sizes .product-form__input--pill input.disabled + label {
+  opacity: 0.35;
 }

@@ -58,9 +58,14 @@ function initProductCardSliders(root) {
 var CARD_HOVER_SCRUB_MAX_ZONES = 6;
 
 function cardHoverScrubSupported() {
+  // Ширина в условии — страховка: часть Android-браузеров и WebView ошибочно
+  // рапортуют (hover: hover) и (pointer: fine). Без неё на таком телефоне
+  // включился бы ховер-режим, который выключает allowTouchMove, и слайды
+  // в карточке перестали бы свайпаться совсем.
   return (
     typeof window.matchMedia === "function" &&
-    window.matchMedia("(hover: hover) and (pointer: fine)").matches
+    window.matchMedia("(hover: hover) and (pointer: fine)").matches &&
+    window.matchMedia("(min-width: 990px)").matches
   );
 }
 
@@ -1097,11 +1102,203 @@ function syncCardSliderWithSwatch() {
   });
 }
 
+/* --------------------------------------------------------------------------
+   Полоска размеров в карточке товара.
+
+   Что чинится:
+   1. Раньше у fieldset[data-card-size-picker] не было ни одного обработчика —
+      радиокнопки были чисто декоративными.
+   2. Тап по размеру на мобильном добавляет вариант в корзину через тот же
+      /cart/add.js и ту же перерисовку cart-drawer, что и product-form.js.
+   3. Размеры, недоступные в выбранном цвете, помечаются классом disabled —
+      стиль для input.disabled + label в теме уже был.
+   -------------------------------------------------------------------------- */
+
+function cardSizePickerVariants(fieldset) {
+  if (fieldset._variants) return fieldset._variants;
+  var raw = fieldset.getAttribute("data-variants");
+  var parsed = [];
+  try {
+    parsed = JSON.parse(raw);
+  } catch (e) {
+    parsed = [];
+  }
+  fieldset._variants = parsed;
+  return parsed;
+}
+
+function cardSizePickerSelectedColor(wrapper, fieldset) {
+  var name = fieldset.getAttribute("data-color-input-name");
+  if (!name) return null;
+  var checked = wrapper.querySelector('input[name="' + name + '"]:checked');
+  return checked ? checked.value : null;
+}
+
+function cardSizePickerFindVariant(wrapper, fieldset, sizeValue) {
+  var variants = cardSizePickerVariants(fieldset);
+  var sizeIndex = parseInt(fieldset.getAttribute("data-size-position"), 10) - 1;
+  var colorPosition = fieldset.getAttribute("data-color-position");
+  var colorIndex = colorPosition ? parseInt(colorPosition, 10) - 1 : -1;
+  var color = cardSizePickerSelectedColor(wrapper, fieldset);
+
+  for (var i = 0; i < variants.length; i++) {
+    var v = variants[i];
+    if (!v || !v.o) continue;
+    if (String(v.o[sizeIndex]) !== String(sizeValue)) continue;
+    if (colorIndex > -1 && color !== null && String(v.o[colorIndex]) !== String(color)) continue;
+    return v;
+  }
+  return null;
+}
+
+// Гасим размеры, которых нет в выбранном цвете
+function cardSizePickerRefresh(wrapper, fieldset) {
+  var inputs = fieldset.querySelectorAll(".card-size-preview__input");
+  for (var i = 0; i < inputs.length; i++) {
+    var variant = cardSizePickerFindVariant(wrapper, fieldset, inputs[i].value);
+    var available = !!(variant && variant.a);
+    inputs[i].classList.toggle("disabled", !available);
+    inputs[i].disabled = !available;
+  }
+}
+
+function cardSizePickerAddToCart(wrapper, toggle, variantId) {
+  var cart = document.querySelector("cart-notification") || document.querySelector("cart-drawer");
+  var formData = new FormData();
+  formData.append("id", variantId);
+  formData.append("quantity", 1);
+
+  if (cart && typeof cart.getSectionsToRender === "function") {
+    formData.append(
+      "sections",
+      cart.getSectionsToRender().map(function (section) {
+        return section.id;
+      })
+    );
+    formData.append("sections_url", window.location.pathname);
+    if (typeof cart.setActiveElement === "function") {
+      cart.setActiveElement(document.activeElement);
+    }
+  }
+
+  var config = typeof fetchConfig === "function" ? fetchConfig("javascript") : { method: "POST", headers: {} };
+  config.headers["X-Requested-With"] = "XMLHttpRequest";
+  delete config.headers["Content-Type"];
+  config.body = formData;
+
+  if (toggle) toggle.classList.add("loading");
+
+  return fetch(window.routes ? window.routes.cart_add_url : "/cart/add.js", config)
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (response) {
+      if (response.status) {
+        // товар кончился между рендером страницы и тапом — обновляем доступность
+        var fieldset = wrapper.querySelector("[data-card-size-picker]");
+        if (fieldset) cardSizePickerRefresh(wrapper, fieldset);
+        return;
+      }
+      if (cart && typeof cart.renderContents === "function") {
+        cart.renderContents(response);
+      }
+    })
+    .catch(function () {
+      /* молча: карточка остаётся в прежнем состоянии */
+    })
+    .finally(function () {
+      if (toggle) toggle.classList.remove("loading");
+      wrapper.classList.remove("is-sizes-open");
+      if (toggle) toggle.setAttribute("aria-expanded", "false");
+    });
+}
+
+function initCardSizePickers(root) {
+  var scope = root || document;
+  var fieldsets = scope.querySelectorAll("[data-card-size-picker]:not([data-size-picker-ready])");
+
+  Array.prototype.forEach.call(fieldsets, function (fieldset) {
+    var wrapper = fieldset.closest(".card-wrapper");
+    if (!wrapper) return;
+
+    fieldset.setAttribute("data-size-picker-ready", "true");
+
+    var toggle = wrapper.querySelector("[data-card-sizes-toggle]");
+
+    cardSizePickerRefresh(wrapper, fieldset);
+
+    if (toggle) {
+      toggle.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var open = !wrapper.classList.contains("is-sizes-open");
+        // одновременно открыта только одна карточка
+        var others = document.querySelectorAll(".card-wrapper.is-sizes-open");
+        Array.prototype.forEach.call(others, function (other) {
+          if (other === wrapper) return;
+          other.classList.remove("is-sizes-open");
+          var otherToggle = other.querySelector("[data-card-sizes-toggle]");
+          if (otherToggle) otherToggle.setAttribute("aria-expanded", "false");
+        });
+        cardSizePickerRefresh(wrapper, fieldset);
+        wrapper.classList.toggle("is-sizes-open", open);
+        toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+    }
+
+    fieldset.addEventListener("click", function (event) {
+      var label = event.target.closest("label");
+      if (!label) return;
+      var input = fieldset.querySelector("#" + CSS.escape(label.getAttribute("for")));
+      if (!input || input.disabled) {
+        event.preventDefault();
+        return;
+      }
+
+      // не даём сработать ссылке-оверлею карточки
+      event.preventDefault();
+      event.stopPropagation();
+      input.checked = true;
+
+      var variant = cardSizePickerFindVariant(wrapper, fieldset, input.value);
+      if (!variant || !variant.a) {
+        cardSizePickerRefresh(wrapper, fieldset);
+        return;
+      }
+      cardSizePickerAddToCart(wrapper, toggle, variant.id);
+    });
+
+    // смена цвета меняет набор доступных размеров
+    var colorName = fieldset.getAttribute("data-color-input-name");
+    if (colorName) {
+      wrapper.addEventListener("change", function (event) {
+        if (!event.target || event.target.name !== colorName) return;
+        cardSizePickerRefresh(wrapper, fieldset);
+      });
+    }
+  });
+}
+
+// тап вне открытой карточки закрывает полоску
+if (!window.__cardSizeOutsideBound) {
+  window.__cardSizeOutsideBound = true;
+  document.addEventListener("click", function (event) {
+    var open = document.querySelectorAll(".card-wrapper.is-sizes-open");
+    Array.prototype.forEach.call(open, function (wrapper) {
+      if (wrapper.contains(event.target)) return;
+      wrapper.classList.remove("is-sizes-open");
+      var toggle = wrapper.querySelector("[data-card-sizes-toggle]");
+      if (toggle) toggle.setAttribute("aria-expanded", "false");
+    });
+  });
+}
+
 function initCollectionGridEnhancements(root) {
   const scope = root || document;
 
   initProductCardSliders(scope);
   initImageSwatchMobileSync(scope);
+  initCardSizePickers(scope);
 }
 
 function watchCollectionGridUpdates(root) {
