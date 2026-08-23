@@ -60,7 +60,8 @@
             "heading": "תאור הפריט",
             "icon": "none",
             "content": "{{ product.description }}",
-            "page": ""
+            "page": "",
+            "open_by_default": true
           }
         },
         "collapsible_tab_JqiqRE": {
@@ -70,7 +71,8 @@
             "heading": "מידת הדוגמנית",
             "icon": "none",
             "content": "",
-            "page": ""
+            "page": "",
+            "open_by_default": false
           }
         },
         "collapsible_tab_KVcmDM": {
@@ -79,7 +81,8 @@
             "heading": "מידע נוסף",
             "icon": "none",
             "content": "<p>ארץ ייצור: {{ product.metafields.custom.country_of_origin.value }}</p><p>הרכב בד: {{ product.metafields.custom.material_composition.value }} <br/><br/>הוראות כביסה: {{ product.metafields.custom.care_instructions.value }}<br/><br/>פרטי יבואן: קבוצת גולף א.ק. בע”מ, ח”פ 510289564</p>",
-            "page": ""
+            "page": "",
+            "open_by_default": false
           }
         },
         "complementary_L9NYyT": {
