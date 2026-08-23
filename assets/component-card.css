@@ -2391,3 +2391,21 @@
     opacity: 1;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Листание слайдов карточки движением мыши (см. initCardHoverScrub
+   в assets/pm-custom.js). Только десктоп.
+   -------------------------------------------------------------------------- */
+@media (hover: hover) and (pointer: fine) {
+  .slider--card[data-hover-scrub-ready="true"] {
+    cursor: pointer;
+  }
+}
+
+/* Слайд переключается мгновенно (slideTo со speed 0), иначе анимации
+   не успевают за курсором. Прогресс-бар при этом сглаживаем, но только
+   во время наведения — на мобильном свайпе транзишн добавлял бы лаг. */
+.slider--card.is-hover-scrub .swiper-pagination-progressbar .swiper-pagination-progressbar-fill {
+  transition-duration: 180ms !important;
+  transition-timing-function: ease !important;
+}

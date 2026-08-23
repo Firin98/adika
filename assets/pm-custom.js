@@ -40,7 +40,129 @@ function initProductCardSliders(root) {
     } catch (e) {
       // ignore
     }
+
+    initCardHoverScrub(sliderElement, swiperInstance);
   });
+}
+
+/* --------------------------------------------------------------------------
+   Листание слайдов карточки движением мыши (только десктоп).
+   Ширина карточки делится на N зон по числу слайдов; наведение на зону
+   показывает соответствующий слайд. Витрина на иврите, поэтому отсчёт идёт
+   справа налево: крайняя правая зона — первый слайд, движение влево листает
+   вперёд. Прогресс-бар Swiper обновляется сам.
+   -------------------------------------------------------------------------- */
+
+// Больше шести зон на карточке шириной ~260px превращается в дрожь курсора:
+// остальные слайды остаются доступны свайпом и стрелками.
+var CARD_HOVER_SCRUB_MAX_ZONES = 6;
+
+function cardHoverScrubSupported() {
+  return (
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(hover: hover) and (pointer: fine)").matches
+  );
+}
+
+function initCardHoverScrub(sliderElement, swiper) {
+  if (!sliderElement || !swiper) return;
+  if (sliderElement.dataset.hoverScrubReady === "true") return;
+  if (!cardHoverScrubSupported()) return;
+
+  var slideCount = swiper.slides ? swiper.slides.length : 0;
+  if (slideCount < 2) return;
+
+  sliderElement.dataset.hoverScrubReady = "true";
+
+  // На десктопе ховер заменяет перетаскивание мышью: иначе после драга
+  // любое движение курсора отбрасывало бы слайдер обратно.
+  try {
+    swiper.allowTouchMove = false;
+    if (swiper.params) {
+      swiper.params.allowTouchMove = false;
+      swiper.params.grabCursor = false;
+    }
+    if (typeof swiper.unsetGrabCursor === "function") swiper.unsetGrabCursor();
+  } catch (e) {
+    // ignore
+  }
+
+  var zones = Math.min(slideCount, CARD_HOVER_SCRUB_MAX_ZONES);
+  var currentZone = -1;
+  var restIndex = swiper.activeIndex || 0;
+  var pendingX = null;
+  var rafId = null;
+  var imagesPrimed = false;
+
+  // Слайды после первого помечены loading="lazy" и лежат вне вьюпорта:
+  // без этого первый проход мышью показывал бы пустые кадры.
+  // Грузим их по первому наведению, а не при загрузке страницы, иначе
+  // коллекция из 48 карточек утащит за собой десятки лишних запросов.
+  function primeImages() {
+    if (imagesPrimed) return;
+    imagesPrimed = true;
+    var lazyImages = sliderElement.querySelectorAll('img[loading="lazy"]');
+    for (var i = 0; i < lazyImages.length; i++) {
+      lazyImages[i].loading = "eager";
+    }
+  }
+
+  function applyZone(clientX) {
+    // rect читаем каждый кадр: он привязан к вьюпорту и устаревает при скролле
+    var rect = sliderElement.getBoundingClientRect();
+    if (!rect.width) return;
+
+    var fromRight = rect.right - clientX;
+    var zone = Math.floor((fromRight / rect.width) * zones);
+    if (zone < 0) zone = 0;
+    if (zone > zones - 1) zone = zones - 1;
+
+    if (zone === currentZone) return;
+    currentZone = zone;
+    swiper.slideTo(zone, 0);
+  }
+
+  function scheduleFrame() {
+    if (rafId !== null) return;
+    rafId = window.requestAnimationFrame(function () {
+      rafId = null;
+      if (pendingX === null) return;
+      var x = pendingX;
+      pendingX = null;
+      applyZone(x);
+    });
+  }
+
+  function onEnter(event) {
+    restIndex = swiper.activeIndex || 0;
+    currentZone = -1;
+    primeImages();
+    sliderElement.classList.add("is-hover-scrub");
+    pendingX = event.clientX;
+    scheduleFrame();
+  }
+
+  function onMove(event) {
+    pendingX = event.clientX;
+    scheduleFrame();
+  }
+
+  function onLeave() {
+    if (rafId !== null) {
+      window.cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+    pendingX = null;
+    currentZone = -1;
+    sliderElement.classList.remove("is-hover-scrub");
+    // Возвращаемся туда, где слайдер стоял до наведения, а не жёстко на первый
+    // слайд: иначе ховер сбрасывал бы выбор цвета через свотч.
+    swiper.slideTo(restIndex, 0);
+  }
+
+  sliderElement.addEventListener("mouseenter", onEnter);
+  sliderElement.addEventListener("mousemove", onMove, { passive: true });
+  sliderElement.addEventListener("mouseleave", onLeave);
 }
 
 function initFeaturedCollectionSwipers(root) {
