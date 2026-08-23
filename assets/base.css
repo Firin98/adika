@@ -3345,7 +3345,7 @@ details-disclosure > details {
 .card__badges--under-image > .badge {
   display: inline-block;
   vertical-align: middle;
-  margin: 0 0 4px;
+  margin: 0;
   background-color: var(--badge-under-image-background);
   border-color: transparent;
   color: var(--badge-under-image-foreground);

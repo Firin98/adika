@@ -303,6 +303,12 @@
                   <label for="{{ size_input_id }}">{{ size_value_text }}</label>
                 {%- endfor -%}
               </fieldset>
+              {%- comment -%}
+                Индикатор процесса внутри самой полоски. На десктопе кнопки-корзины
+                нет (она мобильная), и без него после клика по размеру непонятно,
+                пошло ли добавление в корзину.
+              {%- endcomment -%}
+              {%- render 'loading-spinner', class: 'card__sizes-spinner hidden' -%}
             </div>
           {%- endif -%}
 

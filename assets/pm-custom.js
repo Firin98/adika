@@ -1162,7 +1162,22 @@ function cardSizePickerRefresh(wrapper, fieldset) {
   }
 }
 
-function cardSizeToggleBusy(toggle, busy) {
+function cardSizeSetBusy(wrapper, toggle, busy) {
+  if (wrapper) {
+    if (busy) {
+      wrapper.dataset.cartBusy = "true";
+    } else {
+      delete wrapper.dataset.cartBusy;
+    }
+    // Крутилка в самой полоске — единственный индикатор на десктопе,
+    // где кнопка-корзина скрыта медиазапросом.
+    var stripSpinner = wrapper.querySelector(".card__sizes-spinner");
+    if (stripSpinner) stripSpinner.classList.toggle("hidden", !busy);
+
+    var fieldset = wrapper.querySelector("[data-card-size-picker]");
+    if (fieldset) fieldset.setAttribute("aria-busy", busy ? "true" : "false");
+  }
+
   if (!toggle) return;
   toggle.classList.toggle("loading", busy);
   toggle.disabled = busy;
@@ -1200,8 +1215,7 @@ function cardSizePickerAddToCart(wrapper, toggle, variantId) {
   wrapper.classList.remove("is-sizes-open");
   if (toggle) toggle.setAttribute("aria-expanded", "false");
 
-  wrapper.dataset.cartBusy = "true";
-  cardSizeToggleBusy(toggle, true);
+  cardSizeSetBusy(wrapper, toggle, true);
 
   return fetch(window.routes ? window.routes.cart_add_url : "/cart/add.js", config)
     .then(function (response) {
@@ -1222,8 +1236,7 @@ function cardSizePickerAddToCart(wrapper, toggle, variantId) {
       /* молча: карточка остаётся в прежнем состоянии */
     })
     .finally(function () {
-      delete wrapper.dataset.cartBusy;
-      cardSizeToggleBusy(toggle, false);
+      cardSizeSetBusy(wrapper, toggle, false);
     });
 }
 

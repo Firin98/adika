@@ -2548,3 +2548,41 @@
 .card__information-sizes .product-form__input--pill input.disabled + label {
   opacity: 0.35;
 }
+
+
+/* Индикатор добавления в корзину внутри полоски размеров.
+   Нужен прежде всего на десктопе: там кнопка-корзина скрыта,
+   и крутилке больше негде появиться. */
+.card__sizes-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.card__sizes-spinner svg {
+  width: 100%;
+  height: 100%;
+}
+
+.card__sizes-spinner .path {
+  stroke: #000;
+}
+
+/* Пока идёт запрос: размеры гасим и не даём кликнуть повторно */
+.product-card-wrapper[data-cart-busy='true'] .card__information-sizes .product-form__input--pill {
+  opacity: 0.25;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+/* ...и держим полоску на виду, даже если курсор увели с карточки */
+.product-card-wrapper[data-cart-busy='true'] .card--media .card__information-sizes {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
