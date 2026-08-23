@@ -11,27 +11,20 @@
   "sections": {
     "main": {
       "type": "main-404",
+      "disabled": true,
       "settings": {}
     },
     "rich_text_jJNRtK": {
       "type": "rich-text",
       "blocks": {
-        "heading_KbU4ai": {
-          "type": "heading",
-          "settings": {
-            "heading": "Talk about your brand",
-            "heading_size": "h1"
-          }
-        },
         "text_yMeWrc": {
           "type": "text",
           "settings": {
-            "text": "<p>Share information about your brand with your customers. Describe a product, make announcements, or welcome customers to your store.</p>"
+            "text": "<p>אופסיי</p><p>העמוד שחיפשת לא קיים</p><p>אבל הטעות הזאת תיקח אותך למקום טוב יותר</p>"
           }
         }
       },
       "block_order": [
-        "heading_KbU4ai",
         "text_yMeWrc"
       ],
       "name": "t:sections.rich-text.presets.name",
