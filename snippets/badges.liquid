@@ -4,12 +4,12 @@
 
   Что выводит:
     1. Штатные бейджи темы: «нет в наличии» / «вернулся в продажу» / «-N%».
-       Их угол берётся из настройки темы settings.badge_position.
+       Они всегда в углу по умолчанию (левый верхний, см. default_position ниже).
     2. Пользовательские бейджи из метаобъектов custom.megaobjects_badges
        (метаполе товара + метаполя всех его коллекций).
        Угол каждого берётся из поля метаобъекта `position`
        со значениями: top left / top right / bottom left / bottom right.
-       Если поле пустое или заполнено чем-то другим — берётся settings.badge_position.
+       Если поле пустое или заполнено чем-то другим — бейдж уходит в левый верхний угол.
 
   Дубли по badge_name убираются на уровне Liquid. Раньше это делал <style>-хак
   с соседним селектором `~`, который при выводе бейджей в разные углы перестаёт
@@ -31,8 +31,13 @@
 
   assign allowed_positions = 'top left,top right,bottom left,bottom right' | split: ','
 
-  # угол по умолчанию — из настроек темы
-  assign default_position = settings.badge_position | default: 'top left' | downcase | strip | replace: '-', ' ' | replace: '_', ' '
+  # Угол по умолчанию: сюда попадают штатные бейджи темы и все метаобъекты,
+  # у которых поле position не заполнено.
+  # Если когда-нибудь захочется брать его из настроек темы —
+  # заменить строку ниже на: assign default_position = settings.badge_position
+  assign default_position = 'top left'
+
+  assign default_position = default_position | default: 'top left' | downcase | strip | replace: '-', ' ' | replace: '_', ' '
   unless allowed_positions contains default_position
     assign default_position = 'top left'
   endunless
