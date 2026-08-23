@@ -3334,9 +3334,12 @@ details-disclosure > details {
   margin: 0 0 0.6rem;
   gap: 0;
   pointer-events: auto;
-  /* прижимаем к начальному краю строки: в RTL это правый край, в LTR — левый,
-     так бейдж встаёт по той же стороне, что заголовок и цена */
-  text-align: start;
+  /* Сайт RTL, бейдж должен стоять справа.
+     text-align: start здесь не годится: тема принудительно ставит
+     direction: ltr на .card--media .card__inner .card__content
+     (component-card.css), поэтому «начало строки» внутри карточки — левый край.
+     Если магазин когда-нибудь переведут на LTR — поменять на left. */
+  text-align: right;
 }
 
 .card__badges--under-image > .badge {
