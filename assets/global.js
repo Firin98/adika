@@ -747,12 +747,38 @@ class SliderComponent extends HTMLElement {
     this.nextButton.addEventListener('click', this.onButtonClick.bind(this));
   }
 
+  /*
+   * Поддержка RTL.
+   * Штатный Dawn считает всё в физических координатах: offsetLeft растёт слева
+   * направо, scrollLeft стартует с нуля у левого края. В RTL обе величины
+   * зеркальны — offsetLeft у первого слайда самый большой, scrollLeft уходит
+   * в минус. Хелперы ниже приводят их к логическим: 0 — начало ленты,
+   * рост — движение к её концу. В LTR они возвращают ровно то же, что раньше,
+   * поэтому поведение всех остальных слайдеров темы не меняется.
+   */
+  get sliderIsRTL() {
+    if (this._sliderIsRTL === undefined) {
+      this._sliderIsRTL = window.getComputedStyle(this.slider).direction === 'rtl';
+    }
+    return this._sliderIsRTL;
+  }
+
+  slideStart(element) {
+    if (!this.sliderIsRTL) return element.offsetLeft;
+    return this.slider.clientWidth - element.offsetLeft - element.offsetWidth;
+  }
+
+  get scrollStart() {
+    return this.sliderIsRTL ? -this.slider.scrollLeft : this.slider.scrollLeft;
+  }
+
   initPages() {
+    this._sliderIsRTL = window.getComputedStyle(this.slider).direction === 'rtl';
     this.sliderItemsToShow = Array.from(this.sliderItems).filter((element) => element.clientWidth > 0);
     if (this.sliderItemsToShow.length < 2) return;
-    this.sliderItemOffset = this.sliderItemsToShow[1].offsetLeft - this.sliderItemsToShow[0].offsetLeft;
+    this.sliderItemOffset = this.slideStart(this.sliderItemsToShow[1]) - this.slideStart(this.sliderItemsToShow[0]);
     this.slidesPerPage = Math.floor(
-      (this.slider.clientWidth - this.sliderItemsToShow[0].offsetLeft) / this.sliderItemOffset
+      (this.slider.clientWidth - this.slideStart(this.sliderItemsToShow[0])) / this.sliderItemOffset
     );
     this.totalPages = this.sliderItemsToShow.length - this.slidesPerPage + 1;
     this.update();
@@ -769,7 +795,7 @@ class SliderComponent extends HTMLElement {
     if (!this.slider || !this.nextButton) return;
 
     const previousPage = this.currentPage;
-    this.currentPage = Math.round(this.slider.scrollLeft / this.sliderItemOffset) + 1;
+    this.currentPage = Math.round(this.scrollStart / this.sliderItemOffset) + 1;
 
     if (this.currentPageElement && this.pageTotalElement) {
       this.currentPageElement.textContent = this.currentPage;
@@ -789,7 +815,7 @@ class SliderComponent extends HTMLElement {
 
     if (this.enableSliderLooping) return;
 
-    if (this.isSlideVisible(this.sliderItemsToShow[0]) && this.slider.scrollLeft === 0) {
+    if (this.isSlideVisible(this.sliderItemsToShow[0]) && this.scrollStart === 0) {
       this.prevButton.setAttribute('disabled', 'disabled');
     } else {
       this.prevButton.removeAttribute('disabled');
@@ -803,8 +829,9 @@ class SliderComponent extends HTMLElement {
   }
 
   isSlideVisible(element, offset = 0) {
-    const lastVisibleSlide = this.slider.clientWidth + this.slider.scrollLeft - offset;
-    return element.offsetLeft + element.clientWidth <= lastVisibleSlide && element.offsetLeft >= this.slider.scrollLeft;
+    const lastVisibleSlide = this.slider.clientWidth + this.scrollStart - offset;
+    const elementStart = this.slideStart(element);
+    return elementStart + element.clientWidth <= lastVisibleSlide && elementStart >= this.scrollStart;
   }
 
   onButtonClick(event) {
@@ -812,14 +839,14 @@ class SliderComponent extends HTMLElement {
     const step = event.currentTarget.dataset.step || 1;
     this.slideScrollPosition =
       event.currentTarget.name === 'next'
-        ? this.slider.scrollLeft + step * this.sliderItemOffset
-        : this.slider.scrollLeft - step * this.sliderItemOffset;
+        ? this.scrollStart + step * this.sliderItemOffset
+        : this.scrollStart - step * this.sliderItemOffset;
     this.setSlidePosition(this.slideScrollPosition);
   }
 
   setSlidePosition(position) {
     this.slider.scrollTo({
-      left: position,
+      left: this.sliderIsRTL ? -position : position,
     });
   }
 }

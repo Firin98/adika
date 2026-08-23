@@ -387,3 +387,74 @@ slider-component.slider-component-full-width {
 .swiper-rtl + .slider-buttons .slider-button--prev .icon {
   transform: rotate(-90deg);
 }
+
+
+/* --------------------------------------------------------------------------
+   RTL-лента слайдера. Класс slider--rtl ставится на сам <ul class="slider">.
+   Правила выше написаны в физических координатах (left / margin-left /
+   scroll-padding-left), поэтому здесь они зеркалятся. Логику прокрутки
+   SliderComponent в assets/global.js определяет сам по computed direction.
+   -------------------------------------------------------------------------- */
+.slider--rtl {
+  direction: rtl;
+}
+
+@media screen and (max-width: 749px) {
+  .slider.slider--rtl.slider--mobile {
+    scroll-padding-left: 0;
+    scroll-padding-right: 1.5rem;
+  }
+
+  .slider--rtl.slider--mobile:after {
+    padding-left: 0;
+    padding-right: 1.5rem;
+  }
+}
+
+@media screen and (max-width: 989px) {
+  .slider.slider--rtl.slider--tablet {
+    scroll-padding-left: 0;
+    scroll-padding-right: 1.5rem;
+  }
+
+  .slider--rtl.slider--tablet:after {
+    padding-left: 0;
+    padding-right: 1.5rem;
+    margin-left: 0;
+    margin-right: calc(-1 * var(--grid-desktop-horizontal-spacing));
+  }
+}
+
+@media screen and (min-width: 990px) {
+  .slider--rtl.slider--desktop {
+    scroll-padding-left: 0;
+    scroll-padding-right: var(--desktop-margin-left-first-item);
+  }
+
+  .slider--rtl.slider--desktop:after {
+    padding-left: 0;
+    padding-right: 5rem;
+    margin-left: 0;
+    margin-right: calc(-1 * var(--grid-desktop-horizontal-spacing));
+  }
+
+  .slider--rtl.slider--desktop .slider__slide:first-child {
+    margin-left: 0;
+    margin-right: var(--desktop-margin-left-first-item);
+    scroll-margin-left: 0;
+    scroll-margin-right: var(--desktop-margin-left-first-item);
+  }
+
+  .slider-component-full-width .slider--rtl.slider--desktop {
+    scroll-padding-right: 1.5rem;
+  }
+
+  .slider-component-full-width .slider--rtl.slider--desktop .slider__slide:first-child {
+    margin-right: 1.5rem;
+    scroll-margin-right: 1.5rem;
+  }
+
+  .slider-component-full-width .slider--rtl.slider--desktop:after {
+    padding-right: 1.5rem;
+  }
+}
