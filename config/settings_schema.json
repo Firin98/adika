@@ -1263,6 +1263,42 @@
         "id": "sold_out_badge_color_scheme",
         "label": "t:settings_schema.badges.settings.sold_out_badge_color_scheme.label",
         "default": "scheme-3"
+      },
+      {
+        "type": "header",
+        "content": "Automatic badge colors",
+        "info": "Leave a color empty to keep the default badge style from the color schemes above"
+      },
+      {
+        "type": "color",
+        "id": "badge_sale_background",
+        "label": "Sale badge background",
+        "info": "Applies to the SALE badge and the discount percent badge"
+      },
+      {
+        "type": "color",
+        "id": "badge_sale_text",
+        "label": "Sale badge text"
+      },
+      {
+        "type": "color",
+        "id": "badge_sold_out_background",
+        "label": "Sold out badge background"
+      },
+      {
+        "type": "color",
+        "id": "badge_sold_out_text",
+        "label": "Sold out badge text"
+      },
+      {
+        "type": "color",
+        "id": "badge_back_in_stock_background",
+        "label": "Back in stock badge background"
+      },
+      {
+        "type": "color",
+        "id": "badge_back_in_stock_text",
+        "label": "Back in stock badge text"
       }
     ]
   },

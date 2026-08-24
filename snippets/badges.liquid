@@ -3,8 +3,10 @@
   на странице товара.
 
   Что выводит:
-    1. Штатные бейджи темы: «нет в наличии» / «вернулся в продажу» / «-N%».
-       Они всегда в углу по умолчанию (левый верхний, см. default_position ниже).
+    1. Штатные бейджи темы, независимые друг от друга:
+       «нет в наличии» (левый верхний, глушит остальные штатные),
+       «вернулся в продажу» (левый верхний),
+       SALE (левый верхний) + «N% OFF» (левый нижний) для уценённых товаров.
     2. Пользовательские бейджи из метаобъектов custom.megaobjects_badges
        (метаполе товара + метаполя всех его коллекций).
        Угол каждого берётся из поля метаобъекта `position`
@@ -85,6 +87,34 @@
   endif
 
   assign rendered_names = ''
+
+  # Персональные цвета автоматических бейджей из настроек темы
+  # (Theme settings -> Badges -> Automatic badge colors). Пустая настройка —
+  # остаётся дефолтная цветовая схема. Инлайн с !important, тем же способом,
+  # каким красятся пользовательские бейджи из метаобъектов (badge-item.liquid).
+  assign sale_badge_style = ''
+  if settings.badge_sale_background != blank
+    assign sale_badge_style = sale_badge_style | append: 'background-color: ' | append: settings.badge_sale_background | append: ' !important;'
+  endif
+  if settings.badge_sale_text != blank
+    assign sale_badge_style = sale_badge_style | append: ' color: ' | append: settings.badge_sale_text | append: ' !important;'
+  endif
+
+  assign sold_out_badge_style = ''
+  if settings.badge_sold_out_background != blank
+    assign sold_out_badge_style = sold_out_badge_style | append: 'background-color: ' | append: settings.badge_sold_out_background | append: ' !important;'
+  endif
+  if settings.badge_sold_out_text != blank
+    assign sold_out_badge_style = sold_out_badge_style | append: ' color: ' | append: settings.badge_sold_out_text | append: ' !important;'
+  endif
+
+  assign back_in_stock_badge_style = ''
+  if settings.badge_back_in_stock_background != blank
+    assign back_in_stock_badge_style = back_in_stock_badge_style | append: 'background-color: ' | append: settings.badge_back_in_stock_background | append: ' !important;'
+  endif
+  if settings.badge_back_in_stock_text != blank
+    assign back_in_stock_badge_style = back_in_stock_badge_style | append: ' color: ' | append: settings.badge_back_in_stock_text | append: ' !important;'
+  endif
 -%}
 
 {%- for corner in render_positions -%}
@@ -92,31 +122,55 @@
 
   {%- capture corner_content -%}
 
-    {%- comment -%}Штатные бейджи темы — только в углу по умолчанию и только в «угловом» вызове{%- endcomment -%}
-    {%- if only_position == blank and corner == default_position -%}
-      {%- if badge_product.available == false -%}
-        <span
-          id="{{ badge_id_prefix }}-{{ section_id }}-{{ badge_product.id }}"
-          class="badge badge--{{ corner_class }} color-{{ settings.sold_out_badge_color_scheme }}"
-        >
-          <span>{{- 'products.product.sold_out' | t -}}</span>
-        </span>
-
-      {%- elsif is_back_in_stock -%}
-        <span
-          id="{{ badge_id_prefix }}-{{ section_id }}-{{ badge_product.id }}"
-          class="badge badge--{{ corner_class }} badge--back-in-stock color-{{ settings.sale_badge_color_scheme }}"
-        >
-          <span>Back in stock</span>
-        </span>
-
-      {%- elsif discount_percent > 0 -%}
-        <span
-          id="{{ badge_id_prefix }}-{{ section_id }}-{{ badge_product.id }}"
-          class="badge badge--{{ corner_class }} color-{{ settings.sale_badge_color_scheme }}"
-        >
-          <span>{{ discount_percent }}% OFF</span>
-        </span>
+    {%- comment -%}
+      Штатные бейджи темы. Независимы друг от друга:
+        - «нет в наличии» — левый верхний; на распроданном товаре SALE и процент
+          не показываются (скидка на то, что нельзя купить, — не информация);
+        - «вернулся в продажу» — левый верхний, живёт своей жизнью: уценённый
+          back-in-stock товар получает и его, и SALE, стопкой;
+        - скидка — два бейджа: SALE в левом верхнем, «N% OFF» в левом нижнем.
+      Только в «угловом» вызове (без only).
+    {%- endcomment -%}
+    {%- if only_position == blank -%}
+      {%- if corner == 'top left' -%}
+        {%- if badge_product.available == false -%}
+          <span
+            id="{{ badge_id_prefix }}-{{ section_id }}-{{ badge_product.id }}"
+            class="badge badge--{{ corner_class }} color-{{ settings.sold_out_badge_color_scheme }}"
+            {% if sold_out_badge_style != blank %}style="{{ sold_out_badge_style }}"{% endif %}
+          >
+            <span>{{- 'products.product.sold_out' | t -}}</span>
+          </span>
+        {%- else -%}
+          {%- if discount_percent > 0 -%}
+            <span
+              id="{{ badge_id_prefix }}-{{ section_id }}-{{ badge_product.id }}"
+              class="badge badge--{{ corner_class }} badge--sale color-{{ settings.sale_badge_color_scheme }}"
+              {% if sale_badge_style != blank %}style="{{ sale_badge_style }}"{% endif %}
+            >
+              <span>{{- 'products.product.on_sale' | t -}}</span>
+            </span>
+          {%- endif -%}
+          {%- if is_back_in_stock -%}
+            <span
+              id="{{ badge_id_prefix }}-back-in-stock-{{ section_id }}-{{ badge_product.id }}"
+              class="badge badge--{{ corner_class }} badge--back-in-stock color-{{ settings.sale_badge_color_scheme }}"
+              {% if back_in_stock_badge_style != blank %}style="{{ back_in_stock_badge_style }}"{% endif %}
+            >
+              <span>Back in stock</span>
+            </span>
+          {%- endif -%}
+        {%- endif -%}
+      {%- elsif corner == 'bottom left' -%}
+        {%- if badge_product.available and discount_percent > 0 -%}
+          <span
+            id="{{ badge_id_prefix }}-discount-{{ section_id }}-{{ badge_product.id }}"
+            class="badge badge--{{ corner_class }} badge--discount color-{{ settings.sale_badge_color_scheme }}"
+            {% if sale_badge_style != blank %}style="{{ sale_badge_style }}"{% endif %}
+          >
+            <span>{{ discount_percent }}% OFF</span>
+          </span>
+        {%- endif -%}
       {%- endif -%}
     {%- endif -%}
 
