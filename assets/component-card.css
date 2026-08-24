@@ -2221,9 +2221,8 @@
   }
 
   .card__badge .badge {
-    padding: 2px 4px 0;
+    padding: 2px 4px;
     font-size: 10px;
-    min-height: 17px;
   }
 }
 
