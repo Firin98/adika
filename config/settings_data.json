@@ -133,7 +133,7 @@
     "show_cart_note": false,
     "cart_drawer_collection": "",
     "cart_color_scheme": "scheme-1",
-    "cart_free_shipping_threshold": "250",
+    "cart_free_shipping_threshold": "299",
     "sections": {
       "main-password-header": {
         "type": "main-password-header",
