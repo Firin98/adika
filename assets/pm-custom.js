@@ -1385,7 +1385,61 @@ function watchCollectionGridUpdates(root) {
   window.__collectionGridObserverTarget = collectionGridContainer;
 }
 
+/* --------------------------------------------------------------------------
+   Bottom badges in the product gallery.
+
+   On desktop the gallery is a grid of N rows, and the badge containers are
+   absolutely positioned against the whole <slider-component>. bottom: 5px
+   therefore meant "bottom of the last row" - with ten rows of photos the
+   bottom badges were only visible after scrolling the entire gallery.
+
+   This pins the bottom-corner containers to the bottom edge of the FIRST
+   media item instead, via an inline `top`. A ResizeObserver keeps it correct
+   while images load, the viewport resizes, or a variant swap changes media.
+   -------------------------------------------------------------------------- */
+function initGalleryBadgeAnchor(root) {
+  var scope = root || document;
+
+  scope.querySelectorAll("media-gallery slider-component").forEach(function (component) {
+    if (component.dataset.badgeAnchorReady === "true") return;
+
+    var bottomContainers = component.querySelectorAll(
+      ".card__badges--bottom-left, .card__badges--bottom-right"
+    );
+    if (!bottomContainers.length) return;
+
+    component.dataset.badgeAnchorReady = "true";
+
+    var update = function () {
+      var firstItem = component.querySelector(".product__media-item");
+      if (!firstItem) return;
+      var componentRect = component.getBoundingClientRect();
+      var itemRect = firstItem.getBoundingClientRect();
+      if (!itemRect.height) return;
+      var firstRowBottom = itemRect.bottom - componentRect.top;
+
+      bottomContainers.forEach(function (container) {
+        container.style.bottom = "auto";
+        // 5px gap above the first row's bottom edge, matching the corner offset
+        container.style.top = firstRowBottom - container.offsetHeight - 5 + "px";
+      });
+    };
+
+    if (typeof ResizeObserver === "function") {
+      var observer = new ResizeObserver(update);
+      observer.observe(component);
+      var firstItem = component.querySelector(".product__media-item");
+      if (firstItem) observer.observe(firstItem);
+    }
+    window.addEventListener("resize", update);
+    // images defining the row height may not be loaded yet
+    window.addEventListener("load", update);
+    update();
+  });
+}
+
 document.addEventListener("DOMContentLoaded", function () {
+  initGalleryBadgeAnchor(document);
   initCollectionGridEnhancements(document);
   initFeaturedCollectionSwipers(document);
   initFeaturedCollectionSenseaSwipers(document);
