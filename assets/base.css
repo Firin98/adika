@@ -4020,3 +4020,72 @@ details-disclosure > details {
     transform: translateX(100%) scaleX(0);
   }
 }
+
+
+/* ==========================================================================
+   "Please select a size" popup (see product-form.js).
+   Shown when the visitor hits add-to-cart while the size row is untouched.
+   ========================================================================== */
+.size-required-popup {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.size-required-popup.is-open {
+  display: flex;
+}
+
+.size-required-popup__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.size-required-popup__box {
+  position: relative;
+  z-index: 1;
+  background: rgb(var(--color-background, 255, 255, 255));
+  color: rgb(var(--color-foreground, 0, 0, 0));
+  border-radius: 6px;
+  padding: 2.4rem 2.8rem 2rem;
+  max-width: min(32rem, calc(100vw - 4rem));
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  animation: size-required-pop 0.18s ease;
+}
+
+@keyframes size-required-pop {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.size-required-popup__text {
+  margin: 0 0 1.6rem;
+  font-size: 1.5rem;
+  line-height: 1.4;
+}
+
+.size-required-popup__button {
+  min-width: 12rem;
+}
+
+/* Short highlight of the size row after the popup closes */
+.size-required-highlight {
+  animation: size-required-blink 0.4s ease 0s 3;
+}
+
+@keyframes size-required-blink {
+  50% {
+    opacity: 0.35;
+  }
+}

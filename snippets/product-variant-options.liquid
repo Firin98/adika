@@ -18,6 +18,21 @@
 {% endcomment %}
 {%- liquid
   assign product_form_id = 'product-form-' | append: section.id
+
+  # Size intentionally starts unselected (visual only - Shopify always has a
+  # variant server-side). product.selected_variant is nil until the visitor
+  # actually picks something (no ?variant= URL and no option_values context),
+  # which is exactly the state where the size pills should all look blank.
+  # Applies to radio-based pickers only; a dropdown cannot render "nothing
+  # selected" without a placeholder option that would break the option_values
+  # fetch in global.js (selectedOptionValues picks up option[selected]).
+  assign force_size_unselected = false
+  assign option_name_downcase = option.name | downcase
+  if option_name_downcase contains 'size' or option_name_downcase contains 'מיד'
+    if product.selected_variant == nil
+      assign force_size_unselected = true
+    endif
+  endif
 -%}
 
 {%- for value in option.values -%}
@@ -36,6 +51,11 @@
     assign option_disabled = true
     if value.available
       assign option_disabled = false
+    endif
+
+    assign value_checked = value.selected
+    if force_size_unselected
+      assign value_checked = false
     endif
   -%}
 
@@ -74,7 +94,7 @@
       value: escaped_value,
       swatch: value.swatch,
       product_form_id: product_form_id,
-      checked: value.selected,
+      checked: value_checked,
       visually_disabled: option_disabled,
       shape: block.settings.swatch_shape,
       help_text: help_text,
@@ -87,7 +107,7 @@
       name="{{ input_name | escape }}"
       value="{{ escaped_value }}"
       form="{{ product_form_id }}"
-      {% if value.selected %}
+      {% if value_checked %}
         checked
       {% endif %}
       {% if option_disabled %}

@@ -21,6 +21,15 @@ if (!customElements.get('product-form')) {
         evt.preventDefault();
         if (this.submitButton.getAttribute('aria-disabled') === 'true') return;
 
+        // Size starts unselected on the product page (see
+        // product-variant-options.liquid). The hidden variant id still points
+        // at the default variant, so the form must not submit until the
+        // visitor actually picks a size.
+        if (this.sizeSelectionMissing()) {
+          this.showSizeRequiredPopup();
+          return;
+        }
+
         this.handleErrorMessage();
 
         this.submitButton.setAttribute('aria-disabled', true);
@@ -182,6 +191,76 @@ if (!customElements.get('product-form')) {
         const { CartErrorEvent } = window.StandardEvents || {};
         if (!CartErrorEvent) return;
         this.dispatchEvent(new CartErrorEvent({ error: message, code }));
+      }
+
+      sizeSelectionMissing() {
+        const scope = this.closest('product-info') || document;
+        const variantSelects = scope.querySelector('variant-selects');
+        if (!variantSelects) return false;
+
+        let hasSizeGroup = false;
+        let hasCheckedSize = false;
+        variantSelects.querySelectorAll('fieldset input[type="radio"]').forEach((input) => {
+          const optionName = (input.dataset.optionName || input.name || '').toLowerCase();
+          if (!optionName.includes('size') && !optionName.includes('\u05de\u05d9\u05d3')) return;
+          hasSizeGroup = true;
+          if (input.checked) hasCheckedSize = true;
+        });
+        return hasSizeGroup && !hasCheckedSize;
+      }
+
+      showSizeRequiredPopup() {
+        let modal = document.getElementById('SizeRequiredPopup');
+        if (!modal) {
+          modal = document.createElement('div');
+          modal.id = 'SizeRequiredPopup';
+          modal.className = 'size-required-popup';
+          modal.setAttribute('role', 'alertdialog');
+          modal.setAttribute('aria-modal', 'true');
+          modal.setAttribute('aria-labelledby', 'SizeRequiredPopupText');
+          const text = (window.variantStrings && window.variantStrings.sizeRequired) || '\u05d0\u05e0\u05d0 \u05d1\u05d7\u05e8\u05d5 \u05de\u05d9\u05d3\u05d4';
+          const buttonText = (window.variantStrings && window.variantStrings.sizeRequiredButton) || '\u05d0\u05d9\u05e9\u05d5\u05e8';
+          modal.innerHTML =
+            '<div class="size-required-popup__overlay" data-size-popup-close></div>' +
+            '<div class="size-required-popup__box">' +
+            '<p id="SizeRequiredPopupText" class="size-required-popup__text">' + text + '</p>' +
+            '<button type="button" class="button size-required-popup__button" data-size-popup-close>' + buttonText + '</button>' +
+            '</div>';
+          modal.addEventListener('click', (event) => {
+            if (event.target.closest('[data-size-popup-close]')) this.hideSizeRequiredPopup();
+          });
+          document.body.appendChild(modal);
+        }
+        this._sizePopupKeyHandler = (event) => {
+          if (event.key === 'Escape') this.hideSizeRequiredPopup();
+        };
+        document.addEventListener('keydown', this._sizePopupKeyHandler);
+        modal.classList.add('is-open');
+        const button = modal.querySelector('.size-required-popup__button');
+        if (button) button.focus();
+      }
+
+      hideSizeRequiredPopup() {
+        const modal = document.getElementById('SizeRequiredPopup');
+        if (modal) modal.classList.remove('is-open');
+        if (this._sizePopupKeyHandler) {
+          document.removeEventListener('keydown', this._sizePopupKeyHandler);
+          this._sizePopupKeyHandler = null;
+        }
+        // Bring the size row into view so the visitor sees what to fix
+        const scope = this.closest('product-info') || document;
+        const sizeInput = Array.from(scope.querySelectorAll('variant-selects fieldset input[type="radio"]')).find(
+          (input) => {
+            const optionName = (input.dataset.optionName || input.name || '').toLowerCase();
+            return optionName.includes('size') || optionName.includes('\u05de\u05d9\u05d3');
+          }
+        );
+        const fieldset = sizeInput && sizeInput.closest('fieldset');
+        if (fieldset) {
+          fieldset.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          fieldset.classList.add('size-required-highlight');
+          setTimeout(() => fieldset.classList.remove('size-required-highlight'), 1600);
+        }
       }
 
       get variantIdInput() {

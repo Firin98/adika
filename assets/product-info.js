@@ -169,7 +169,27 @@ if (!customElements.get('product-info')) {
       updateOptionValues(html) {
         const variantSelects = html.querySelector('variant-selects');
         if (variantSelects) {
-          HTMLUpdateUtility.viewTransition(this.variantSelectors, variantSelects, this.preProcessHtmlCallbacks);
+          // Safety net for the unselected-size feature: if the re-rendered
+          // picker comes back with a radio group left blank while the visitor
+          // had already made a choice there, restore that choice. Prevents a
+          // picked size from visually resetting after a section re-render.
+          const checkedValueIds = Array.from(
+            this.variantSelectors?.querySelectorAll('fieldset input[type="radio"]:checked') || []
+          ).map((input) => input.dataset.optionValueId).filter(Boolean);
+
+          const restoreChecked = (newNode) => {
+            checkedValueIds.forEach((valueId) => {
+              const input = newNode.querySelector('input[type="radio"][data-option-value-id="' + valueId + '"]');
+              if (!input || input.checked) return;
+              const group = input.closest('fieldset');
+              if (group && !group.querySelector('input[type="radio"]:checked')) input.checked = true;
+            });
+          };
+
+          HTMLUpdateUtility.viewTransition(this.variantSelectors, variantSelects, [
+            ...this.preProcessHtmlCallbacks,
+            restoreChecked,
+          ]);
         }
       }
 
