@@ -1420,8 +1420,8 @@ function initGalleryBadgeAnchor(root) {
 
       bottomContainers.forEach(function (container) {
         container.style.bottom = "auto";
-        // 5px gap above the first row's bottom edge, matching the corner offset
-        container.style.top = firstRowBottom - container.offsetHeight - 5 + "px";
+        // 10px gap above the first row's bottom edge (5px read as glued to the photo)
+        container.style.top = firstRowBottom - container.offsetHeight - 10 + "px";
       });
     };
 
