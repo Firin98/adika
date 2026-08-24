@@ -166,29 +166,75 @@ if (!customElements.get('product-info')) {
         return `${url}?${params.join('&')}`;
       }
 
+      isSizeOptionName(name) {
+        const optionName = (name || '').toLowerCase();
+        return optionName.includes('size') || optionName.includes('\u05de\u05d9\u05d3');
+      }
+
       updateOptionValues(html) {
         const variantSelects = html.querySelector('variant-selects');
         if (variantSelects) {
-          // Safety net for the unselected-size feature: if the re-rendered
-          // picker comes back with a radio group left blank while the visitor
-          // had already made a choice there, restore that choice. Prevents a
-          // picked size from visually resetting after a section re-render.
-          const checkedValueIds = Array.from(
-            this.variantSelectors?.querySelectorAll('fieldset input[type="radio"]:checked') || []
-          ).map((input) => input.dataset.optionValueId).filter(Boolean);
+          // The size row intentionally starts unselected (see
+          // product-variant-options.liquid). The Section Rendering response is
+          // built from option_values=..., and for options missing from that
+          // list Shopify falls back to a matching variant - so the fetched
+          // HTML can come back with a size pre-checked even though the visitor
+          // never touched size (e.g. they clicked a color first). The DOM the
+          // visitor currently sees is the source of truth: mirror each radio
+          // group's checked state from the old picker onto the new one, in
+          // both directions.
+          const oldGroups = new Map();
+          this.variantSelectors?.querySelectorAll('fieldset').forEach((fieldset) => {
+            const inputs = fieldset.querySelectorAll('input[type="radio"]');
+            if (!inputs.length) return;
+            const name = inputs[0].dataset.optionName || inputs[0].name || '';
+            const checked = fieldset.querySelector('input[type="radio"]:checked');
+            oldGroups.set(name, checked ? checked.dataset.optionValueId : null);
+          });
 
-          const restoreChecked = (newNode) => {
-            checkedValueIds.forEach((valueId) => {
-              const input = newNode.querySelector('input[type="radio"][data-option-value-id="' + valueId + '"]');
-              if (!input || input.checked) return;
-              const group = input.closest('fieldset');
-              if (group && !group.querySelector('input[type="radio"]:checked')) input.checked = true;
+          const mirrorSelection = (newNode) => {
+            newNode.querySelectorAll('fieldset').forEach((fieldset) => {
+              const inputs = fieldset.querySelectorAll('input[type="radio"]');
+              if (!inputs.length) return;
+              const name = inputs[0].dataset.optionName || inputs[0].name || '';
+              if (!oldGroups.has(name)) return;
+              const oldValueId = oldGroups.get(name);
+
+              // HTMLUpdateUtility.viewTransition re-serialises this node via
+              // outerHTML before inserting it, so DOM properties are lost -
+              // only the checked ATTRIBUTE survives. Toggle attributes here.
+              if (oldValueId === null) {
+                // Visitor had nothing chosen here. Only the size row is ever
+                // in that state by design - blank it again on the new markup.
+                if (this.isSizeOptionName(name)) {
+                  inputs.forEach((input) => {
+                    input.removeAttribute('checked');
+                    input.checked = false;
+                  });
+                }
+                return;
+              }
+
+              const match = fieldset.querySelector(
+                'input[type="radio"][data-option-value-id="' + oldValueId + '"]'
+              );
+              if (match && !match.hasAttribute('checked')) {
+                inputs.forEach((input) => {
+                  if (input === match) {
+                    input.setAttribute('checked', '');
+                    input.checked = true;
+                  } else {
+                    input.removeAttribute('checked');
+                    input.checked = false;
+                  }
+                });
+              }
             });
           };
 
           HTMLUpdateUtility.viewTransition(this.variantSelectors, variantSelects, [
             ...this.preProcessHtmlCallbacks,
-            restoreChecked,
+            mirrorSelection,
           ]);
         }
       }
