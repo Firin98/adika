@@ -1857,12 +1857,12 @@
 }
 .card .quick-add {
   margin: 0;
-      /* width: 28px;
-    height: 28px; */
-    margin: 0 auto;
-    bottom: 0;
-    transition: bottom 0.35s cubic-bezier(0.455, 0.03, 0.515, 0.955);
-
+  /* width: 28px;
+  height: 28px; */
+  margin: 0 auto;
+  bottom: 0;
+  transition: bottom 0.35s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  display: none;
 }
 .card:hover .quick-add {
   /* bottom: 15px; */
