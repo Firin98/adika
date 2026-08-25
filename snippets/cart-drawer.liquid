@@ -654,29 +654,34 @@
     </div>
   </div>
   {% comment %}
-    Edit-item modal. Kept outside .drawer__inner: the drawer panel keeps a
-    CSS transform while open, which would trap the fixed-position modal.
+    Edit-item modal. Two Dawn requirements: the close button id must start
+    with "ModalClose-" (ModalDialog's constructor binds to it and throws
+    otherwise), and a .shopify-section ancestor must exist (its
+    connectedCallback reads the ancestor id, then hoists the modal to
+    <body>). The drawer renders outside any section, hence the wrapper.
   {% endcomment %}
-  <quick-add-modal id="CartEditModal-drawer" class="quick-add-modal cart-edit-modal">
-    <div
-      role="dialog"
-      aria-label="עריכת פריט"
-      aria-modal="true"
-      class="quick-add-modal__content global-settings-popup"
-      tabindex="-1"
-    >
-      <button
-        id="CartEditModalClose-drawer"
-        type="button"
-        class="quick-add-modal__toggle"
-        aria-label="{{ 'accessibility.close' | t }}"
-      >
-        {{- 'icon-close.svg' | inline_asset_content -}}
-      </button>
+  <div class="shopify-section" id="shopify-section-cart-edit-modal">
+    <quick-add-modal id="CartEditModal-drawer" class="quick-add-modal cart-edit-modal">
       <div
-        id="QuickAddInfo-cart-edit-drawer"
-        class="quick-add-modal__content-info"
-      ></div>
-    </div>
-  </quick-add-modal>
+        role="dialog"
+        aria-label="עריכת פריט"
+        aria-modal="true"
+        class="quick-add-modal__content global-settings-popup"
+        tabindex="-1"
+      >
+        <button
+          id="ModalClose-cart-edit-drawer"
+          type="button"
+          class="quick-add-modal__toggle"
+          aria-label="{{ 'accessibility.close' | t }}"
+        >
+          {{- 'icon-close.svg' | inline_asset_content -}}
+        </button>
+        <div
+          id="QuickAddInfo-cart-edit-drawer"
+          class="quick-add-modal__content-info"
+        ></div>
+      </div>
+    </quick-add-modal>
+  </div>
 </cart-drawer>
