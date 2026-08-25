@@ -515,3 +515,6 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
 #CartDrawer-ColumnTotal {
   text-align: left !important;
 }
+#CartDrawer .quantity__button {
+  width: calc(3.5rem / var(--font-body-scale));
+}
