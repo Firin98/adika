@@ -57,6 +57,28 @@
   .search__button .icon {
     height: 1.8rem;
   }
+
+  /* RTL search form: text flows from the right, buttons mirror sides */
+  .template-search__search .search__input {
+    text-align: right;
+    padding-right: 2rem;
+    padding-left: 9.8rem; /* room for the search/reset buttons on the left */
+  }
+
+  .template-search__search .field__label {
+    left: auto;
+    right: calc(var(--inputs-border-width) + 2rem);
+  }
+
+  .template-search__search .search__button {
+    right: auto;
+    left: var(--inputs-border-width);
+  }
+
+  .template-search__search .reset__button {
+    right: auto;
+    left: calc(var(--inputs-border-width) + 4.4rem);
+  }
 </style>
 
 {%- liquid
@@ -81,7 +103,13 @@
 
 {% paginate search.results by 24 %}
   <div class="template-search{% unless search.performed and search.results_count > 0 %} template-search--empty{% endunless %} section-{{ section.id }}-padding">
-    <div class="template-search__header page-width{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}">
+    {%- comment -%}
+      dir=rtl: Hebrew storefront. The page has no global direction (the theme
+      sets RTL per-block), so the search header - input, status line, results
+      messages - gets it explicitly. Field styles are mirrored in the inline
+      <style> block above / component-search.css additions.
+    {%- endcomment -%}
+    <div class="template-search__header page-width{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}" dir="rtl">
       <h1 class="h2 center">
         {%- if search.performed -%}
           {{- 'templates.search.title' | t -}}
@@ -242,7 +270,7 @@
             </aside>
           {%- endif -%}
         {%- endif -%}
-        <div class="product-grid-container" id="ProductGridContainer">
+        <div class="product-grid-container" id="ProductGridContainer" dir="rtl">
           {%- if search.results.size == 0 and search.filters != empty -%}
             <div
               class="template-search__results collection collection--empty{% if section.settings.filter_type != 'vertical' %} page-width{% endif %}"
