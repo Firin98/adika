@@ -206,8 +206,11 @@
           {%- comment -%}
             Wishlist Hero heart, top-right corner of the card image.
             The app's embed script hydrates the div rendered by
-            wishlisthero-collection-product.liquid. Sections may opt out
-            by passing show_wishlist: false (featured-collection does).
+            wishlisthero-collection-product.liquid. Controlled per section
+            by the show_wishlist parameter (a "Show wishlist" checkbox in
+            main-collection-product-grid, featured-collection and
+            featured-collection-swiper); sections that do not pass it
+            show the heart by default.
           {%- endcomment -%}
           {%- unless show_wishlist == false -%}
             <div class="card__wishlist">

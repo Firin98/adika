@@ -132,7 +132,7 @@
                   lazy_load: lazy_load,
                   show_secondary_image: section.settings.show_secondary_image,
                   show_vendor: section.settings.show_vendor,
-                  show_wishlist: false,
+                  show_wishlist: section.settings.show_wishlist,
                   show_badges: false,
                   show_swatches: true,
                   show_rating: section.settings.show_rating,
@@ -482,6 +482,12 @@
       "id": "show_secondary_image",
       "default": false,
       "label": "t:sections.featured-collection.settings.show_secondary_image.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_wishlist",
+      "default": true,
+      "label": "Show wishlist"
     },
     {
       "type": "checkbox",
