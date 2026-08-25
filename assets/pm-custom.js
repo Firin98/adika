@@ -1022,6 +1022,11 @@ function initProductMediaGalleries(root) {
       slidesPerView: isQuickAddGallery ? 1.6 : 1,
       loop: false,
       grabCursor: false,
+      // Variant switches mutate the slide list in place and quick-add
+      // modals size their gallery while still closed - let Swiper watch
+      // its own DOM (and ancestors, e.g. the modal's open attribute).
+      observer: true,
+      observeParents: true,
       // watchSlidesVisibility: true,
       navigation: mainNavigation,
       pagination: paginationElement
@@ -1102,6 +1107,24 @@ function initProductMediaGalleries(root) {
 }
 
 window.initProductMediaGalleries = initProductMediaGalleries;
+
+/* --------------------------------------------------------------------------
+   Product galleries inside quick-add modals are injected after page load,
+   so the DOMContentLoaded init never sees them. product-info dispatches a
+   bubbling "product-info:loaded" when its content connects - init there.
+   -------------------------------------------------------------------------- */
+document.addEventListener("product-info:loaded", function (event) {
+  var target = event.target;
+  var modal = target && target.closest && target.closest("quick-add-modal");
+  if (!modal) return;
+  // Defer one tick so the injected markup is fully in place.
+  setTimeout(function () {
+    initProductMediaGalleries(modal);
+    modal.querySelectorAll("[data-product-media-gallery-slider]").forEach(function (gallery) {
+      if (gallery.productMediaMainSwiper) gallery.productMediaMainSwiper.update();
+    });
+  }, 0);
+});
 
 function syncCardSliderWithSwatch() {
   document.addEventListener("change", event => {
