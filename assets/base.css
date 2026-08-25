@@ -3158,8 +3158,8 @@ details[open] > .header__menu-item .icon-caret {
 }
 
 .header__menu-item .icon-caret {
-  left: 0;
-  right: auto;
+  /* left: 0;
+  right: auto; */
 }
 
 .header__submenu .icon-caret {
