@@ -413,3 +413,20 @@ quick-add-bulk .quantity__input {
 quick-add-modal .product-form__size-guide {
   display: none;
 }
+/* Restore the mobile swipe gallery inside quick-add modals: the
+   unscoped "overflow: visible" rule above turns the slider into a
+   static grid on every breakpoint. Desktop keeps the grid look. */
+@media screen and (max-width: 749px) {
+  quick-add-modal .slider.slider--mobile {
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  quick-add-modal .slider.slider--mobile .product__media-item.grid__item {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+  }
+}
