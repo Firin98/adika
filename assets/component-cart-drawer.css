@@ -520,9 +520,9 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
 }
 #CartDrawer .quantity {
   width: calc(7rem / var(--font-body-scale) + var(--inputs-border-width) * 2);
-  min-height: calc((var(--inputs-border-width) * 2) + 2.5rem);
+  min-height: calc((var(--inputs-border-width) * 2) + 2rem);
 }
 #CartDrawer .quantity__input {
-  font-size: 1.4rem;
-  padding: 0;
+  font-size: 1rem;
+  padding: 0 !important;
 }
