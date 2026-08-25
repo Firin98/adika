@@ -264,6 +264,25 @@
                 {%- when 'custom_liquid' -%}
                   {{ block.settings.custom_liquid }}
                 {%- when 'collapsible_tab' -%}
+                  {%- liquid
+                    # Hide the whole accordion when it has nothing to show:
+                    # both the rich text content and the linked page are empty.
+                    # Text is stripped of markup first, so a leftover empty
+                    # paragraph from the editor does not count as content;
+                    # embedded images/iframes count even with no text.
+                    # In the theme editor the row stays visible so a freshly
+                    # added block does not look broken.
+                    assign tab_text = block.settings.content | strip_html | strip
+                    assign tab_page_text = block.settings.page.content | strip_html | strip
+                    assign tab_has_content = false
+                    if tab_text != blank or tab_page_text != blank
+                      assign tab_has_content = true
+                    endif
+                    if block.settings.content contains '<img' or block.settings.content contains '<iframe' or block.settings.page.content contains '<img' or block.settings.page.content contains '<iframe'
+                      assign tab_has_content = true
+                    endif
+                  -%}
+                  {%- if tab_has_content or request.design_mode -%}
                   <div class="product__accordion accordion quick-add-hidden" {{ block.shopify_attributes }}>
                     {%- comment -%}
                       "Open by default" checkbox on the block. Plain <details>, no JS
@@ -293,6 +312,7 @@
                       </div>
                     </details>
                   </div>
+                  {%- endif -%}
                 {%- when 'collapsible_specs' -%}
                   {%- liquid
                     # Collapsible row for metafield specs. Each row is a
