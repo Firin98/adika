@@ -1374,7 +1374,7 @@ a.product__text {
 }
 @media all and (max-width: 749px) {
   .product-media-container .media {
-    padding-top: 110%;
+    padding-top: 133%;
   }
 }
 .product-media-container.constrain-height .media {
