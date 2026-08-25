@@ -275,3 +275,20 @@
       padding-right: 3rem;
     }
 }
+
+/* 'Natural (no crop)' image ratio: the container takes the image's own
+   height and the image is laid out in flow - object-fit: cover never gets a
+   chance to trim the sides (client images carry decorative borders). */
+.multicolumn-card__media--natural {
+  position: relative;
+  height: auto;
+  padding-bottom: 0;
+  overflow: visible;
+}
+
+.media.multicolumn-card__media--natural > img.multicolumn-card__image {
+  position: static;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}

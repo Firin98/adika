@@ -77,12 +77,18 @@
           >
             <div class="multicolumn-card content-container">
               {%- if block.settings.image != blank -%}
-                {% if section.settings.image_ratio == 'adapt' or section.settings.image_ratio == 'circle' %}
+                {% if section.settings.image_ratio == 'adapt' or section.settings.image_ratio == 'circle' or section.settings.image_ratio == 'natural' %}
                   {% assign spaced_image = true %}
                 {% endif %}
                 <div class="multicolumn-card__image-wrapper multicolumn-card__image-wrapper--{{ section.settings.image_width }}-width{% if section.settings.image_width != 'full' or spaced_image %} multicolumn-card-spacing{% endif %}">
+                  {%- comment -%}
+                    'natural' ratio: the image keeps its intrinsic proportions,
+                    nothing is cropped (client images have decorative borders).
+                    No fixed padding-bottom and no absolute positioning - see
+                    .multicolumn-card__media--natural in section-multicolumn.css.
+                  {%- endcomment -%}
                   <div
-                    class="media media--transparent media--{{ section.settings.image_ratio }}"
+                    class="media media--transparent{% if section.settings.image_ratio == 'natural' %} multicolumn-card__media--natural{% else %} media--{{ section.settings.image_ratio }}{% endif %}"
                     {% if section.settings.image_ratio == 'adapt' %}
                       style="padding-bottom: {{ 1 | divided_by: highest_ratio | times: 100 }}%;"
                     {% endif %}
@@ -202,7 +208,10 @@
   "class": "section",
   "tag": "section",
   "disabled_on": {
-    "groups": ["header", "footer"]
+    "groups": [
+      "header",
+      "footer"
+    ]
   },
   "settings": [
     {
@@ -282,6 +291,10 @@
         {
           "value": "circle",
           "label": "t:sections.multicolumn.settings.image_ratio.options__4.label"
+        },
+        {
+          "value": "natural",
+          "label": "Natural (no crop)"
         }
       ],
       "default": "adapt",
