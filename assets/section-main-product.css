@@ -1590,3 +1590,6 @@ product-info .wishlist-hero-custom-button.wishlisthero-floating button {
   color: rgba(var(--color-foreground), 0.55);
   margin-inline-end: 0.3rem;
 }
+#wishlisthero-product-page-button-container {
+  display: none !important;
+}
