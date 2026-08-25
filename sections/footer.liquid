@@ -177,12 +177,46 @@
                     </div>
                
                     {%- when 'email_signup' -%}
-                      <div class="footer-block__email-signup 1111">
+                      {%- liquid
+                        # Already-subscribed indication.
+                        # Authoritative: logged-in customer with marketing consent.
+                        # Heuristic (anonymous): localStorage flag set after a
+                        # successful signup in this browser - handled by the
+                        # inline script below; it reveals the hidden message but
+                        # keeps the form usable (could be a different email).
+                        assign newsletter_subscribed = false
+                        if customer and customer.accepts_marketing
+                          assign newsletter_subscribed = true
+                        endif
+                        assign subscribed_message = block.settings.subscribed_message
+                      -%}
+                      <div class="footer-block__email-signup 1111" data-email-signup="{{ block.id }}">
 
                         {%  if block.settings.subheading != blank %}
                           <p class="footer-block__email-signup-subheading">{{ block.settings.subheading }}</p>
                         {% endif %}
 
+                        {%- if newsletter_subscribed and subscribed_message != blank -%}
+                          <p class="email-signup-form__subscribed">
+                            <span class="svg-wrapper">{{- 'icon-success.svg' | inline_asset_content -}}</span>
+                            {{ subscribed_message }}
+                          </p>
+                        {%- else -%}
+                        {%- if subscribed_message != blank -%}
+                          <p class="email-signup-form__subscribed hidden" id="EmailSignup-known--{{ block.id }}">
+                            <span class="svg-wrapper">{{- 'icon-success.svg' | inline_asset_content -}}</span>
+                            {{ subscribed_message }}
+                          </p>
+                          <script>
+                            (function () {
+                              try {
+                                if (localStorage.getItem('newsletter-subscribed') === '1') {
+                                  document.getElementById('EmailSignup-known--{{ block.id }}').classList.remove('hidden');
+                                }
+                              } catch (e) {}
+                            })();
+                          </script>
+                        {%- endif -%}
                         {% form 'customer', class: 'email-signup-form' %}
                           <input type="hidden" name="contact[tags]" value="newsletter">
 
@@ -286,9 +320,19 @@
                                 </span>
                                 {{- 'newsletter.success' | t }}
                               </h3>
+                              <script>
+                                (function () {
+                                  try {
+                                    localStorage.setItem('newsletter-subscribed', '1');
+                                    var known = document.getElementById('EmailSignup-known--{{ block.id }}');
+                                    if (known) known.classList.add('hidden');
+                                  } catch (e) {}
+                                })();
+                              </script>
                             {%- endif -%}
                           </div>
                         {% endform %}
+                        {%- endif -%}
                       </div>
                   {%- endcase -%}
               </div>
@@ -591,6 +635,13 @@ window.access4u = {
           "id": "checkbox_label",
           "default": "<p>והי עובדה מבוססת שדעתו של הקורא תהיה</p>",
           "label": "Checkbox label"
+        },
+        {
+          "type": "text",
+          "id": "subscribed_message",
+          "default": "כבר רשומה לניוזלטר שלנו",
+          "label": "Already subscribed message",
+          "info": "Shown to logged-in subscribers instead of the form, and to visitors who subscribed earlier in this browser (above the form). Leave empty to disable."
         }
       ]
     }
