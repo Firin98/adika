@@ -1,0 +1,41 @@
+{% comment %}
+  Renders a small pencil button over a cart line item image.
+  Opens the cart edit modal (quick-add-modal) for that line so the
+  customer can switch the variant (size/color) or quantity in place.
+
+  Accepts:
+  - item: {Object} cart line item (required)
+  - modal_id: {String} id of the quick-add-modal to open (required)
+
+  Usage:
+  {% render 'cart-item-edit-button', item: item, modal_id: 'CartEditModal-drawer' %}
+{% endcomment %}
+<modal-opener class="cart-item__edit" data-modal="#{{ modal_id }}">
+  <button
+    type="button"
+    class="cart-item__edit-button"
+    aria-haspopup="dialog"
+    aria-label="עריכת פריט"
+    data-cart-edit-opener
+    data-product-url="{{ item.url }}"
+    data-line-key="{{ item.key | escape }}"
+    data-line-quantity="{{ item.quantity }}"
+    data-variant-id="{{ item.variant_id }}"
+  >
+    <svg
+      class="cart-item__edit-icon"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+    </svg>
+    {%- render 'loading-spinner' -%}
+  </button>
+</modal-opener>

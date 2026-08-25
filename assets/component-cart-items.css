@@ -622,3 +622,57 @@ cart-remove-button .icon-remove {
     padding-left: 0;
   }
 }
+
+/* Cart item edit (pencil) button */
+.cart-item__media {
+  position: relative;
+}
+
+.cart-item__edit {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 2;
+}
+
+.cart-item__edit-button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  padding: 0;
+  border-radius: 50%;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.12);
+  background: rgba(var(--color-background), 0.92);
+  color: rgb(var(--color-foreground));
+  cursor: pointer;
+}
+
+.cart-item__edit-icon {
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.cart-item__edit-button .loading__spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.cart-item__edit-button .loading__spinner .spinner {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.cart-item__edit-button.loading .cart-item__edit-icon {
+  visibility: hidden;
+}
+
+.cart-edit-modal[open] {
+  z-index: 1001;
+}

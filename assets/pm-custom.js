@@ -1974,6 +1974,228 @@ window.initImageSwatchMobileSync = initImageSwatchMobileSync;
   });
 })();
 
+/* --------------------------------------------------------------------------
+   Cart item edit (pencil button on the cart line image).
+   Reuses the quick-add modal to show the product's variant picker, then
+   swaps the cart line: add the newly picked variant, remove the old line.
+   The Shopify AJAX API cannot change a line's variant in place, so the
+   swap is always add + remove. Works in the cart drawer and on /cart.
+   -------------------------------------------------------------------------- */
+(function () {
+  var EDIT_LABEL = "עדכון פריט"; // "Update item"
+  var currentEdit = null;
+  var busy = false;
+
+  function cartRoutes() {
+    var r = window.routes || {};
+    return {
+      add: r.cart_add_url || "/cart/add.js",
+      change: r.cart_change_url || "/cart/change.js",
+    };
+  }
+
+  function jsonConfig(body) {
+    var config =
+      typeof fetchConfig === "function"
+        ? fetchConfig()
+        : { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" } };
+    config.body = JSON.stringify(body);
+    return config;
+  }
+
+  // Capture the line context before modal-opener runs its own click handler.
+  document.addEventListener(
+    "click",
+    function (event) {
+      var opener = event.target.closest && event.target.closest("[data-cart-edit-opener]");
+      if (!opener) return;
+      currentEdit = {
+        lineKey: opener.getAttribute("data-line-key"),
+        variantId: opener.getAttribute("data-variant-id"),
+        quantity: parseInt(opener.getAttribute("data-line-quantity"), 10) || 1,
+      };
+    },
+    true
+  );
+
+  // Drop the context when the modal closes without a completed swap.
+  document.body.addEventListener("modalClosed", function () {
+    if (!busy) currentEdit = null;
+  });
+
+  // Relabel the submit button and preset the line quantity inside the
+  // edit modal. Runs through a MutationObserver because variant changes
+  // re-render the buy buttons and would restore the default label.
+  function adjustModalContent(modal) {
+    if (!currentEdit) return;
+    var submitButton = modal.querySelector(".product-form__submit");
+    var submitSpan = submitButton && submitButton.querySelector(":scope > span");
+    var unavailable =
+      submitButton && (submitButton.hasAttribute("disabled") || submitButton.getAttribute("aria-disabled") === "true");
+    if (submitSpan && !unavailable && submitSpan.textContent.trim() !== EDIT_LABEL && !submitSpan.classList.contains("hidden")) {
+      submitSpan.textContent = EDIT_LABEL;
+    }
+    var qtyInput = modal.querySelector('form[data-type="add-to-cart-form"] input[name="quantity"], .product-form__input--quantity input[name="quantity"], quantity-input input[name="quantity"]');
+    if (qtyInput && !qtyInput.dataset.cartEditPreset) {
+      qtyInput.dataset.cartEditPreset = "1";
+      qtyInput.value = currentEdit.quantity;
+    }
+  }
+
+  function watchModal(modal) {
+    if (modal.dataset.cartEditWatched) return;
+    modal.dataset.cartEditWatched = "1";
+    new MutationObserver(function () {
+      adjustModalContent(modal);
+    }).observe(modal, { childList: true, subtree: true });
+  }
+
+  function initModalWatchers() {
+    document.querySelectorAll("quick-add-modal.cart-edit-modal").forEach(watchModal);
+  }
+  if (document.readyState !== "loading") {
+    initModalWatchers();
+  } else {
+    document.addEventListener("DOMContentLoaded", initModalWatchers);
+  }
+  document.addEventListener("shopify:section:load", initModalWatchers);
+
+  function setSubmitBusy(form, isBusy) {
+    var button = form.querySelector('[type="submit"]');
+    if (!button) return;
+    button.classList.toggle("loading", isBusy);
+    if (isBusy) {
+      button.setAttribute("aria-disabled", "true");
+    } else {
+      button.removeAttribute("aria-disabled");
+    }
+    var spinner = button.querySelector(".loading__spinner") || form.querySelector(".loading__spinner");
+    if (spinner) spinner.classList.toggle("hidden", !isBusy);
+  }
+
+  function showFormError(form, message) {
+    var wrapper = form.querySelector(".product-form__error-message-wrapper");
+    if (!wrapper) {
+      var productForm = form.closest("product-form");
+      if (productForm) wrapper = productForm.querySelector(".product-form__error-message-wrapper");
+    }
+    if (wrapper) {
+      wrapper.hidden = false;
+      var text = wrapper.querySelector(".product-form__error-message");
+      if (text) text.textContent = message;
+    }
+  }
+
+  function refreshCartUI(cartState) {
+    // cart.js / cart-drawer.js components refetch their own sections when
+    // the cartUpdate event arrives from a source other than 'cart-items'.
+    if (typeof publish === "function" && typeof PUB_SUB_EVENTS !== "undefined" && PUB_SUB_EVENTS.cartUpdate) {
+      publish(PUB_SUB_EVENTS.cartUpdate, { source: "cart-item-edit", cartData: cartState });
+    }
+    // The header bubble is not covered by those subscribers.
+    if (cartState && cartState.sections && cartState.sections["cart-icon-bubble"]) {
+      var bubble = document.getElementById("cart-icon-bubble");
+      if (bubble) {
+        var parsed = new DOMParser().parseFromString(cartState.sections["cart-icon-bubble"], "text/html");
+        var inner = parsed.querySelector(".shopify-section");
+        if (inner) bubble.innerHTML = inner.innerHTML;
+      }
+    }
+  }
+
+  function finishEdit(modal, cartState) {
+    busy = false;
+    currentEdit = null;
+    modal.hide(true);
+    refreshCartUI(cartState);
+  }
+
+  // Intercept the add-to-cart submit inside the edit modal (capture phase,
+  // before ProductForm's own submit handler) and run the swap instead.
+  document.addEventListener(
+    "submit",
+    function (event) {
+      if (!currentEdit) return;
+      var modal = event.target.closest && event.target.closest("quick-add-modal.cart-edit-modal");
+      if (!modal) return;
+      var form = event.target;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      if (busy) return;
+
+      var ctx = currentEdit;
+      var formData = new FormData(form);
+      var variantId = formData.get("id");
+      var quantity = parseInt(formData.get("quantity"), 10);
+      if (!quantity || quantity < 1) quantity = ctx.quantity;
+      var sameVariant = String(variantId) === String(ctx.variantId);
+
+      // Nothing changed - just close the modal.
+      if (sameVariant && quantity === ctx.quantity) {
+        currentEdit = null;
+        modal.hide(true);
+        return;
+      }
+
+      busy = true;
+      setSubmitBusy(form, true);
+      var urls = cartRoutes();
+      var changeSections = ["cart-icon-bubble"];
+
+      if (sameVariant) {
+        // Same variant, new quantity - a plain line update.
+        fetch(urls.change, jsonConfig({ id: ctx.lineKey, quantity: quantity, sections: changeSections }))
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (state) {
+            if (state.errors || state.status) throw new Error(state.errors || state.description || state.message);
+            finishEdit(modal, state);
+          })
+          .catch(function (error) {
+            busy = false;
+            showFormError(form, error.message || "שגיאה בעדכון הפריט");
+          })
+          .finally(function () {
+            setSubmitBusy(form, false);
+          });
+        return;
+      }
+
+      // New variant: add it first, then remove the old line. The add can
+      // fail (sold out, stock limit), in which case the old line is kept.
+      fetch(urls.add, jsonConfig({ items: [{ id: parseInt(variantId, 10), quantity: quantity }] }))
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (addState) {
+          if (addState.status) {
+            throw new Error(addState.description || addState.message || "שגיאה בהוספת הפריט");
+          }
+          return fetch(urls.change, jsonConfig({ id: ctx.lineKey, quantity: 0, sections: changeSections })).then(
+            function (response) {
+              return response.json();
+            }
+          );
+        })
+        .then(function (state) {
+          if (state.errors || state.status) throw new Error(state.errors || state.description || state.message);
+          finishEdit(modal, state);
+        })
+        .catch(function (error) {
+          busy = false;
+          showFormError(form, error.message || "שגיאה בעדכון הפריט");
+          // The cart may already hold the new line - refresh what we can.
+          refreshCartUI(null);
+        })
+        .finally(function () {
+          setSubmitBusy(form, false);
+        });
+    },
+    true
+  );
+})();
+
 
 
 

@@ -4,6 +4,7 @@
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
 {{ 'component-discounts.css' | asset_url | stylesheet_tag }}
 {{ 'quantity-popover.css' | asset_url | stylesheet_tag }}
+{{ 'quick-add.css' | asset_url | stylesheet_tag }}
 
 {%- style -%}
   .section-{{ section.id }}-padding {
@@ -24,6 +25,7 @@
 {%- endunless -%}
 
 <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
 
 <cart-items
   class="gradient color-{{ section.settings.color_scheme }} isolate{% if cart == empty %} is-empty{% else %} section-{{ section.id }}-padding{% endif %}"
@@ -104,6 +106,12 @@
                           >
                         </div>
                       {% endif %}
+                      {%- if item.product.has_only_default_variant == false and item.parent_relationship.parent == null -%}
+                        {%- render 'cart-item-edit-button',
+                          item: item,
+                          modal_id: 'CartEditModal-page'
+                        -%}
+                      {%- endif -%}
                     </td>
 
                     <td class="cart-item__details">
@@ -467,6 +475,33 @@
     </form>
   </div>
 </cart-items>
+
+{% comment %}
+  Edit-item modal for the cart page. Kept outside <cart-items> so it
+  survives the innerHTML refresh that runs after cart updates.
+{% endcomment %}
+<quick-add-modal id="CartEditModal-page" class="quick-add-modal cart-edit-modal">
+  <div
+    role="dialog"
+    aria-label="עריכת פריט"
+    aria-modal="true"
+    class="quick-add-modal__content global-settings-popup"
+    tabindex="-1"
+  >
+    <button
+      id="CartEditModalClose-page"
+      type="button"
+      class="quick-add-modal__toggle"
+      aria-label="{{ 'accessibility.close' | t }}"
+    >
+      {{- 'icon-close.svg' | inline_asset_content -}}
+    </button>
+    <div
+      id="QuickAddInfo-cart-edit-page"
+      class="quick-add-modal__content-info"
+    ></div>
+  </div>
+</quick-add-modal>
 
 {% schema %}
 {

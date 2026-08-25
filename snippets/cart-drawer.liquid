@@ -13,6 +13,7 @@
 
 <script src="{{ 'cart.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'quantity-popover.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'quick-add.js' | asset_url }}" defer="defer"></script>
 
 <style>
   .drawer {
@@ -188,6 +189,12 @@
                               height="{{ 150 | divided_by: item.image.aspect_ratio | ceil }}"
                             >
                           {% endif %}
+                          {%- if item.product.has_only_default_variant == false and item.parent_relationship.parent == null -%}
+                            {%- render 'cart-item-edit-button',
+                              item: item,
+                              modal_id: 'CartEditModal-drawer'
+                            -%}
+                          {%- endif -%}
                         </td>
 
                         <td class="cart-item__details" role="cell" headers="CartDrawer-ColumnProduct">
@@ -646,4 +653,30 @@
       </div>
     </div>
   </div>
+  {% comment %}
+    Edit-item modal. Kept outside .drawer__inner: the drawer panel keeps a
+    CSS transform while open, which would trap the fixed-position modal.
+  {% endcomment %}
+  <quick-add-modal id="CartEditModal-drawer" class="quick-add-modal cart-edit-modal">
+    <div
+      role="dialog"
+      aria-label="עריכת פריט"
+      aria-modal="true"
+      class="quick-add-modal__content global-settings-popup"
+      tabindex="-1"
+    >
+      <button
+        id="CartEditModalClose-drawer"
+        type="button"
+        class="quick-add-modal__toggle"
+        aria-label="{{ 'accessibility.close' | t }}"
+      >
+        {{- 'icon-close.svg' | inline_asset_content -}}
+      </button>
+      <div
+        id="QuickAddInfo-cart-edit-drawer"
+        class="quick-add-modal__content-info"
+      ></div>
+    </div>
+  </quick-add-modal>
 </cart-drawer>
