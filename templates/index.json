@@ -187,7 +187,7 @@
         "title": "",
         "heading_size": "h1",
         "image_width": "full",
-        "image_ratio": "portrait",
+        "image_ratio": "natural",
         "button_label": "",
         "button_link": "",
         "columns_desktop": 4,
