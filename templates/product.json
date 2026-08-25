@@ -106,8 +106,8 @@
             "value_2": "{{ product.metafields.custom.material_composition.value }}",
             "label_3": "הוראות כביסה:",
             "value_3": "{{ product.metafields.custom.care_instructions.value }}",
-            "label_4": "",
-            "value_4": "",
+            "label_4": "פרטי יבואן:",
+            "value_4": "קבוצת גולף א.ק. בע”מ, ח”פ 510289564",
             "label_5": "",
             "value_5": "",
             "footer_text": ""
