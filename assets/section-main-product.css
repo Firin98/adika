@@ -1566,3 +1566,7 @@ a.product__text {
 #MainContent product-info .card__badge:not(.card__badges) .badge {
   border-radius: 0;
 }
+product-info .wishlist-hero-custom-button.wishlisthero-floating button {
+  max-width: 40px !important;
+  min-width: 40px !important;
+}
