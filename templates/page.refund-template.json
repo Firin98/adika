@@ -18,9 +18,36 @@
         "padding_top": 28,
         "padding_bottom": 28
       }
+    },
+    "refund_form_GKWqDB": {
+      "type": "refund-form",
+      "name": "Refund form custom",
+      "settings": {
+        "heading": "",
+        "email_subject": "בקשת ביטול עסקה",
+        "success_message": "הטופס נשלח בהצלחה. נחזור אליך בהקדם.",
+        "label_email": "כתובת מייל לתשובה בנוגע לביטול העסקה",
+        "label_first_name": "שם פרטי",
+        "label_last_name": "שם משפחה",
+        "label_phone": "טלפון",
+        "label_order_number": "מספר הזמנה",
+        "label_reason": "סיבת ביטול",
+        "label_message": "הודעה",
+        "label_submit": "שליחה",
+        "show_phone": true,
+        "form_width": 600,
+        "input_background": "#f0f0f0",
+        "input_border_radius": 4,
+        "textarea_height": 100,
+        "button_background": "#222222",
+        "button_text_color": "#ffffff",
+        "padding_top": 40,
+        "padding_bottom": 40
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "refund_form_GKWqDB"
   ]
 }
