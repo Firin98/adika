@@ -4089,3 +4089,35 @@ details-disclosure > details {
     opacity: 0.35;
   }
 }
+
+
+/* ==========================================================================
+   Wishlist Hero button, top-right corner of card images and the product
+   gallery. The app hydrates .wishlist-hero-custom-button rendered by
+   snippets/wishlisthero-collection-product.liquid; its own "floating" CSS
+   positions the heart absolutely, so it is pinned inside our wrapper here.
+   ========================================================================== */
+.card__wishlist,
+.product__wishlist {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  left: auto;
+  z-index: 3;
+}
+
+.card__wishlist .wishlist-hero-custom-button,
+.product__wishlist .wishlist-hero-custom-button {
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  left: auto !important;
+  margin: 0 !important;
+}
+
+/* A top-right corner badge would sit under the heart - nudge badges down.
+   Badges render before the wishlist wrapper in the DOM, so :has() looks ahead. */
+.card__badges--top-right:has(~ .card__wishlist),
+.card__badges--top-right:has(~ .product__wishlist) {
+  top: 44px;
+}

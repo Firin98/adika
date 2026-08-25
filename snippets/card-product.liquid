@@ -203,6 +203,21 @@
             section_id: section_id,
             badge_id: 'NoMediaStandardBadge'
           %}
+          {%- comment -%}
+            Wishlist Hero heart, top-right corner of the card image.
+            The app's embed script hydrates the div rendered by
+            wishlisthero-collection-product.liquid. Sections may opt out
+            by passing show_wishlist: false (featured-collection does).
+          {%- endcomment -%}
+          {%- unless show_wishlist == false -%}
+            <div class="card__wishlist">
+              {% render 'wishlisthero-collection-product',
+                product: card_product,
+                buttonMode: 'icon_only',
+                buttonView: 'Collection'
+              %}
+            </div>
+          {%- endunless -%}
 
           {%- liquid
             # позиция опции цвета нужна, чтобы по выбранному свотчу и нажатому

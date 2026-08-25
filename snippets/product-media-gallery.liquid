@@ -108,6 +108,14 @@
   <div id="GalleryStatus-{{ section.id }}" class="visually-hidden" role="status"></div>
   <slider-component id="GalleryViewer-{{ section.id }}" class="slider-mobile-gutter">
     {% render 'badges', card_product: product, section_id: section.id %}
+    {%- comment -%}Wishlist Hero heart, top-right corner of the gallery{%- endcomment -%}
+    <div class="product__wishlist">
+      {% render 'wishlisthero-collection-product',
+        product: product,
+        buttonMode: 'icon_only',
+        buttonView: 'Product'
+      %}
+    </div>
     <a class="skip-to-content-link button visually-hidden quick-add-hidden" href="#ProductInfo-{{ section.id }}">
       {{ 'accessibility.skip_to_product_info' | t }}
     </a>
