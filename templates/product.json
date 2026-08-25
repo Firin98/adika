@@ -50,6 +50,15 @@
             "show_gift_card_recipient": false
           }
         },
+        "variant_meta_UmykwD": {
+          "type": "variant_meta",
+          "settings": {
+            "show_handle": true,
+            "handle_label": "",
+            "show_color_code": true,
+            "color_label": ""
+          }
+        },
         "description": {
           "type": "description",
           "disabled": true,
@@ -131,6 +140,7 @@
         "variant_picker",
         "quantity_selector",
         "buy_buttons",
+        "variant_meta_UmykwD",
         "description",
         "collapsible_tab_r838AT",
         "collapsible_tab_JqiqRE",
