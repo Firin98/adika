@@ -1594,3 +1594,17 @@ product-info .wishlist-hero-custom-button.wishlisthero-floating button {
 #wishlisthero-product-page-button-container {
   display: none !important;
 }
+
+/* Collapsible specifications block: label + metafield value rows */
+.product__spec-row {
+  margin: 0 0 0.6rem;
+}
+
+.product__spec-label {
+  font-weight: 600;
+  margin-inline-end: 0.4rem;
+}
+
+.product__spec-footer {
+  margin-top: 1rem;
+}
