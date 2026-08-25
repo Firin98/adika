@@ -4161,3 +4161,42 @@ details-disclosure > details {
     opacity: 0;
   }
 }
+
+
+/* 
+searchanize styles */
+
+.snize-ac-results .snize-button {
+  border-radius: 6px !important;
+}
+.snize-ac-results-content {
+  direction: rtl;
+}
+.snize-ac-results-multicolumn-list .snize-title {
+  text-align: right;
+}
+.snize-ac-results-arrow {
+  transform: rotate(180deg);
+  margin-right: 1rem !important;
+}
+.snize-ac-results.snize-ac-results-mobile .snize-mobile-top-panel button.snize-close-button-arrow {
+  transform: rotate(180deg);
+  margin-right: 1rem !important;
+}
+.snize-ac-results .snize-item-image {
+  width: 100%;
+  height: 100%;
+  max-height: initial !important;
+  object-fit: cover !important;
+}
+.snize-ac-results .snize-thumbnail {
+  aspect-ratio: 3 / 4;
+  height: initial !important;
+}
+.snize-ac-results.snize-ac-results-mobile .snize-thumbnail {
+  margin-right: 0 !important;
+  margin-left: 16px;
+}
+.snize-ac-results-multicolumn-list .snize-description {
+	text-align: right;
+}
