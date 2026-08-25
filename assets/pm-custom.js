@@ -1474,8 +1474,43 @@ function initGalleryBadgeAnchor(root) {
   });
 }
 
+/* --------------------------------------------------------------------------
+   Mobile gallery: only the slide that is actually in view shows its badges.
+   Each slide carries its own badge copy; an IntersectionObserver marks the
+   slides that are mostly outside the slider viewport with .badge-dimmed and
+   CSS fades their badges out. Default (no JS / old browser) = all visible.
+   -------------------------------------------------------------------------- */
+function initGalleryActiveBadges(root) {
+  var scope = root || document;
+  scope.querySelectorAll("media-gallery slider-component .product__media-list").forEach(function (list) {
+    if (list.dataset.badgeSpotlightReady === "true") return;
+    list.dataset.badgeSpotlightReady = "true";
+    if (typeof IntersectionObserver !== "function") return;
+
+    var io = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          entry.target.classList.toggle("badge-dimmed", entry.intersectionRatio < 0.6);
+        });
+      },
+      { root: list, threshold: [0.6] }
+    );
+
+    var observeAll = function () {
+      list.querySelectorAll(".product__media-item").forEach(function (item) {
+        io.observe(item);
+      });
+    };
+    observeAll();
+
+    // variant switches replace the <li> elements - re-observe the new ones
+    new MutationObserver(observeAll).observe(list, { childList: true });
+  });
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   initGalleryBadgeAnchor(document);
+  initGalleryActiveBadges(document);
   initCollectionGridEnhancements(document);
   initFeaturedCollectionSwipers(document);
   initFeaturedCollectionSenseaSwipers(document);

@@ -4147,3 +4147,17 @@ details-disclosure > details {
 .product__media-item .card__badges--bottom-right {
   bottom: 10px;
 }
+
+
+/* Badges only on the slide that is in view (mobile slider). The class is
+   toggled by initGalleryActiveBadges in pm-custom.js; without JS nothing is
+   dimmed and every slide keeps its badges. */
+@media screen and (max-width: 749px) {
+  .product__media-item .product__media-item-badges {
+    transition: opacity 0.2s ease;
+  }
+
+  .product__media-item.badge-dimmed .product__media-item-badges {
+    opacity: 0;
+  }
+}
