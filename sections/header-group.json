@@ -34,7 +34,7 @@
         "announcement_9znq6Q"
       ],
       "settings": {
-        "auto_rotate": false,
+        "auto_rotate": true,
         "change_slides_speed": 3,
         "color_scheme": "scheme-4",
         "show_line_separator": false,
