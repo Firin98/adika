@@ -721,7 +721,8 @@
         "reduced_with_quantity_label": "רק {{quantity_available}} נשארו",
         "remove_from_cart_button_label": "מחק מהעגלה",
         "continue_shopping_button_label": "המשך",
-        "go_back_to_cart_button_label": "חזור לעגלה"
+        "go_back_to_cart_button_label": "חזור לעגלה",
+        "sold_out_label": "OUT OF STOCK"
       },
       "failed_payment": {
         "return_to_cart_button_label": "חזרה לסל הקניות"
@@ -893,6 +894,11 @@
           "errors": {
             "permission_not_allowed": "נא לאשר שירותי מיקום"
           }
+        }
+      },
+      "throttle": {
+        "merchandise": {
+          "sold_out": "OUT OF STOCK"
         }
       }
     },
