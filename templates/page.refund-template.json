@@ -15,8 +15,8 @@
         "{direction: rtl;}"
       ],
       "settings": {
-        "padding_top": 28,
-        "padding_bottom": 28
+        "padding_top": 16,
+        "padding_bottom": 0
       }
     },
     "refund_form_GKWqDB": {
