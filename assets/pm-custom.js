@@ -41,8 +41,43 @@ function initProductCardSliders(root) {
       // ignore
     }
 
+    initCardBreakpointModes(sliderElement, swiperInstance);
     initCardHoverScrub(sliderElement, swiperInstance);
   });
+}
+
+/* --------------------------------------------------------------------------
+   Per-breakpoint card image mode (section selects "Image display mode -
+   desktop / mobile"). The slider markup is rendered when either breakpoint
+   wants a slider; here the swiper is switched off on the breakpoint that
+   chose the static mode. CSS in component-card.css pins the first slide and
+   handles the hover second-image swap for slider-off-desktop.
+   -------------------------------------------------------------------------- */
+function initCardBreakpointModes(sliderElement, swiper) {
+  var offDesktop = sliderElement.classList.contains("slider-off-desktop");
+  var offMobile = sliderElement.classList.contains("slider-off-mobile");
+  if (!offDesktop && !offMobile) return;
+
+  var mq = window.matchMedia("(min-width: 990px)");
+  var apply = function () {
+    var shouldDisable = mq.matches ? offDesktop : offMobile;
+    try {
+      if (shouldDisable) {
+        swiper.disable();
+        swiper.setTranslate(0);
+      } else {
+        swiper.enable();
+      }
+    } catch (e) {
+      /* ignore */
+    }
+  };
+  apply();
+  if (typeof mq.addEventListener === "function") {
+    mq.addEventListener("change", apply);
+  } else if (typeof mq.addListener === "function") {
+    mq.addListener(apply);
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -71,6 +106,8 @@ function cardHoverScrubSupported() {
 
 function initCardHoverScrub(sliderElement, swiper) {
   if (!sliderElement || !swiper) return;
+  // static desktop mode: first image + hover second image, no scrubbing
+  if (sliderElement.classList.contains("slider-off-desktop")) return;
   if (sliderElement.dataset.hoverScrubReady === "true") return;
   if (!cardHoverScrubSupported()) return;
 

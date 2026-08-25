@@ -149,6 +149,7 @@
                     card_product: product,
                     media_aspect_ratio: section.settings.image_ratio,
                     image_display_mode: section.settings.image_display_mode,
+                  image_display_mode_mobile: section.settings.image_display_mode_mobile,
                     image_shape: section.settings.image_shape,
                     show_secondary_image: section.settings.show_secondary_image,
                     show_vendor: section.settings.show_vendor,
@@ -474,7 +475,7 @@
     {
       "type": "select",
       "id": "image_display_mode",
-      "label": "Image display mode",
+      "label": "Image display mode — desktop",
       "options": [
         {
           "value": "default",
@@ -486,6 +487,22 @@
         }
       ],
       "default": "default"
+    },
+    {
+      "type": "select",
+      "id": "image_display_mode_mobile",
+      "label": "Image display mode — mobile",
+      "options": [
+        {
+          "value": "default",
+          "label": "Static image"
+        },
+        {
+          "value": "slider",
+          "label": "Slider"
+        }
+      ],
+      "default": "slider"
     },
     {
       "type": "select",

@@ -2585,3 +2585,58 @@
   visibility: visible;
   transform: translateY(0);
 }
+
+
+/* ==========================================================================
+   Static card image modes (section selects "Image display mode - desktop /
+   mobile"). The swiper is disabled by initCardBreakpointModes in pm-custom.js;
+   these rules pin the first slide and hide slider chrome on that breakpoint.
+   ========================================================================== */
+@media screen and (min-width: 990px) {
+  .slider--card.slider-off-desktop .swiper-wrapper {
+    transform: none !important;
+  }
+
+  .slider--card.slider-off-desktop .swiper-pagination,
+  .slider--card.slider-off-desktop .swiper-button-prev,
+  .slider--card.slider-off-desktop .swiper-button-next {
+    display: none !important;
+  }
+
+  /* Hover shows the second image: slide 2 overlays slide 1 and fades in.
+     Slides 3+ are hidden entirely on this breakpoint. */
+  .slider--card.slider-off-desktop .swiper-slide:nth-child(2) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  .slider--card.slider-off-desktop:hover .swiper-slide:nth-child(2) {
+    opacity: 1;
+  }
+
+  .slider--card.slider-off-desktop .swiper-slide:nth-child(n + 3) {
+    visibility: hidden;
+  }
+}
+
+@media screen and (max-width: 989px) {
+  .slider--card.slider-off-mobile .swiper-wrapper {
+    transform: none !important;
+  }
+
+  .slider--card.slider-off-mobile .swiper-pagination,
+  .slider--card.slider-off-mobile .swiper-button-prev,
+  .slider--card.slider-off-mobile .swiper-button-next {
+    display: none !important;
+  }
+
+  .slider--card.slider-off-mobile .swiper-slide:nth-child(n + 2) {
+    visibility: hidden;
+  }
+}

@@ -42,9 +42,21 @@
     if ratio == 0 or ratio == null
       assign ratio = 1
     endif
+    # Card image mode, per breakpoint. Sections pass:
+    #   image_display_mode        - desktop ('default' = static + hover second image, 'slider')
+    #   image_display_mode_mobile - mobile  (same values; falls back to the desktop value)
+    # Slider markup is rendered when EITHER breakpoint wants a slider; the
+    # breakpoint that opted out gets the swiper disabled by pm-custom.js
+    # (matchMedia -> swiper.disable()) plus CSS that pins the first slide and
+    # shows the second one on hover (slider-off-desktop only).
+    assign card_image_mode_desktop = image_display_mode | default: 'default'
+    assign card_image_mode_mobile = image_display_mode_mobile | default: card_image_mode_desktop
+
     assign use_media_slider = false
-    if image_display_mode == 'slider' and card_product.media.size > 1
-      assign use_media_slider = true
+    if card_product.media.size > 1
+      if card_image_mode_desktop == 'slider' or card_image_mode_mobile == 'slider'
+        assign use_media_slider = true
+      endif
     endif
   -%}
   <div class="card-wrapper product-card-wrapper underline-links-hover">
@@ -69,7 +81,7 @@
           <div class="card__media{% if image_shape and image_shape != 'default' %} shape--{{ image_shape }} color-{{ settings.card_color_scheme }} gradient{% endif %}">
             {%- if use_media_slider -%}
               <div
-                class="slider--card swiper"
+                class="slider--card swiper{% if card_image_mode_desktop != 'slider' %} slider-off-desktop{% endif %}{% if card_image_mode_mobile != 'slider' %} slider-off-mobile{% endif %}"
                 {%- comment -%}
                   dir задан явно, а не унаследован. На странице коллекции RTL приходил
                   из template-collection.css (.product-grid-container .grid.product-grid),
