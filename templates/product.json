@@ -249,6 +249,7 @@
         "image_ratio": "portrait",
         "image_display_mode": "default",
         "image_display_mode_mobile": "slider",
+        "swatch_gallery_reload": true,
         "image_shape": "default",
         "show_secondary_image": false,
         "show_wishlist": true,
