@@ -108,6 +108,7 @@
         },
         "wishlist_hero_custom_product_button_RgVGCg": {
           "type": "shopify://apps/wishlist-hero/blocks/custom-product-button/a9a5079b-59e8-47cb-b659-ecf1c60b9b72",
+          "disabled": true,
           "settings": {
             "displayButtonMode": "~",
             "contentAlignment": "center",
@@ -206,8 +207,10 @@
         "color_scheme": "scheme-1",
         "image_ratio": "portrait",
         "image_display_mode": "slider",
+        "image_display_mode_mobile": "slider",
         "image_shape": "default",
         "show_secondary_image": false,
+        "show_wishlist": true,
         "show_vendor": false,
         "show_rating": false,
         "quick_add": "standard",
