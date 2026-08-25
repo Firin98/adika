@@ -216,7 +216,7 @@
         "view_all_style": "solid",
         "color_scheme": "scheme-1",
         "image_ratio": "portrait",
-        "image_display_mode": "slider",
+        "image_display_mode": "default",
         "image_display_mode_mobile": "slider",
         "image_shape": "default",
         "show_secondary_image": false,
