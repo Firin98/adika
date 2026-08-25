@@ -52,6 +52,7 @@
         },
         "description": {
           "type": "description",
+          "disabled": true,
           "settings": {}
         },
         "collapsible_tab_r838AT": {
