@@ -114,6 +114,16 @@
             "footer_text": ""
           }
         },
+        "collapsible_tab_BeCEUQ": {
+          "type": "collapsible_tab",
+          "settings": {
+            "heading": "מידת דוגמנית",
+            "icon": "none",
+            "content": "<p>{{ product.metafields.custom.model_size.value }}</p>",
+            "page": "",
+            "open_by_default": false
+          }
+        },
         "complementary_L9NYyT": {
           "type": "complementary",
           "settings": {
@@ -165,6 +175,7 @@
         "collapsible_tab_JqiqRE",
         "collapsible_tab_KVcmDM",
         "collapsible_specs_n3Egw9",
+        "collapsible_tab_BeCEUQ",
         "complementary_L9NYyT",
         "share",
         "wishlist_hero_custom_product_button_RgVGCg"
