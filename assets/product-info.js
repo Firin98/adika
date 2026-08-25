@@ -322,7 +322,9 @@ if (!customElements.get('product-info')) {
       }
 
       updateMedia(html, variantFeaturedMediaId) {
-        if (!variantFeaturedMediaId) return;
+        // The early return used to skip the whole sync when the variant has no
+        // featured image. With per-variant custom galleries the media list can
+        // change even then, so only setActiveMedia is conditional now.
 
         const mediaGallerySource = this.querySelector('media-gallery ul');
         const mediaGalleryDestination = html.querySelector(`media-gallery ul`);
@@ -381,10 +383,12 @@ if (!customElements.get('product-info')) {
         }
 
         // set featured media as active in the media gallery
-        this.querySelector(`media-gallery`)?.setActiveMedia?.(
-          `${this.dataset.section}-${variantFeaturedMediaId}`,
-          true
-        );
+        if (variantFeaturedMediaId) {
+          this.querySelector(`media-gallery`)?.setActiveMedia?.(
+            `${this.dataset.section}-${variantFeaturedMediaId}`,
+            true
+          );
+        }
 
         // update media modal
         const modalContent = this.productModal?.querySelector(`.product-media-modal__content`);

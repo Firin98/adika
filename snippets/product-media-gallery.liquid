@@ -12,7 +12,56 @@
 {% endcomment %}
 
 {%- liquid
-  if section.settings.hide_variants and variant_images.size == product.media.size
+  # ---- Per-variant custom gallery (variant metafield custom.gallery) -------
+  # Selection rule: take the color of the selected variant, walk every variant
+  # sharing that color value, and use the FIRST non-empty gallery found - so a
+  # red product with 10 sizes needs the gallery filled on only one of them.
+  # No color option on the product -> first non-empty gallery on any variant.
+  # Nothing found -> the standard product.media gallery below is used as-is.
+  # NOTE: the same lookup is duplicated in product-media-modal.liquid (render
+  # cannot share variables between snippets) - keep both in sync.
+  assign custom_gallery = blank
+  assign gallery_source_variant = blank
+  assign color_option_position = 0
+  for option in product.options_with_values
+    assign option_name_downcase = option.name | downcase
+    if option_name_downcase contains 'color' or option_name_downcase contains 'colour' or option_name_downcase contains 'צבע'
+      assign color_option_position = option.position
+      break
+    endif
+  endfor
+
+  assign current_variant = product.selected_or_first_available_variant
+  for gallery_variant in product.variants
+    if color_option_position == 1
+      if gallery_variant.option1 != current_variant.option1
+        continue
+      endif
+    elsif color_option_position == 2
+      if gallery_variant.option2 != current_variant.option2
+        continue
+      endif
+    elsif color_option_position == 3
+      if gallery_variant.option3 != current_variant.option3
+        continue
+      endif
+    endif
+    assign gallery_candidate = gallery_variant.metafields.custom.gallery.value
+    if gallery_candidate != blank and gallery_candidate.size > 0
+      assign custom_gallery = gallery_candidate
+      assign gallery_source_variant = gallery_variant
+      break
+    endif
+  endfor
+
+  # foolproofing: the variant featured image may also be uploaded into the
+  # gallery - compare by file basename (without size params) and skip the dupe
+  assign featured_basename = ''
+  if current_variant.featured_media != null
+    assign featured_basename = current_variant.featured_media.preview_image.src | split: '/' | last | split: '?' | first | downcase
+  endif
+
+  if custom_gallery == blank and section.settings.hide_variants and variant_images.size == product.media.size
     assign single_media_visible = true
   endif
 
@@ -21,7 +70,12 @@
   endif
 
   assign media_count = product.media.size
-  if section.settings.hide_variants and media_count > 1 and variant_images.size > 0
+  if custom_gallery != blank
+    assign media_count = custom_gallery.size
+    if current_variant.featured_media != null
+      assign media_count = media_count | plus: 1
+    endif
+  elsif section.settings.hide_variants and media_count > 1 and variant_images.size > 0
     assign media_count = media_count | minus: variant_images.size | plus: 1
   endif
 
@@ -86,6 +140,49 @@
           %}
         </li>
       {%- endif -%}
+      {%- if custom_gallery != blank -%}
+        {%- for gallery_file in custom_gallery -%}
+          {%- liquid
+            assign file_basename = gallery_file.preview_image.src | default: gallery_file.src | split: '/' | last | split: '?' | first | downcase
+            if featured_basename != '' and file_basename == featured_basename
+              continue
+            endif
+            assign media_position = media_position | default: 0 | plus: 1
+            if limit
+              if media_position > limit
+                break
+              endif
+            endif
+            assign file_key = 'file-' | append: gallery_file.id
+            if gallery_file.id == blank
+              assign file_key = 'file-' | append: file_basename
+            endif
+            assign lazy_load_file = true
+            if media_position == 1
+              assign lazy_load_file = false
+            endif
+          -%}
+          <li
+            id="Slide-{{ section.id }}-{{ file_key }}"
+            class="product__media-item grid__item slider__slide{% if single_media_visible %} product__media-item--single{% endif %}{% if current_variant.featured_media == nil and forloop.index == 1 %} is-active{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}"
+            data-media-id="{{ section.id }}-{{ file_key }}"
+          >
+            {% render 'product-thumbnail-file',
+              file: gallery_file,
+              file_key: file_key,
+              media_count: media_count,
+              position: media_position,
+              desktop_layout: section.settings.gallery_layout,
+              mobile_layout: section.settings.mobile_thumbnails,
+              modal_id: section.id,
+              media_width: media_width,
+              media_fit: section.settings.media_fit,
+              constrain_to_viewport: section.settings.constrain_to_viewport,
+              lazy_load: lazy_load_file
+            %}
+          </li>
+        {%- endfor -%}
+      {%- else -%}
       {%- for media in product.media -%}
         {% if media_position >= limit
           or media_position >= 1
@@ -125,6 +222,7 @@
           </li>
         {%- endunless -%}
       {%- endfor -%}
+      {%- endif -%}
     </ul>
     <div class="hidden slider-buttons quick-add-hidden{% if hide_mobile_slider %} small-hide{% endif %}">
       <button

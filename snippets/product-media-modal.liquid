@@ -33,12 +33,72 @@
       tabindex="0"
     >
       {%- liquid
-        if product.selected_or_first_available_variant.featured_media != null
-          assign media = product.selected_or_first_available_variant.featured_media
+        # Same custom-gallery lookup as in product-media-gallery.liquid - keep
+        # both in sync (render cannot share variables between snippets).
+        assign custom_gallery = blank
+        assign color_option_position = 0
+        for option in product.options_with_values
+          assign option_name_downcase = option.name | downcase
+          if option_name_downcase contains 'color' or option_name_downcase contains 'colour' or option_name_downcase contains 'צבע'
+            assign color_option_position = option.position
+            break
+          endif
+        endfor
+
+        assign current_variant = product.selected_or_first_available_variant
+        for gallery_variant in product.variants
+          if color_option_position == 1
+            if gallery_variant.option1 != current_variant.option1
+              continue
+            endif
+          elsif color_option_position == 2
+            if gallery_variant.option2 != current_variant.option2
+              continue
+            endif
+          elsif color_option_position == 3
+            if gallery_variant.option3 != current_variant.option3
+              continue
+            endif
+          endif
+          assign gallery_candidate = gallery_variant.metafields.custom.gallery.value
+          if gallery_candidate != blank and gallery_candidate.size > 0
+            assign custom_gallery = gallery_candidate
+            break
+          endif
+        endfor
+
+        assign featured_basename = ''
+        if current_variant.featured_media != null
+          assign featured_basename = current_variant.featured_media.preview_image.src | split: '/' | last | split: '?' | first | downcase
+        endif
+
+        if current_variant.featured_media != null
+          assign media = current_variant.featured_media
           render 'product-media', media: media, loop: section.settings.enable_video_looping, variant_image: section.settings.hide_variants
         endif
       -%}
 
+      {%- if custom_gallery != blank -%}
+        {%- for gallery_file in custom_gallery -%}
+          {%- liquid
+            assign file_basename = gallery_file.preview_image.src | default: gallery_file.src | split: '/' | last | split: '?' | first | downcase
+            if featured_basename != '' and file_basename == featured_basename
+              continue
+            endif
+            assign file_key = 'file-' | append: gallery_file.id | default: file_basename
+          -%}
+          <img
+            class="global-media-settings global-media-settings--no-shadow"
+            src="{{ gallery_file | image_url: width: 1445 }}"
+            srcset="{{ gallery_file | image_url: width: 1100 }} 1100w, {{ gallery_file | image_url: width: 1445 }} 1445w, {{ gallery_file | image_url: width: 2048 }} 2048w"
+            sizes="(min-width: 750px) calc(100vw - 22rem), 1100px"
+            alt=""
+            loading="lazy"
+            width="1100"
+            data-media-id="{{ file_key }}"
+          >
+        {%- endfor -%}
+      {%- else -%}
       {%- for media in product.media -%}
         {%- liquid
           if section.settings.hide_variants and variant_images contains media.src or variant_images contains media.id
@@ -52,6 +112,7 @@
           endunless
         -%}
       {%- endfor -%}
+      {%- endif -%}
     </div>
   </div>
 </product-modal>
