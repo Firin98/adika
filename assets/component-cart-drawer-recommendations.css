@@ -82,6 +82,8 @@
   font-size: 1.2rem;
   padding: 0.6rem 1rem;
   min-height: unset;
+  max-width: 120px;
+  min-width: 120px;
 }
 
 .cdr-card-wrapper .quick-add {

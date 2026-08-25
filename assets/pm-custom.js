@@ -129,7 +129,12 @@ function initCardHoverScrub(sliderElement, swiper) {
     // ignore
   }
 
-  var zones = Math.min(slideCount, CARD_HOVER_SCRUB_MAX_ZONES);
+  // The slide count can change at runtime (color swatch gallery swap), so
+  // the zone count is recomputed per frame instead of captured at init.
+  function getZones() {
+    var count = swiper.slides ? swiper.slides.length : slideCount;
+    return Math.max(1, Math.min(count, CARD_HOVER_SCRUB_MAX_ZONES));
+  }
   var currentZone = -1;
   var restIndex = swiper.activeIndex || 0;
   var pendingX = null;
@@ -154,6 +159,7 @@ function initCardHoverScrub(sliderElement, swiper) {
     var rect = sliderElement.getBoundingClientRect();
     if (!rect.width) return;
 
+    var zones = getZones();
     var fromRight = rect.right - clientX;
     var zone = Math.floor((fromRight / rect.width) * zones);
     if (zone < 0) zone = 0;
@@ -1125,6 +1131,182 @@ document.addEventListener("product-info:loaded", function (event) {
     });
   }, 0);
 });
+
+/* --------------------------------------------------------------------------
+   Color swatch -> per-variant gallery swap inside product cards.
+
+   Cards rendered by a section with "Swap images on color swatch" enabled
+   carry data-card-galleries: { "<color value>": [{u,w,h,a}, ...] }, built in
+   card-product.liquid from the variant featured image plus the custom.gallery
+   metafield. Only colors that actually have a gallery are in that map, so:
+     - color with a gallery      -> images are replaced (slider or static)
+     - color without a gallery   -> the original card markup is restored and
+                                    the existing behaviour takes over
+                                    (syncCardSliderWithSwatch below)
+   Both image display modes keep working: in slider mode the swiper slides are
+   rebuilt from one cloned slide, in static mode only the <img> attributes of
+   the first (and hover) image are rewritten, so the CSS hover swap is intact.
+   -------------------------------------------------------------------------- */
+var CARD_GALLERY_WIDTHS = [165, 360, 533, 720, 940, 1066];
+
+function cardGalleryData(wrapper) {
+  if (wrapper._cardGalleries !== undefined) return wrapper._cardGalleries;
+  var raw = wrapper.getAttribute("data-card-galleries");
+  var parsed = null;
+  if (raw) {
+    try {
+      parsed = JSON.parse(raw);
+    } catch (e) {
+      parsed = null;
+    }
+  }
+  wrapper._cardGalleries = parsed;
+  return parsed;
+}
+
+function cardGalleryUrl(base, width) {
+  return base + (base.indexOf("?") === -1 ? "?" : "&") + "width=" + width;
+}
+
+function applyCardGalleryImage(img, image) {
+  if (!img || !image || !image.u) return;
+  var width = parseInt(image.w, 10) || 0;
+  var parts = [];
+  CARD_GALLERY_WIDTHS.forEach(function (w) {
+    if (!width || width >= w) parts.push(cardGalleryUrl(image.u, w) + " " + w + "w");
+  });
+  if (width) parts.push(cardGalleryUrl(image.u, width) + " " + width + "w");
+
+  img.setAttribute("srcset", parts.join(", "));
+  img.setAttribute("src", cardGalleryUrl(image.u, 533));
+  img.setAttribute("alt", image.a || "");
+  if (width) img.setAttribute("width", width);
+  if (image.h) img.setAttribute("height", image.h);
+  // the card is on screen by the time a swatch is clicked
+  img.removeAttribute("loading");
+}
+
+function cardGallerySwiper(sliderElement) {
+  return sliderElement.swiper || sliderElement._cardSwiper || null;
+}
+
+function refreshCardGallerySwiper(sliderElement) {
+  var swiper = cardGallerySwiper(sliderElement);
+  if (!swiper) return;
+  try {
+    swiper.update();
+    swiper.slideTo(0, 0);
+    // a card that started with a single image has no hover scrub bound yet
+    initCardHoverScrub(sliderElement, swiper);
+  } catch (e) {
+    // ignore
+  }
+}
+
+function swapCardSliderImages(sliderElement, images) {
+  var track = sliderElement.querySelector(".swiper-wrapper");
+  if (!track) return;
+  if (track._originalHTML === undefined) track._originalHTML = track.innerHTML;
+
+  var template = track.querySelector(".swiper-slide");
+  if (!template) return;
+
+  var proto = template.cloneNode(true);
+  proto.removeAttribute("style");
+  proto.removeAttribute("data-media-id");
+  proto.classList.remove(
+    "swiper-slide-active",
+    "swiper-slide-next",
+    "swiper-slide-prev",
+    "swiper-slide-visible",
+    "swiper-slide-duplicate"
+  );
+
+  var fragment = document.createDocumentFragment();
+  images.forEach(function (image) {
+    var slide = proto.cloneNode(true);
+    applyCardGalleryImage(slide.querySelector("img"), image);
+    fragment.appendChild(slide);
+  });
+
+  track.innerHTML = "";
+  track.appendChild(fragment);
+  refreshCardGallerySwiper(sliderElement);
+}
+
+function restoreCardSliderImages(sliderElement, featuredMediaId) {
+  var track = sliderElement.querySelector(".swiper-wrapper");
+  if (!track || track._originalHTML === undefined) return;
+  track.innerHTML = track._originalHTML;
+  refreshCardGallerySwiper(sliderElement);
+
+  if (!featuredMediaId) return;
+  var swiper = cardGallerySwiper(sliderElement);
+  if (!swiper || !swiper.slides) return;
+  for (var i = 0; i < swiper.slides.length; i++) {
+    if (String(swiper.slides[i].dataset.mediaId) === String(featuredMediaId)) {
+      swiper.slideTo(i, 0);
+      break;
+    }
+  }
+}
+
+function swapCardStaticImages(mediaElement, images) {
+  if (mediaElement._originalHTML === undefined) mediaElement._originalHTML = mediaElement.innerHTML;
+  var imgs = mediaElement.querySelectorAll("img");
+  if (!imgs.length) return;
+  applyCardGalleryImage(imgs[0], images[0]);
+  // second image is the hover state - fall back to the first one
+  if (imgs[1]) applyCardGalleryImage(imgs[1], images[1] || images[0]);
+}
+
+function restoreCardStaticImages(mediaElement) {
+  if (mediaElement._originalHTML === undefined) return;
+  mediaElement.innerHTML = mediaElement._originalHTML;
+}
+
+var cardGallerySwapsBound = false;
+
+function initCardGallerySwaps() {
+  // one delegated listener covers cards added later (pagination, filters)
+  if (cardGallerySwapsBound) return;
+  cardGallerySwapsBound = true;
+
+  document.addEventListener("change", function (event) {
+    var input = event.target;
+    if (!input || !input.classList || !input.classList.contains("swatch-input__input")) return;
+
+    var wrapper = input.closest(".card-wrapper");
+    if (!wrapper || !wrapper.hasAttribute("data-card-galleries")) return;
+
+    var galleries = cardGalleryData(wrapper);
+    if (!galleries) return;
+
+    var value = (input.value || "").trim();
+    var images = galleries[value];
+    var hasImages = Boolean(images && images.length);
+
+    var sliderElement = wrapper.querySelector("[data-product-card-slider]");
+    if (sliderElement) {
+      if (hasImages) {
+        swapCardSliderImages(sliderElement, images);
+      } else {
+        restoreCardSliderImages(sliderElement, input.dataset.variantFeaturedMediaId);
+      }
+      return;
+    }
+
+    var mediaElement = wrapper.querySelector(".card__media .media");
+    if (!mediaElement) return;
+    if (hasImages) {
+      swapCardStaticImages(mediaElement, images);
+    } else {
+      restoreCardStaticImages(mediaElement);
+    }
+  });
+}
+
+initCardGallerySwaps();
 
 function syncCardSliderWithSwatch() {
   document.addEventListener("change", event => {
