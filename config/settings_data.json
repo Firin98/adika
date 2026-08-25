@@ -205,6 +205,11 @@
           "PriceFontSize": 16,
           "PriceColor": ""
         }
+      },
+      "208873322266159137": {
+        "type": "shopify://apps/searchanise-search-filter/blocks/app-embed-v2/d8f24ada-02b1-458a-bbeb-5bf16d5c921e",
+        "disabled": false,
+        "settings": {}
       }
     },
     "color_schemes": {
