@@ -95,6 +95,24 @@
             "open_by_default": false
           }
         },
+        "collapsible_specs_n3Egw9": {
+          "type": "collapsible_specs",
+          "settings": {
+            "heading": "מידע נוסף",
+            "open_by_default": false,
+            "label_1": "ארץ ייצור:",
+            "value_1": "{{ product.metafields.custom.country_of_origin.value }}",
+            "label_2": "",
+            "value_2": "",
+            "label_3": "",
+            "value_3": "",
+            "label_4": "",
+            "value_4": "",
+            "label_5": "",
+            "value_5": "",
+            "footer_text": ""
+          }
+        },
         "complementary_L9NYyT": {
           "type": "complementary",
           "settings": {
@@ -145,6 +163,7 @@
         "collapsible_tab_r838AT",
         "collapsible_tab_JqiqRE",
         "collapsible_tab_KVcmDM",
+        "collapsible_specs_n3Egw9",
         "complementary_L9NYyT",
         "share",
         "wishlist_hero_custom_product_button_RgVGCg"
