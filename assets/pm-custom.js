@@ -1423,16 +1423,16 @@ function watchCollectionGridUpdates(root) {
 }
 
 /* --------------------------------------------------------------------------
-   Badges in the product gallery are anchored to the FIRST media item, not to
-   the whole <slider-component>.
+   Bottom badges in the product gallery, tablet/desktop only.
 
-   Why: on desktop the gallery is a grid of N rows, so "bottom" of the
-   component is the bottom of the last row; on mobile the gallery is a slider
-   showing ~1.5 slides, so the component's left edge belongs to the peeking
-   neighbour, not to the first photo. Anchoring every corner to the first
-   item's box fixes both. On mobile the position also tracks the slider's
-   scroll, so the badges travel with the first slide instead of floating
-   over the next one.
+   The gallery is a grid of N rows there, and the badge containers are
+   absolutely positioned against the whole <slider-component>, so bottom: 5px
+   would mean "bottom of the last row". This pins the bottom-corner containers
+   to the bottom edge of the FIRST media item via an inline top.
+
+   Mobile does not go through here at all: the component-level badges are
+   hidden below 750px and every slide carries its own copy instead
+   (product-media-gallery.liquid + .product__media-item rules in base.css).
    -------------------------------------------------------------------------- */
 function initGalleryBadgeAnchor(root) {
   var scope = root || document;
@@ -1440,16 +1440,12 @@ function initGalleryBadgeAnchor(root) {
   scope.querySelectorAll("media-gallery slider-component").forEach(function (component) {
     if (component.dataset.badgeAnchorReady === "true") return;
 
-    var containers = component.querySelectorAll(
-      ".card__badges--top-left, .card__badges--top-right, .card__badges--bottom-left, .card__badges--bottom-right"
+    var bottomContainers = component.querySelectorAll(
+      ".small-hide > .card__badges--bottom-left, .small-hide > .card__badges--bottom-right"
     );
-    if (!containers.length) return;
+    if (!bottomContainers.length) return;
 
     component.dataset.badgeAnchorReady = "true";
-
-    var mobileQuery = window.matchMedia("(max-width: 749px)");
-    var EDGE = 5;   // gap from the slide edges, matches the corner offset
-    var BOTTOM_EDGE = 10;
 
     var update = function () {
       var firstItem = component.querySelector(".product__media-item");
@@ -1457,68 +1453,23 @@ function initGalleryBadgeAnchor(root) {
       var componentRect = component.getBoundingClientRect();
       var itemRect = firstItem.getBoundingClientRect();
       if (!itemRect.height) return;
+      var firstRowBottom = itemRect.bottom - componentRect.top;
 
-      var isMobile = mobileQuery.matches;
-      var topInset = itemRect.top - componentRect.top;
-      var leftInset = itemRect.left - componentRect.left;
-      var rightInset = componentRect.right - itemRect.right;
-      var bottomOfItem = itemRect.bottom - componentRect.top;
-
-      containers.forEach(function (container) {
-        var cl = container.classList;
-        var isBottom = cl.contains("card__badges--bottom-left") || cl.contains("card__badges--bottom-right");
-        var isLeft = cl.contains("card__badges--top-left") || cl.contains("card__badges--bottom-left");
-
-        // vertical
-        if (isBottom) {
-          container.style.bottom = "auto";
-          container.style.top = bottomOfItem - container.offsetHeight - BOTTOM_EDGE + "px";
-        } else if (isMobile) {
-          container.style.top = topInset + EDGE + "px";
-        } else {
-          container.style.top = "";
-        }
-
-        // horizontal: only the mobile slider needs it - on desktop the grid
-        // spans the full component width and the CSS corners are already right
-        if (isMobile) {
-          if (isLeft) {
-            container.style.left = leftInset + EDGE + "px";
-            container.style.right = "auto";
-          } else {
-            container.style.right = rightInset + EDGE + "px";
-            container.style.left = "auto";
-          }
-        } else {
-          container.style.left = "";
-          container.style.right = "";
-        }
-      });
-    };
-
-    var rafId = null;
-    var scheduled = function () {
-      if (rafId !== null) return;
-      rafId = window.requestAnimationFrame(function () {
-        rafId = null;
-        update();
+      bottomContainers.forEach(function (container) {
+        if (!container.offsetHeight) return; // hidden on this breakpoint
+        container.style.bottom = "auto";
+        container.style.top = firstRowBottom - container.offsetHeight - 10 + "px";
       });
     };
 
     if (typeof ResizeObserver === "function") {
-      var observer = new ResizeObserver(scheduled);
+      var observer = new ResizeObserver(update);
       observer.observe(component);
       var firstItem = component.querySelector(".product__media-item");
       if (firstItem) observer.observe(firstItem);
     }
-    // mobile slider scrolls natively - badges follow the first slide
-    var sliderList = component.querySelector(".product__media-list");
-    if (sliderList) sliderList.addEventListener("scroll", scheduled, { passive: true });
-    window.addEventListener("resize", scheduled);
+    window.addEventListener("resize", update);
     window.addEventListener("load", update);
-    if (typeof mobileQuery.addEventListener === "function") {
-      mobileQuery.addEventListener("change", scheduled);
-    }
     update();
   });
 }

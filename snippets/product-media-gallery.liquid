@@ -107,7 +107,14 @@
 >
   <div id="GalleryStatus-{{ section.id }}" class="visually-hidden" role="status"></div>
   <slider-component id="GalleryViewer-{{ section.id }}" class="slider-mobile-gutter">
-    {% render 'badges', card_product: product, section_id: section.id %}
+    {%- comment -%}
+      Component-level badges: tablet/desktop only. On mobile the gallery is a
+      slider showing ~1.5 slides, so each slide carries its own badge copy
+      (see the per-item render inside every <li> below) and this one is hidden.
+    {%- endcomment -%}
+    <div class="small-hide">
+      {% render 'badges', card_product: product, section_id: section.id %}
+    </div>
     {%- comment -%}Wishlist Hero heart, top-right corner of the gallery{%- endcomment -%}
     <div class="product__wishlist">
       {% render 'wishlisthero-collection-product',
@@ -132,6 +139,9 @@
           data-media-id="{{ section.id }}-{{ featured_media.id }}"
         >
           {%- assign media_position = 1 -%}
+          <div class="product__media-item-badges medium-hide large-up-hide">
+            {% render 'badges', card_product: product, section_id: section.id, badge_id: 'GalleryBadgeF' %}
+          </div>
           {% render 'product-thumbnail',
             media: featured_media,
             media_count: media_count,
@@ -175,6 +185,10 @@
             class="product__media-item grid__item slider__slide{% if single_media_visible %} product__media-item--single{% endif %}{% if current_variant.featured_media == nil and forloop.index == 1 %} is-active{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--fade-in{% endif %}"
             data-media-id="{{ section.id }}-{{ file_key }}"
           >
+            {%- assign gallery_badge_prefix = 'GalleryBadge' | append: forloop.index -%}
+            <div class="product__media-item-badges medium-hide large-up-hide">
+              {% render 'badges', card_product: product, section_id: section.id, badge_id: gallery_badge_prefix %}
+            </div>
             {% render 'product-thumbnail-file',
               file: gallery_file,
               file_key: file_key,
@@ -213,6 +227,10 @@
                 assign lazy_load = true
               endif
             -%}
+            {%- assign gallery_badge_prefix = 'GalleryBadgeM' | append: forloop.index -%}
+            <div class="product__media-item-badges medium-hide large-up-hide">
+              {% render 'badges', card_product: product, section_id: section.id, badge_id: gallery_badge_prefix %}
+            </div>
             {% render 'product-thumbnail',
               media: media,
               media_count: media_count,

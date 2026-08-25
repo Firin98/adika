@@ -4121,3 +4121,16 @@ details-disclosure > details {
 .card__badges--top-right:has(~ .product__wishlist) {
   top: 44px;
 }
+
+
+/* Per-slide badges in the mobile product gallery: every slide carries its own
+   copy (mobile only, see product-media-gallery.liquid), anchored to the slide
+   itself so they travel with it and are always visible on the current slide. */
+.product__media-item {
+  position: relative;
+}
+
+.product__media-item .card__badges--bottom-left,
+.product__media-item .card__badges--bottom-right {
+  bottom: 10px;
+}
