@@ -30,7 +30,8 @@
 .cdr-card-wrapper .cdr-card__image-wrap {
   flex-shrink: 0;
   width: 90px;
-  height: 90px;
+  aspect-ratio: 3 / 4;
+  /* height: 90px; */
   overflow: hidden;
   border-radius: var(--media-radius, 4px);
   background: rgba(var(--color-foreground), 0.04);
