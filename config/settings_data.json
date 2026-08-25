@@ -210,6 +210,11 @@
         "type": "shopify://apps/searchanise-search-filter/blocks/app-embed-v2/d8f24ada-02b1-458a-bbeb-5bf16d5c921e",
         "disabled": false,
         "settings": {}
+      },
+      "12526071353035850722": {
+        "type": "shopify://apps/amp-back-in-stock/blocks/app-embed/bfa6a8c4-24e2-411a-9396-e35031b33f34",
+        "disabled": false,
+        "settings": {}
       }
     },
     "color_schemes": {
