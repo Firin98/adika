@@ -673,6 +673,6 @@ cart-remove-button .icon-remove {
   visibility: hidden;
 }
 
-.cart-edit-modal[open] {
+quick-add-modal.cart-edit-modal[open] {
   z-index: 1001;
 }

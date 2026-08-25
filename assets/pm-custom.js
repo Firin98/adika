@@ -2003,6 +2003,22 @@ window.initImageSwatchMobileSync = initImageSwatchMobileSync;
     return config;
   }
 
+  // The drawer modal lives outside any .shopify-section, so Dawn's
+  // ModalDialog.connectedCallback (which hoists every modal to <body>)
+  // never completes for it, and its cached modalContent can be missing.
+  // Restore both right before the modal is opened.
+  function healEditModal(modal) {
+    if (!modal) return;
+    if (!modal.modalContent) {
+      modal.modalContent = modal.querySelector('[id^="QuickAddInfo-"]');
+    }
+    if (modal.parentElement !== document.body) {
+      modal.moved = true; // skip ModalDialog's own hoisting logic
+      document.body.appendChild(modal);
+    }
+    watchModal(modal);
+  }
+
   // Capture the line context before modal-opener runs its own click handler.
   document.addEventListener(
     "click",
@@ -2014,6 +2030,9 @@ window.initImageSwatchMobileSync = initImageSwatchMobileSync;
         variantId: opener.getAttribute("data-variant-id"),
         quantity: parseInt(opener.getAttribute("data-line-quantity"), 10) || 1,
       };
+      var openerWrap = opener.closest("modal-opener");
+      var modalSelector = openerWrap && openerWrap.getAttribute("data-modal");
+      if (modalSelector) healEditModal(document.querySelector(modalSelector));
     },
     true
   );

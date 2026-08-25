@@ -579,7 +579,9 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   visibility: hidden;
 }
 
-/* The drawer sits at z-index 1000 - the edit modal must render above it */
-.cart-edit-modal[open] {
+/* The drawer sits at z-index 1000 - the edit modal must render above it.
+   The element-qualified selector outranks quick-add.css regardless of
+   stylesheet load order. */
+quick-add-modal.cart-edit-modal[open] {
   z-index: 1001;
 }
