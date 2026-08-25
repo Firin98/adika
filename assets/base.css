@@ -4130,6 +4130,19 @@ details-disclosure > details {
   position: relative;
 }
 
+/* The badge wrapper picks up position: relative from theme-wide rules and,
+   being 0px tall, would become the anchor for the absolute corners. Stretch
+   it over the whole slide instead so the corners mean the slide's corners. */
+.product__media-item .product__media-item-badges {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
 .product__media-item .card__badges--bottom-left,
 .product__media-item .card__badges--bottom-right {
   bottom: 10px;
