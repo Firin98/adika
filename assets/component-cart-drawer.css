@@ -516,7 +516,7 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   text-align: left !important;
 }
 #CartDrawer .quantity__button {
-  width: calc(3.5rem / var(--font-body-scale));
+  width: calc(3rem / var(--font-body-scale));
 }
 #CartDrawer .quantity {
   width: calc(10rem / var(--font-body-scale) + var(--inputs-border-width) * 2);
