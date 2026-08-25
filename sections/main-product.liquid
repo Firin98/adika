@@ -217,6 +217,15 @@
                     assign vm_variant = product.selected_or_first_available_variant
                     assign vm_handle = vm_variant.metafields.custom.handle.value
                     assign vm_color = vm_variant.metafields.custom.color_code.value
+
+                    assign vm_show_handle = false
+                    if block.settings.show_handle and vm_handle and vm_handle != blank
+                      assign vm_show_handle = true
+                    endif
+                    assign vm_show_color = false
+                    if block.settings.show_color_code and vm_color and vm_color != blank
+                      assign vm_show_color = true
+                    endif
                   -%}
                   {%- comment -%}
                     Variant metadata block: shows the selected variant's
@@ -227,24 +236,28 @@
                   {%- endcomment -%}
                   <div
                     id="Variant-Meta-{{ section.id }}"
-                    class="product__variant-meta caption-with-letter-spacing{% if vm_handle == blank and vm_color == blank %} hidden{% endif %}"
+                    class="product__variant-meta caption-with-letter-spacing{% unless vm_show_handle or vm_show_color %} hidden{% endunless %}"
                     role="status"
                     {{ block.shopify_attributes }}
                   >
-                    {%- if block.settings.show_handle and vm_handle != blank -%}
-                      <span class="product__variant-meta-item">
-                        {%- if block.settings.handle_label != blank -%}
-                          <span class="product__variant-meta-label">{{ block.settings.handle_label | escape }}</span>
-                        {%- endif -%}
-                        {{ vm_handle }}
-                      </span>
-                    {%- endif -%}
-                    {%- if block.settings.show_color_code and vm_color != blank -%}
+                    {%- comment -%}Order: color code first, then " - ", then handle{%- endcomment -%}
+                    {%- if vm_show_color -%}
                       <span class="product__variant-meta-item">
                         {%- if block.settings.color_label != blank -%}
                           <span class="product__variant-meta-label">{{ block.settings.color_label | escape }}</span>
                         {%- endif -%}
                         {{ vm_color }}
+                      </span>
+                    {%- endif -%}
+                    {%- if vm_show_color and vm_show_handle -%}
+                      <span class="product__variant-meta-separator" aria-hidden="true">&nbsp;-&nbsp;</span>
+                    {%- endif -%}
+                    {%- if vm_show_handle -%}
+                      <span class="product__variant-meta-item">
+                        {%- if block.settings.handle_label != blank -%}
+                          <span class="product__variant-meta-label">{{ block.settings.handle_label | escape }}</span>
+                        {%- endif -%}
+                        {{ vm_handle }}
                       </span>
                     {%- endif -%}
                   </div>
