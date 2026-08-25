@@ -166,6 +166,45 @@
           "additionalWLButtonCssClasses": "",
           "additionalWLCartBubbleCssClasses": ""
         }
+      },
+      "10486658301671024706": {
+        "type": "shopify://apps/wishlist-hero/blocks/collection-embed/a9a5079b-59e8-47cb-b659-ecf1c60b9b72",
+        "disabled": false,
+        "settings": {
+          "customThemeName": "~",
+          "wlIconPlacementInCard": "auto",
+          "iconHorizontalOffset": 0,
+          "iconVerticalOffset": 0,
+          "iconBackgroundSize": 40,
+          "iconFontSize": 0,
+          "enableCustomColors": false,
+          "wishlistIconColor": "",
+          "wishlistIconBgColor": "",
+          "wishlistIconBgColorAlpha": 100,
+          "addedWishlistIconColor": "",
+          "addedWishlistIconBgColor": "",
+          "addedWishlistIconBgColorAlpha": 100,
+          "wlCollectionCardSelectorClass": "",
+          "wlIconPlacementInCardSelector": "",
+          "wlIconPlacementInCardMode": "I",
+          "wlProductHandleExtractor": "",
+          "enableSortMutation": false,
+          "searchAndFilterApp": "none"
+        }
+      },
+      "1366455014531238847": {
+        "type": "shopify://apps/wishlist-hero/blocks/customize-style-block/a9a5079b-59e8-47cb-b659-ecf1c60b9b72",
+        "disabled": false,
+        "settings": {
+          "Btn_color": "",
+          "WishlistButtonTextColor": "",
+          "Ico_color": "",
+          "HeaderFontSize": 30,
+          "HeaderColor": "",
+          "ProductNameFontSize": 18,
+          "PriceFontSize": 16,
+          "PriceColor": ""
+        }
       }
     },
     "color_schemes": {
