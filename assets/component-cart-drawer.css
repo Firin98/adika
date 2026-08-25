@@ -526,3 +526,6 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
   font-size: 1rem;
   padding: 0 !important;
 }
+#CartDrawer .quantity__button .svg-wrapper {
+  width: 0.7rem;
+}
