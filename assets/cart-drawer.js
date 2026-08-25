@@ -38,11 +38,14 @@ class CartDrawer extends HTMLElement {
     this.addEventListener(
       'transitionend',
       () => {
-        const containerToTrapFocusOn = this.classList.contains('is-empty')
-          ? this.querySelector('.drawer__inner-empty')
-          : document.getElementById('CartDrawer');
+        // The is-empty state can be toggled client-side (last item removed)
+        // while the server-rendered empty markup is absent - fall back.
+        const containerToTrapFocusOn =
+          (this.classList.contains('is-empty') && this.querySelector('.drawer__inner-empty')) ||
+          document.getElementById('CartDrawer') ||
+          this;
         const focusElement = this.querySelector('.drawer__inner') || this.querySelector('.drawer__close');
-        trapFocus(containerToTrapFocusOn, focusElement);
+        if (containerToTrapFocusOn && focusElement) trapFocus(containerToTrapFocusOn, focusElement);
       },
       { once: true },
     );

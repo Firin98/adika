@@ -7,8 +7,10 @@ class FacetFiltersForm extends HTMLElement {
       this.onSubmitHandler(event);
     }, 800);
 
+    // Pages can render the element without an inner form (e.g. a search
+    // page with no results) - skip wiring instead of throwing.
     const facetForm = this.querySelector('form');
-    facetForm.addEventListener('input', this.debouncedOnSubmit.bind(this));
+    if (facetForm) facetForm.addEventListener('input', this.debouncedOnSubmit.bind(this));
 
     const facetWrapper = this.querySelector('#FacetsWrapperDesktop');
     if (facetWrapper) facetWrapper.addEventListener('keyup', onKeyUpEscape);

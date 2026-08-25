@@ -620,7 +620,12 @@ class ModalDialog extends HTMLElement {
   connectedCallback() {
     if (this.moved) return;
     this.moved = true;
-    this.dataset.section = this.closest('.shopify-section').id.replace('shopify-section-', '');
+    // Modals rendered outside a section (cart drawer, drawer recommendations)
+    // have no .shopify-section ancestor - hoist them without a section id.
+    const section = this.closest('.shopify-section');
+    if (section && section.id) {
+      this.dataset.section = section.id.replace('shopify-section-', '');
+    }
     document.body.appendChild(this);
   }
 

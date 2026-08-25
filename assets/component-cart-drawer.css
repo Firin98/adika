@@ -585,3 +585,9 @@ cart-drawer-items::-webkit-scrollbar-track-piece {
 quick-add-modal.cart-edit-modal[open] {
   z-index: 1001;
 }
+
+/* Any quick-add modal hoisted to <body> (incl. drawer recommendations)
+   must also stack above the open drawer */
+body > .quick-add-modal[open] {
+  z-index: 1001;
+}
