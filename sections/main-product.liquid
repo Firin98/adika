@@ -212,6 +212,42 @@
                     <span class="visually-hidden">{{ 'products.product.sku' | t }}:</span>
                     {{- product.selected_or_first_available_variant.sku -}}
                   </p>
+                {%- when 'variant_meta' -%}
+                  {%- liquid
+                    assign vm_variant = product.selected_or_first_available_variant
+                    assign vm_handle = vm_variant.metafields.custom.handle.value
+                    assign vm_color = vm_variant.metafields.custom.color_code.value
+                  -%}
+                  {%- comment -%}
+                    Variant metadata block: shows the selected variant's
+                    custom.handle and custom.color_code metafields. The
+                    wrapper id is synced on variant change by
+                    updateSourceFromDestination('Variant-Meta') in
+                    assets/product-info.js.
+                  {%- endcomment -%}
+                  <div
+                    id="Variant-Meta-{{ section.id }}"
+                    class="product__variant-meta caption-with-letter-spacing{% if vm_handle == blank and vm_color == blank %} hidden{% endif %}"
+                    role="status"
+                    {{ block.shopify_attributes }}
+                  >
+                    {%- if block.settings.show_handle and vm_handle != blank -%}
+                      <span class="product__variant-meta-item">
+                        {%- if block.settings.handle_label != blank -%}
+                          <span class="product__variant-meta-label">{{ block.settings.handle_label | escape }}</span>
+                        {%- endif -%}
+                        {{ vm_handle }}
+                      </span>
+                    {%- endif -%}
+                    {%- if block.settings.show_color_code and vm_color != blank -%}
+                      <span class="product__variant-meta-item">
+                        {%- if block.settings.color_label != blank -%}
+                          <span class="product__variant-meta-label">{{ block.settings.color_label | escape }}</span>
+                        {%- endif -%}
+                        {{ vm_color }}
+                      </span>
+                    {%- endif -%}
+                  </div>
                 {%- when 'custom_liquid' -%}
                   {{ block.settings.custom_liquid }}
                 {%- when 'collapsible_tab' -%}
@@ -810,6 +846,37 @@
       "type": "price",
       "name": "t:sections.main-product.blocks.price.name",
       "limit": 1
+    },
+    {
+      "type": "variant_meta",
+      "name": "Variant metadata",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_handle",
+          "default": true,
+          "label": "Show handle (custom.handle)"
+        },
+        {
+          "type": "text",
+          "id": "handle_label",
+          "label": "Handle label",
+          "info": "Optional text shown before the value"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_color_code",
+          "default": true,
+          "label": "Show color code (custom.color_code)"
+        },
+        {
+          "type": "text",
+          "id": "color_label",
+          "label": "Color code label",
+          "info": "Optional text shown before the value"
+        }
+      ]
     },
     {
       "type": "sku",

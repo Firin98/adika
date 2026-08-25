@@ -1571,3 +1571,22 @@ product-info .wishlist-hero-custom-button.wishlisthero-floating button {
   min-width: 40px !important;
   opacity: 1 !important;
 }
+
+/* Variant metadata block (custom.handle + custom.color_code) */
+.product__variant-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.2rem;
+  margin: 0.8rem 0;
+  font-size: 1.2rem;
+  color: rgba(var(--color-foreground), 0.75);
+}
+
+.product__variant-meta.hidden {
+  display: none;
+}
+
+.product__variant-meta-label {
+  color: rgba(var(--color-foreground), 0.55);
+  margin-inline-end: 0.3rem;
+}
