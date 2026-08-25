@@ -87,6 +87,7 @@
         },
         "collapsible_tab_KVcmDM": {
           "type": "collapsible_tab",
+          "disabled": true,
           "settings": {
             "heading": "מידע נוסף",
             "icon": "none",
