@@ -442,7 +442,29 @@
     </div>
   </div>
 </footer>
+<script data-cfasync="false">
+window.access4u = {
+  sitekey: "6a8d6ea6c73b50cefa90d3c1",
+  userId: "6460bcd73b274aacc62b3c3a",
+  feature: "ALL_FEATURES",
+  scriptVersion: "LEGACY_V03",
+  scriptFilename: "features_new_v03.js",
+  Language: "iw",
+  Menulang: "EN",
+  apiBase: "https://db.access4u.co.il",
+  assetsBase: "https://plugin.access4u.co.il",
+  disableManifestCache: false,
+  domains: { js: "" }
+};
 
+(function(page, head, body) {
+  var asyncAccess = page.createElement('script');
+  asyncAccess.defer = true;
+  asyncAccess.src = 'https://plugin.access4u.co.il/features_new_v03.js';
+  asyncAccess.setAttribute('data-cfasync', 'false');
+  (body || head).appendChild(asyncAccess);
+})(document, document.head, document.body);
+</script>
 {% schema %}
 {
   "name": "Footer Adika",
