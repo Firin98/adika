@@ -274,7 +274,8 @@
                       label_text: block.settings.label_text,
                       swatch_size: block.settings.swatch_size,
                       dim_unavailable: block.settings.dim_unavailable,
-                      instant_mode: block.settings.instant_mode
+                      instant_mode: block.settings.instant_mode,
+                      preload_mode: block.settings.preload_mode
                     -%}
                   </div>
                 {%- when 'custom_liquid' -%}
@@ -1045,6 +1046,23 @@
           ],
           "default": "ajax",
           "info": "Instant: the target page is fetched on hover or on pointer down and swapped in on click, so nothing is loaded until the visitor shows interest."
+        },
+        {
+          "type": "select",
+          "id": "preload_mode",
+          "label": "Preloading",
+          "options": [
+            {
+              "value": "idle",
+              "label": "Warm up all colours after load"
+            },
+            {
+              "value": "hover",
+              "label": "Only on hover or tap"
+            }
+          ],
+          "default": "idle",
+          "info": "Only the product section is fetched (about 50 KB per colour, not 560 KB), one request at a time, after the page has loaded. Skipped on Save-Data, on 2g and on low-memory devices."
         }
       ]
     },

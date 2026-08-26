@@ -17,6 +17,8 @@
   - dim_unavailable: {Boolean} fade the swatches of sold-out products
   - instant_mode: {String} 'ajax' (fetch and swap), 'prerender' (browser
     speculation rules) or 'off' (plain navigation)
+  - preload_mode: {String} 'idle' (warm up every colour after load) or
+    'hover' (fetch only on intent)
 
   Usage:
   {% render 'product-color-group', product: product %}
@@ -53,6 +55,7 @@
   <div
     class="product-color-group"
     data-instant="{{ instant }}"
+    data-preload="{{ preload_mode | default: 'idle' }}"
     style="--swatch-input--size: {{ swatch_size_px }}px;"
   >
     {%- if show_label and current_label != '' -%}
