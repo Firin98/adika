@@ -274,7 +274,7 @@
                       label_text: block.settings.label_text,
                       swatch_size: block.settings.swatch_size,
                       dim_unavailable: block.settings.dim_unavailable,
-                      enable_prerender: block.settings.enable_prerender
+                      instant_mode: block.settings.instant_mode
                     -%}
                   </div>
                 {%- when 'custom_liquid' -%}
@@ -1026,11 +1026,25 @@
           "default": true
         },
         {
-          "type": "checkbox",
-          "id": "enable_prerender",
-          "label": "Preload colour pages",
-          "default": true,
-          "info": "Chrome and Edge prerender the linked page on hover or pointer down, so the click is instant. The browser throttles this itself; other browsers navigate normally."
+          "type": "select",
+          "id": "instant_mode",
+          "label": "Colour switching",
+          "options": [
+            {
+              "value": "ajax",
+              "label": "Instant (fetch and swap)"
+            },
+            {
+              "value": "prerender",
+              "label": "Browser prerender"
+            },
+            {
+              "value": "off",
+              "label": "Normal page load"
+            }
+          ],
+          "default": "ajax",
+          "info": "Instant: the target page is fetched on hover or on pointer down and swapped in on click, so nothing is loaded until the visitor shows interest."
         }
       ]
     },

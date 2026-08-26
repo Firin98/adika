@@ -15,7 +15,8 @@
   - label_text: {String} prefix for that name, e.g. "צבע"
   - swatch_size: {Number} swatch diameter in px
   - dim_unavailable: {Boolean} fade the swatches of sold-out products
-  - enable_prerender: {Boolean} emit the speculation rules for instant clicks
+  - instant_mode: {String} 'ajax' (fetch and swap), 'prerender' (browser
+    speculation rules) or 'off' (plain navigation)
 
   Usage:
   {% render 'product-color-group', product: product %}
@@ -45,11 +46,13 @@
   assign current_label = product.metafields.custom.color_label.value | default: product.metafields.custom.color_label | default: '' | strip
   assign label_prefix = label_text | default: '' | strip
   assign swatch_size_px = swatch_size | default: 36
+  assign instant = instant_mode | default: 'ajax'
 -%}
 
 {%- if has_group -%}
   <div
     class="product-color-group"
+    data-instant="{{ instant }}"
     style="--swatch-input--size: {{ swatch_size_px }}px;"
   >
     {%- if show_label and current_label != '' -%}
@@ -124,14 +127,15 @@
     </div>
   </div>
 
-  {%- if enable_prerender -%}
+  {%- if instant == 'ajax' -%}
+    <script src="{{ 'product-color-group.js' | asset_url }}" defer="defer"></script>
+  {%- elsif instant == 'prerender' -%}
     {%- comment -%}
-      Speculation rules: the browser prerenders the linked colour page after a
-      short hover or on pointer down, so the click lands on a page that is
-      already rendered. Chrome and Edge apply their own throttling (two
-      speculations at a time, disabled on Save-Data, low battery or memory
-      pressure), which is what keeps this from looking like scraping. Other
-      browsers ignore the tag and navigate normally.
+      Browser-side prerendering. Note that it did not activate on this
+      storefront during testing: Shopify serves product pages with
+      "Cache-Control: no-store", and Chrome also refuses to prerender when
+      preloading is disabled in the browser. Kept as an option because it
+      costs nothing where it does work.
     {%- endcomment -%}
     <script type="speculationrules">
       {
@@ -145,4 +149,5 @@
       }
     </script>
   {%- endif -%}
+
 {%- endif -%}

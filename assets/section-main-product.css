@@ -1668,3 +1668,8 @@ product-info .wishlist-hero-custom-button.wishlisthero-floating button {
 .product-color-group__item--soldout .swatch {
   opacity: 0.4;
 }
+
+.product-color-group__link--loading {
+  opacity: 0.5;
+  pointer-events: none;
+}
