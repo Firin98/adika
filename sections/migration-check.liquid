@@ -1,139 +1,136 @@
 {% comment %}
   Migration check - a temporary section for eyeballing the "1 product = 1 colour"
-  split. For every old product it prints one row with that product, and directly
-  under it a row with the products it became.
+  split. Every block shows the old product on one row and the products it became
+  on the next, all drawn with the normal card-product snippet.
 
-  Two ways to feed it:
-    - "Old product handles": a list of handles, one per line. Uses all_products,
-      which Shopify limits to 20 unique handles per page, so the section counts
-      its own budget and says when it had to stop.
-    - "Collection": no lookup limit. Old and new products live in the same
-      collection right after the import, so both rows are read straight from it.
+  The handle map is baked in (snippets/migration-check-data.liquid), so the
+  section works with no configuration. Because Liquid only allows 20 unique
+  handles per page through all_products, the groups are paged automatically:
+  the section fills a page up to that budget and prints "page X of Y".
+  Groups with problems are listed first.
 
-  New products are recognised by their metafields: custom.handle holds the old
-  handle, and for a new product it differs from its own handle.
-
-  Delete this section once the migration is verified.
+  Delete this section and its three files once the migration is verified.
 {% endcomment %}
 
 {{ 'component-card.css' | asset_url | stylesheet_tag }}
 {{ 'migration-check.css' | asset_url | stylesheet_tag }}
 
 {%- liquid
-  assign handle_list = section.settings.handles | newline_to_br | split: '<br />'
-  assign use_handles = false
-  if section.settings.handles != blank
-    assign use_handles = true
-  endif
   assign lookup_budget = 20
+
+  capture raw_map
+    render 'migration-check-data'
+  endcapture
+  assign map_body = raw_map | strip
+  assign all_groups = map_body | split: '|'
+
+  # manual override: a list of old handles typed into the section settings
+  assign manual = false
+  if section.settings.handles != blank
+    assign manual = true
+    assign manual_lines = section.settings.handles | newline_to_br | split: '<br />'
+  endif
+
+  assign only_problems = false
+  if section.settings.filter == 'problems'
+    assign only_problems = true
+  endif
 -%}
 
 <div class="migration-check page-width section-{{ section.id }}-padding" dir="rtl">
   <h2 class="migration-check__title">{{ section.settings.heading }}</h2>
 
-  {%- if use_handles -%}
+  {%- if manual -%}
     {%- liquid
-      assign used_lookups = 0
-      assign skipped_groups = 0
+      assign used = 0
+      assign skipped = 0
     -%}
-    {%- for raw_handle in handle_list -%}
+    {%- for raw_handle in manual_lines -%}
       {%- liquid
         assign old_handle = raw_handle | strip_newlines | strip
         if old_handle == ''
           continue
         endif
-      -%}
-      {%- assign old_product = all_products[old_handle] -%}
-      {%- if old_product == empty or old_product.id == blank -%}
-        <div class="migration-check__group migration-check__group--error">
-          <p class="migration-check__error">Товар «{{ old_handle }}» не найден в магазине</p>
-        </div>
-        {%- continue -%}
-      {%- endif -%}
-
-      {%- liquid
-        # colour option of the old product, to know how many products to expect
-        assign colour_option = blank
-        for option in old_product.options_with_values
-          assign option_name = option.name | downcase
-          if option_name contains 'color' or option_name contains 'colour' or option_name contains 'צבע'
-            assign colour_option = option
+        assign kids_csv = ''
+        for entry in all_groups
+          assign bits = entry | split: '~'
+          if bits[0] == old_handle
+            assign kids_csv = bits[2]
             break
           endif
         endfor
-
-        assign colour_codes = ''
-        for variant in old_product.variants
-          assign code = variant.metafields.custom.color_code.value | default: '' | strip
-          if code != ''
-            assign code_key = '|' | append: code | append: '|'
-            unless colour_codes contains code_key
-              assign colour_codes = colour_codes | append: code_key
-            endunless
-          endif
-        endfor
-        assign code_list = colour_codes | split: '|' | uniq
-        assign expected = code_list.size
-
-        assign needed = expected | plus: 1
-        assign remaining = lookup_budget | minus: used_lookups
+        assign kids = kids_csv | split: ','
+        assign needed = kids.size | plus: 1
+        # filters are not allowed inside an if condition, so compute first
+        assign would_be = used | plus: needed
       -%}
-
-      {%- if needed > remaining -%}
-        {%- assign skipped_groups = skipped_groups | plus: 1 -%}
+      {%- if would_be > lookup_budget -%}
+        {%- assign skipped = skipped | plus: 1 -%}
         {%- continue -%}
       {%- endif -%}
-      {%- assign used_lookups = used_lookups | plus: needed -%}
-
+      {%- assign used = used | plus: needed -%}
       {%- render 'migration-check-group',
-        old_product: old_product,
-        code_list: code_list,
-        expected: expected,
-        section: section,
-        from_collection: false
+        old_handle: old_handle,
+        kids: kids,
+        flag: 'ok',
+        section: section
       -%}
     {%- endfor -%}
-
-    {%- if skipped_groups > 0 -%}
+    {%- if skipped > 0 -%}
       <p class="migration-check__note">
-        Показаны не все: Shopify отдаёт максимум {{ lookup_budget }} товаров через all_products на страницу,
-        поэтому {{ skipped_groups }} групп(ы) пропущено. Уберите лишние handle или используйте режим коллекции.
+        {{ skipped }} групп(ы) не показано: Liquid отдаёт максимум {{ lookup_budget }} товаров на страницу.
+        Уберите лишние handle из настроек.
       </p>
     {%- endif -%}
 
-  {%- elsif section.settings.collection != blank -%}
+  {%- else -%}
     {%- liquid
-      assign source = section.settings.collection
+      # assign each group to a page, filling every page up to the lookup budget
+      assign page_now = 1
+      assign used = 0
+      assign total_pages = 1
       assign shown = 0
+      assign matched = 0
+      assign requested = section.settings.page
     -%}
-    {%- for candidate in source.products limit: 50 -%}
+    {%- for entry in all_groups -%}
       {%- liquid
-        assign old_key = candidate.metafields.custom.handle.value | default: '' | strip
-        # an old product points at itself; a new one points at its parent
-        if old_key != '' and old_key != candidate.handle
+        assign bits = entry | split: '~'
+        assign old_handle = bits[0]
+        assign flag = bits[1]
+        if only_problems and flag == 'ok'
           continue
         endif
-        if shown >= section.settings.max_groups
-          break
+        assign matched = matched | plus: 1
+        assign kids = bits[2] | split: ','
+        assign needed = kids.size | plus: 1
+
+        assign after = used | plus: needed
+        if after > lookup_budget
+          assign page_now = page_now | plus: 1
+          assign used = needed
+        else
+          assign used = after
         endif
-        assign shown = shown | plus: 1
+        assign total_pages = page_now
       -%}
-      {%- render 'migration-check-group',
-        old_product: candidate,
-        source_collection: source,
-        section: section,
-        from_collection: true
-      -%}
+      {%- if page_now == requested -%}
+        {%- assign shown = shown | plus: 1 -%}
+        {%- render 'migration-check-group',
+          old_handle: old_handle,
+          kids: kids,
+          flag: flag,
+          section: section
+        -%}
+      {%- endif -%}
     {%- endfor -%}
 
-    {%- if shown == 0 -%}
-      <p class="migration-check__note">
-        В коллекции не нашлось ни одного «старого» товара. Проверьте, что и старые, и новые товары лежат в ней,
-        либо впишите handle вручную.
-      </p>
-    {%- endif -%}
-  {%- else -%}
-    <p class="migration-check__note">Выберите коллекцию или впишите handle старых товаров в настройках секции.</p>
+    <p class="migration-check__note">
+      Страница <strong>{{ requested }}</strong> из <strong>{{ total_pages }}</strong> ·
+      групп на странице: {{ shown }} · всего групп в выборке: {{ matched }}.
+      {%- if requested > total_pages %} Такой страницы нет — уменьшите номер в настройках секции.{% endif %}
+      {%- unless only_problems %} Группы с проблемами идут первыми.{% endunless %}
+    </p>
   {%- endif -%}
 </div>
 
@@ -152,13 +149,19 @@
   "settings": [
     { "type": "text", "id": "heading", "label": "Heading", "default": "Проверка миграции: было → стало" },
     {
-      "type": "textarea",
-      "id": "handles",
-      "label": "Old product handles",
-      "info": "One per line. Uses all_products (max 20 products per page, the section says when it stops). Leave empty to use the collection below."
+      "type": "select", "id": "filter", "label": "Which groups",
+      "options": [
+        { "value": "problems", "label": "Only groups with problems" },
+        { "value": "all", "label": "All groups" }
+      ],
+      "default": "problems"
     },
-    { "type": "collection", "id": "collection", "label": "Collection with old and new products" },
-    { "type": "range", "id": "max_groups", "min": 1, "max": 20, "step": 1, "label": "Groups per page (collection mode)", "default": 8 },
+    { "type": "range", "id": "page", "min": 1, "max": 20, "step": 1, "label": "Page", "default": 1,
+      "info": "Liquid allows only 20 products per page, so the groups are paged. The page number of the last page is printed under the results." },
+    {
+      "type": "textarea", "id": "handles", "label": "Or check these old handles",
+      "info": "One per line. Overrides the two settings above."
+    },
     { "type": "header", "content": "Card display" },
     {
       "type": "select", "id": "image_ratio", "label": "Image ratio",
