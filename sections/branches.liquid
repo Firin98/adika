@@ -7,13 +7,13 @@
 {%- endcomment -%}
 
 {%- liquid
-  assign mo_type = section.settings.metaobject_type | strip
-  assign k_name = section.settings.key_name | strip
-  assign k_address = section.settings.key_address | strip
-  assign k_phone = section.settings.key_phone | strip
-  assign k_hours = section.settings.key_hours | strip
-  assign k_appr = section.settings.key_approaches | strip
-  assign k_access = section.settings.key_access | strip
+  assign mo_type   = section.settings.metaobject_type | strip
+  assign k_name    = section.settings.key_name       | strip
+  assign k_address = section.settings.key_address    | strip
+  assign k_phone   = section.settings.key_phone      | strip
+  assign k_hours   = section.settings.key_hours      | strip
+  assign k_appr    = section.settings.key_approaches | strip
+  assign k_access  = section.settings.key_access     | strip
 
   assign entries = shop.metaobjects[mo_type].values
   if section.settings.reverse_order and entries.size > 0
@@ -199,6 +199,22 @@
   .brn-{{ uid }} .brn__value p + p{ margin-top: 4px; }
   .brn-{{ uid }} .brn__value a{ color: var(--brn-val-color); text-decoration: {{ section.settings.link_underline }}; }
 
+  {%- liquid
+    if section.settings.direction == 'ltr'
+      assign phone_align = 'left'
+    else
+      assign phone_align = 'right'
+    endif
+  -%}
+  {% if section.settings.phone_dir != 'inherit' %}
+  .brn-{{ uid }} .brn__value--phone{
+    direction: {{ section.settings.phone_dir }};
+    unicode-bidi: isolate;
+    text-align: {{ phone_align }};
+  }
+  .brn-{{ uid }} .brn__value--phone a{ unicode-bidi: isolate; }
+  {% endif %}
+
   .brn-{{ uid }} .brn__empty{
     padding: 24px;
     border: 1px dashed var(--brn-card-bc);
@@ -245,11 +261,15 @@
     }
     .brn-{{ uid }} .brn__cols{ grid-template-columns: repeat({{ section.settings.cols_m }}, minmax(0, 1fr)); }
     .brn-{{ uid }} .brn__col{ order: var(--ord-m, 0); {% if section.settings.center_cols_m %}align-items: center; text-align: center;{% endif %} }
+    {% if section.settings.center_cols_m and section.settings.phone_dir != 'inherit' %}
+    .brn-{{ uid }} .brn__value--phone{ text-align: center; }
+    {% endif %}
   }
 {%- endstyle -%}
 
 <div class="brn brn-{{ uid }}" dir="{{ section.settings.direction }}">
   <div class="brn__inner">
+
     {%- if section.settings.heading != blank -%}
       <h2 class="brn__heading">{{ section.settings.heading }}</h2>
     {%- endif -%}
@@ -257,13 +277,14 @@
     {%- if entries.size > 0 -%}
       <div class="brn__grid">
         {%- for entry in entries limit: lim -%}
+
           {%- liquid
-            assign e_name = entry[k_name]
+            assign e_name    = entry[k_name]
             assign e_address = entry[k_address]
-            assign e_phone = entry[k_phone]
-            assign e_hours = entry[k_hours]
-            assign e_appr = entry[k_appr]
-            assign e_access = entry[k_access]
+            assign e_phone   = entry[k_phone]
+            assign e_hours   = entry[k_hours]
+            assign e_appr    = entry[k_appr]
+            assign e_access  = entry[k_access]
             assign acc_str = e_access | append: ''
           -%}
 
@@ -315,9 +336,9 @@
 
           {%- assign norm = norm_all | split: '[[F]]' -%}
           {%- assign h_address = norm[0] -%}
-          {%- assign h_phone = norm[1] -%}
-          {%- assign h_hours = norm[2] -%}
-          {%- assign h_appr = norm[3] -%}
+          {%- assign h_phone   = norm[1] -%}
+          {%- assign h_hours   = norm[2] -%}
+          {%- assign h_appr    = norm[3] -%}
 
           {%- if section.settings.phone_link and h_phone != blank -%}
             {%- assign phone_txt = h_phone | strip_html | strip -%}
@@ -326,11 +347,10 @@
           {%- endif -%}
 
           <div class="brn__card">
+
             <div class="brn__head">
               {%- if section.settings.show_title and e_name != blank -%}
-                <{{ section.settings.title_tag }} class="brn__title">
-                  {{- e_name | strip_html | strip -}}
-                </{{ section.settings.title_tag }}>
+                <{{ section.settings.title_tag }} class="brn__title">{{ e_name | strip_html | strip }}</{{ section.settings.title_tag }}>
               {%- else -%}
                 <span></span>
               {%- endif -%}
@@ -339,11 +359,7 @@
                   {%- if section.settings.svg_access != blank -%}
                     {{ section.settings.svg_access }}
                   {%- elsif section.settings.icon_access != blank -%}
-                    {{
-                      section.settings.icon_access
-                      | image_url: width: 96
-                      | image_tag: loading: 'lazy', alt: '', widths: '24,48,96'
-                    }}
+                    {{ section.settings.icon_access | image_url: width: 96 | image_tag: loading: 'lazy', alt: '', widths: '24,48,96' }}
                   {%- endif -%}
                 </span>
               {%- endif -%}
@@ -358,22 +374,10 @@
               {%- assign total_visible = 0 -%}
               {%- for fk in field_order -%}
                 {%- case fk -%}
-                  {%- when 'address' -%}
-                    {%- if section.settings.show_address and h_address != blank -%}
-                      {%- assign total_visible = total_visible | plus: 1 -%}
-                    {%- endif -%}
-                  {%- when 'phone' -%}
-                    {%- if section.settings.show_phone and h_phone != blank -%}
-                      {%- assign total_visible = total_visible | plus: 1 -%}
-                    {%- endif -%}
-                  {%- when 'hours' -%}
-                    {%- if section.settings.show_hours and h_hours != blank -%}
-                      {%- assign total_visible = total_visible | plus: 1 -%}
-                    {%- endif -%}
-                  {%- when 'approaches' -%}
-                    {%- if section.settings.show_approaches and h_appr != blank -%}
-                      {%- assign total_visible = total_visible | plus: 1 -%}
-                    {%- endif -%}
+                  {%- when 'address' -%}{%- if section.settings.show_address and h_address != blank -%}{%- assign total_visible = total_visible | plus: 1 -%}{%- endif -%}
+                  {%- when 'phone' -%}{%- if section.settings.show_phone and h_phone != blank -%}{%- assign total_visible = total_visible | plus: 1 -%}{%- endif -%}
+                  {%- when 'hours' -%}{%- if section.settings.show_hours and h_hours != blank -%}{%- assign total_visible = total_visible | plus: 1 -%}{%- endif -%}
+                  {%- when 'approaches' -%}{%- if section.settings.show_approaches and h_appr != blank -%}{%- assign total_visible = total_visible | plus: 1 -%}{%- endif -%}
                 {%- endcase -%}
               {%- endfor -%}
 
@@ -381,7 +385,7 @@
                 {%- liquid
                   assign f_html = ''
                   assign f_label = ''
-                  assign f_icon = null
+                  assign f_icon = nil
                   assign f_svg = ''
                   case fk
                     when 'address'
@@ -433,42 +437,31 @@
                         {%- elsif f_icon != blank -%}
                           {%- if section.settings.icon_recolor -%}
                             {%- assign icon_url = f_icon | image_url: width: 96 -%}
-                            <span
-                              class="brn__icon brn__icon--mask"
-                              aria-hidden="true"
-                              style="-webkit-mask-image:url({{ icon_url }});mask-image:url({{ icon_url }});"
-                            ></span>
+                            <span class="brn__icon brn__icon--mask" aria-hidden="true" style="-webkit-mask-image:url({{ icon_url }});mask-image:url({{ icon_url }});"></span>
                           {%- else -%}
-                            <span class="brn__icon" aria-hidden="true">
-                              {{-
-                                f_icon
-                                | image_url: width: 96
-                                | image_tag: loading: 'lazy', alt: '', widths: '24,48,96'
-                              -}}
-                            </span>
+                            <span class="brn__icon" aria-hidden="true">{{ f_icon | image_url: width: 96 | image_tag: loading: 'lazy', alt: '', widths: '24,48,96' }}</span>
                           {%- endif -%}
                         {%- endif -%}
                       {%- endif -%}
-                      {%- if f_label != blank -%}
-                        <span>{{ f_label }}</span>
-                      {%- endif -%}
+                      {%- if f_label != blank -%}<span>{{ f_label }}</span>{%- endif -%}
                     </div>
-                    <div class="brn__value">{{ f_html }}</div>
+                    <div class="brn__value brn__value--{{ fk }}"{% if fk == 'phone' and section.settings.phone_dir != 'inherit' %} dir="{{ section.settings.phone_dir }}"{% endif %}>{{ f_html }}</div>
                   </div>
                 {%- endif -%}
               {%- endfor -%}
             </div>
+
           </div>
         {%- endfor -%}
       </div>
     {%- else -%}
       {%- if request.design_mode -%}
         <div class="brn__empty">
-          Metaobject entries not found for type "{{ mo_type }}". Check the type handle in section settings and make sure
-          entries are published to the Online Store.
+          Metaobject entries not found for type "{{ mo_type }}". Check the type handle in section settings and make sure entries are published to the Online Store.
         </div>
       {%- endif -%}
     {%- endif -%}
+
   </div>
 </div>
 
@@ -485,45 +478,32 @@
     { "type": "text", "id": "key_phone", "label": "Field key: phone", "default": "phone" },
     { "type": "text", "id": "key_hours", "label": "Field key: working time", "default": "working_time" },
     { "type": "text", "id": "key_approaches", "label": "Field key: approaches", "default": "approaches" },
-    {
-      "type": "text",
-      "id": "key_access",
-      "label": "Field key: accessability (true/false)",
-      "default": "accessability"
-    },
-    {
-      "type": "range",
-      "id": "entries_limit",
-      "label": "Max entries (0 = all)",
-      "min": 0,
-      "max": 50,
-      "step": 1,
-      "default": 0
-    },
+    { "type": "text", "id": "key_access", "label": "Field key: accessability (true/false)", "default": "accessability" },
+    { "type": "range", "id": "entries_limit", "label": "Max entries (0 = all)", "min": 0, "max": 50, "step": 1, "default": 0 },
     { "type": "checkbox", "id": "reverse_order", "label": "Reverse entries order", "default": false },
-    {
-      "type": "checkbox",
-      "id": "use_metafield_tag",
-      "label": "Render rich text via metafield_tag",
-      "default": true,
-      "info": "A raw JSON fallback parser runs automatically either way."
-    },
+    { "type": "checkbox", "id": "use_metafield_tag", "label": "Render rich text via metafield_tag", "default": true, "info": "A raw JSON fallback parser runs automatically either way." },
 
     { "type": "header", "content": "Content" },
     { "type": "checkbox", "id": "show_title", "label": "Show name", "default": true },
     { "type": "checkbox", "id": "show_address", "label": "Show address", "default": true },
     { "type": "checkbox", "id": "show_phone", "label": "Show phone", "default": true },
     { "type": "checkbox", "id": "phone_link", "label": "Make phone clickable (tel:)", "default": true },
+    {
+      "type": "select",
+      "id": "phone_dir",
+      "label": "Phone text direction",
+      "options": [
+        { "value": "ltr", "label": "LTR (recommended for numbers)" },
+        { "value": "rtl", "label": "RTL" },
+        { "value": "inherit", "label": "Inherit from section" }
+      ],
+      "default": "ltr",
+      "info": "Keeps +8 (453) 734-45-56 from being reordered inside an RTL page. Alignment stays on the section side."
+    },
     { "type": "checkbox", "id": "show_hours", "label": "Show working time", "default": true },
     { "type": "checkbox", "id": "show_approaches", "label": "Show approaches", "default": true },
     { "type": "checkbox", "id": "show_access", "label": "Show accessibility icon when true", "default": true },
-    {
-      "type": "text",
-      "id": "field_order",
-      "label": "Column order",
-      "default": "address,phone,hours,approaches",
-      "info": "Comma-separated: address, phone, hours, approaches"
-    },
+    { "type": "text", "id": "field_order", "label": "Column order", "default": "address,phone,hours,approaches", "info": "Comma-separated: address, phone, hours, approaches" },
     { "type": "checkbox", "id": "mobile_reverse", "label": "Reverse column order on mobile", "default": true },
 
     { "type": "header", "content": "Labels" },
@@ -531,12 +511,7 @@
     { "type": "text", "id": "label_phone", "label": "Phone label", "default": "טלפון:" },
     { "type": "text", "id": "label_hours", "label": "Working time label", "default": "שעות פעילות:" },
     { "type": "text", "id": "label_approaches", "label": "Approaches label", "default": "גישות:" },
-    {
-      "type": "text",
-      "id": "access_aria",
-      "label": "Accessibility icon aria-label",
-      "default": "הסניף מונגש לבעלי המוגבלויות"
-    },
+    { "type": "text", "id": "access_aria", "label": "Accessibility icon aria-label", "default": "הסניף מונגש לבעלי המוגבלויות" },
 
     { "type": "header", "content": "Section layout" },
     {
@@ -552,26 +527,8 @@
     },
     { "type": "color", "id": "color_bg", "label": "Section background", "default": "#ffffff" },
     { "type": "checkbox", "id": "full_width", "label": "Full width", "default": false },
-    {
-      "type": "range",
-      "id": "section_width",
-      "label": "Max content width",
-      "min": 480,
-      "max": 1600,
-      "step": 20,
-      "unit": "px",
-      "default": 1120
-    },
-    {
-      "type": "range",
-      "id": "mobile_bp",
-      "label": "Mobile breakpoint",
-      "min": 480,
-      "max": 1200,
-      "step": 20,
-      "unit": "px",
-      "default": 740
-    },
+    { "type": "range", "id": "section_width", "label": "Max content width", "min": 480, "max": 1600, "step": 20, "unit": "px", "default": 1120 },
+    { "type": "range", "id": "mobile_bp", "label": "Mobile breakpoint", "min": 480, "max": 1200, "step": 20, "unit": "px", "default": 740 },
 
     { "type": "header", "content": "Section heading" },
     { "type": "text", "id": "heading", "label": "Heading" },
@@ -600,278 +557,44 @@
       ],
       "default": "700"
     },
-    {
-      "type": "range",
-      "id": "heading_size",
-      "label": "Font size (desktop)",
-      "min": 12,
-      "max": 80,
-      "step": 1,
-      "unit": "px",
-      "default": 32
-    },
-    {
-      "type": "range",
-      "id": "heading_lh",
-      "label": "Line height (desktop)",
-      "min": 12,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 40
-    },
-    {
-      "type": "range",
-      "id": "heading_size_m",
-      "label": "Font size (mobile)",
-      "min": 12,
-      "max": 60,
-      "step": 1,
-      "unit": "px",
-      "default": 24
-    },
-    {
-      "type": "range",
-      "id": "heading_lh_m",
-      "label": "Line height (mobile)",
-      "min": 12,
-      "max": 80,
-      "step": 1,
-      "unit": "px",
-      "default": 30
-    },
-    {
-      "type": "range",
-      "id": "heading_mb",
-      "label": "Bottom margin (desktop)",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 24
-    },
-    {
-      "type": "range",
-      "id": "heading_mb_m",
-      "label": "Bottom margin (mobile)",
-      "min": 0,
-      "max": 80,
-      "step": 1,
-      "unit": "px",
-      "default": 16
-    },
+    { "type": "range", "id": "heading_size", "label": "Font size (desktop)", "min": 12, "max": 80, "step": 1, "unit": "px", "default": 32 },
+    { "type": "range", "id": "heading_lh", "label": "Line height (desktop)", "min": 12, "max": 100, "step": 1, "unit": "px", "default": 40 },
+    { "type": "range", "id": "heading_size_m", "label": "Font size (mobile)", "min": 12, "max": 60, "step": 1, "unit": "px", "default": 24 },
+    { "type": "range", "id": "heading_lh_m", "label": "Line height (mobile)", "min": 12, "max": 80, "step": 1, "unit": "px", "default": 30 },
+    { "type": "range", "id": "heading_mb", "label": "Bottom margin (desktop)", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 24 },
+    { "type": "range", "id": "heading_mb_m", "label": "Bottom margin (mobile)", "min": 0, "max": 80, "step": 1, "unit": "px", "default": 16 },
 
     { "type": "header", "content": "Spacing — desktop" },
-    {
-      "type": "range",
-      "id": "pt",
-      "label": "Padding top",
-      "min": 0,
-      "max": 200,
-      "step": 2,
-      "unit": "px",
-      "default": 40
-    },
-    {
-      "type": "range",
-      "id": "pb",
-      "label": "Padding bottom",
-      "min": 0,
-      "max": 200,
-      "step": 2,
-      "unit": "px",
-      "default": 40
-    },
-    {
-      "type": "range",
-      "id": "px",
-      "label": "Padding sides",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 20
-    },
-    {
-      "type": "range",
-      "id": "gap",
-      "label": "Gap between cards",
-      "min": 0,
-      "max": 80,
-      "step": 1,
-      "unit": "px",
-      "default": 15
-    },
+    { "type": "range", "id": "pt", "label": "Padding top", "min": 0, "max": 200, "step": 2, "unit": "px", "default": 40 },
+    { "type": "range", "id": "pb", "label": "Padding bottom", "min": 0, "max": 200, "step": 2, "unit": "px", "default": 40 },
+    { "type": "range", "id": "px", "label": "Padding sides", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 20 },
+    { "type": "range", "id": "gap", "label": "Gap between cards", "min": 0, "max": 80, "step": 1, "unit": "px", "default": 15 },
 
     { "type": "header", "content": "Spacing — mobile" },
-    {
-      "type": "range",
-      "id": "pt_m",
-      "label": "Padding top",
-      "min": 0,
-      "max": 160,
-      "step": 2,
-      "unit": "px",
-      "default": 24
-    },
-    {
-      "type": "range",
-      "id": "pb_m",
-      "label": "Padding bottom",
-      "min": 0,
-      "max": 160,
-      "step": 2,
-      "unit": "px",
-      "default": 24
-    },
-    {
-      "type": "range",
-      "id": "px_m",
-      "label": "Padding sides",
-      "min": 0,
-      "max": 60,
-      "step": 1,
-      "unit": "px",
-      "default": 16
-    },
-    {
-      "type": "range",
-      "id": "gap_m",
-      "label": "Gap between cards",
-      "min": 0,
-      "max": 60,
-      "step": 1,
-      "unit": "px",
-      "default": 10
-    },
+    { "type": "range", "id": "pt_m", "label": "Padding top", "min": 0, "max": 160, "step": 2, "unit": "px", "default": 24 },
+    { "type": "range", "id": "pb_m", "label": "Padding bottom", "min": 0, "max": 160, "step": 2, "unit": "px", "default": 24 },
+    { "type": "range", "id": "px_m", "label": "Padding sides", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "gap_m", "label": "Gap between cards", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 10 },
 
     { "type": "header", "content": "Card" },
     { "type": "color", "id": "card_bg", "label": "Background", "default": "#ffffff" },
     { "type": "color", "id": "card_border_color", "label": "Border color", "default": "#B6B7B7" },
-    {
-      "type": "range",
-      "id": "card_border_w",
-      "label": "Border width",
-      "min": 0,
-      "max": 8,
-      "step": 1,
-      "unit": "px",
-      "default": 1
-    },
-    {
-      "type": "range",
-      "id": "card_radius",
-      "label": "Radius (desktop)",
-      "min": 0,
-      "max": 60,
-      "step": 1,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "card_radius_m",
-      "label": "Radius (mobile)",
-      "min": 0,
-      "max": 60,
-      "step": 1,
-      "unit": "px",
-      "default": 0
-    },
-    {
-      "type": "range",
-      "id": "card_pad_y",
-      "label": "Padding top/bottom (desktop)",
-      "min": 0,
-      "max": 80,
-      "step": 1,
-      "unit": "px",
-      "default": 25
-    },
-    {
-      "type": "range",
-      "id": "card_pad_x",
-      "label": "Padding sides (desktop)",
-      "min": 0,
-      "max": 80,
-      "step": 1,
-      "unit": "px",
-      "default": 25
-    },
-    {
-      "type": "range",
-      "id": "card_pad_y_m",
-      "label": "Padding top/bottom (mobile)",
-      "min": 0,
-      "max": 60,
-      "step": 1,
-      "unit": "px",
-      "default": 20
-    },
-    {
-      "type": "range",
-      "id": "card_pad_x_m",
-      "label": "Padding sides (mobile)",
-      "min": 0,
-      "max": 60,
-      "step": 1,
-      "unit": "px",
-      "default": 14
-    },
+    { "type": "range", "id": "card_border_w", "label": "Border width", "min": 0, "max": 8, "step": 1, "unit": "px", "default": 1 },
+    { "type": "range", "id": "card_radius", "label": "Radius (desktop)", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 0 },
+    { "type": "range", "id": "card_radius_m", "label": "Radius (mobile)", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 0 },
+    { "type": "range", "id": "card_pad_y", "label": "Padding top/bottom (desktop)", "min": 0, "max": 80, "step": 1, "unit": "px", "default": 25 },
+    { "type": "range", "id": "card_pad_x", "label": "Padding sides (desktop)", "min": 0, "max": 80, "step": 1, "unit": "px", "default": 25 },
+    { "type": "range", "id": "card_pad_y_m", "label": "Padding top/bottom (mobile)", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 20 },
+    { "type": "range", "id": "card_pad_x_m", "label": "Padding sides (mobile)", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 14 },
 
     { "type": "header", "content": "Header divider" },
     { "type": "checkbox", "id": "show_divider", "label": "Show divider", "default": true },
     { "type": "color", "id": "divider_color", "label": "Color", "default": "#EAEAEA" },
-    {
-      "type": "range",
-      "id": "divider_w",
-      "label": "Thickness",
-      "min": 0,
-      "max": 6,
-      "step": 1,
-      "unit": "px",
-      "default": 1
-    },
-    {
-      "type": "range",
-      "id": "divider_mt",
-      "label": "Margin above (desktop)",
-      "min": 0,
-      "max": 60,
-      "step": 1,
-      "unit": "px",
-      "default": 20
-    },
-    {
-      "type": "range",
-      "id": "divider_mb",
-      "label": "Margin below (desktop)",
-      "min": 0,
-      "max": 60,
-      "step": 1,
-      "unit": "px",
-      "default": 20
-    },
-    {
-      "type": "range",
-      "id": "divider_mt_m",
-      "label": "Margin above (mobile)",
-      "min": 0,
-      "max": 60,
-      "step": 1,
-      "unit": "px",
-      "default": 16
-    },
-    {
-      "type": "range",
-      "id": "divider_mb_m",
-      "label": "Margin below (mobile)",
-      "min": 0,
-      "max": 60,
-      "step": 1,
-      "unit": "px",
-      "default": 16
-    },
+    { "type": "range", "id": "divider_w", "label": "Thickness", "min": 0, "max": 6, "step": 1, "unit": "px", "default": 1 },
+    { "type": "range", "id": "divider_mt", "label": "Margin above (desktop)", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 20 },
+    { "type": "range", "id": "divider_mb", "label": "Margin below (desktop)", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 20 },
+    { "type": "range", "id": "divider_mt_m", "label": "Margin above (mobile)", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "divider_mb_m", "label": "Margin below (mobile)", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 16 },
 
     { "type": "header", "content": "Branch name" },
     {
@@ -900,110 +623,24 @@
       ],
       "default": "600"
     },
-    {
-      "type": "range",
-      "id": "title_size",
-      "label": "Font size (desktop)",
-      "min": 12,
-      "max": 60,
-      "step": 1,
-      "unit": "px",
-      "default": 24
-    },
-    {
-      "type": "range",
-      "id": "title_lh",
-      "label": "Line height (desktop)",
-      "min": 12,
-      "max": 80,
-      "step": 1,
-      "unit": "px",
-      "default": 29
-    },
-    {
-      "type": "range",
-      "id": "title_size_m",
-      "label": "Font size (mobile)",
-      "min": 12,
-      "max": 48,
-      "step": 1,
-      "unit": "px",
-      "default": 18
-    },
-    {
-      "type": "range",
-      "id": "title_lh_m",
-      "label": "Line height (mobile)",
-      "min": 12,
-      "max": 70,
-      "step": 1,
-      "unit": "px",
-      "default": 22
-    },
-    {
-      "type": "range",
-      "id": "title_ls",
-      "label": "Letter spacing",
-      "min": -2,
-      "max": 5,
-      "step": 0.1,
-      "unit": "px",
-      "default": 0
-    },
+    { "type": "range", "id": "title_size", "label": "Font size (desktop)", "min": 12, "max": 60, "step": 1, "unit": "px", "default": 24 },
+    { "type": "range", "id": "title_lh", "label": "Line height (desktop)", "min": 12, "max": 80, "step": 1, "unit": "px", "default": 29 },
+    { "type": "range", "id": "title_size_m", "label": "Font size (mobile)", "min": 12, "max": 48, "step": 1, "unit": "px", "default": 18 },
+    { "type": "range", "id": "title_lh_m", "label": "Line height (mobile)", "min": 12, "max": 70, "step": 1, "unit": "px", "default": 22 },
+    { "type": "range", "id": "title_ls", "label": "Letter spacing", "min": -2, "max": 5, "step": 0.1, "unit": "px", "default": 0 },
 
     { "type": "header", "content": "Accessibility icon" },
     { "type": "image_picker", "id": "icon_access", "label": "Icon" },
-    {
-      "type": "textarea",
-      "id": "svg_access",
-      "label": "Icon — inline SVG",
-      "info": "Takes priority over the uploaded image."
-    },
+    { "type": "textarea", "id": "svg_access", "label": "Icon — inline SVG", "info": "Takes priority over the uploaded image." },
     { "type": "color", "id": "access_color", "label": "Color (SVG only)", "default": "#111111" },
-    {
-      "type": "range",
-      "id": "access_size",
-      "label": "Size (desktop)",
-      "min": 12,
-      "max": 60,
-      "step": 1,
-      "unit": "px",
-      "default": 24
-    },
-    {
-      "type": "range",
-      "id": "access_size_m",
-      "label": "Size (mobile)",
-      "min": 12,
-      "max": 48,
-      "step": 1,
-      "unit": "px",
-      "default": 20
-    },
+    { "type": "range", "id": "access_size", "label": "Size (desktop)", "min": 12, "max": 60, "step": 1, "unit": "px", "default": 24 },
+    { "type": "range", "id": "access_size_m", "label": "Size (mobile)", "min": 12, "max": 48, "step": 1, "unit": "px", "default": 20 },
 
     { "type": "header", "content": "Columns" },
     { "type": "range", "id": "cols", "label": "Columns (desktop)", "min": 1, "max": 4, "step": 1, "default": 4 },
     { "type": "range", "id": "cols_m", "label": "Columns (mobile)", "min": 1, "max": 3, "step": 1, "default": 1 },
-    {
-      "type": "range",
-      "id": "col_gap",
-      "label": "Gap between columns (desktop)",
-      "min": 0,
-      "max": 100,
-      "step": 1,
-      "unit": "px",
-      "default": 40
-    },
-    {
-      "type": "range",
-      "id": "col_gap_m",
-      "label": "Gap between columns (mobile)",
-      "min": 0,
-      "max": 60,
-      "step": 1,
-      "unit": "px",
-      "default": 15
-    },
+    { "type": "range", "id": "col_gap", "label": "Gap between columns (desktop)", "min": 0, "max": 100, "step": 1, "unit": "px", "default": 40 },
+    { "type": "range", "id": "col_gap_m", "label": "Gap between columns (mobile)", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 15 },
     { "type": "checkbox", "id": "center_cols_m", "label": "Center columns on mobile", "default": false },
 
     { "type": "header", "content": "Field labels (typography)" },
@@ -1020,66 +657,12 @@
       ],
       "default": "600"
     },
-    {
-      "type": "range",
-      "id": "label_size",
-      "label": "Font size (desktop)",
-      "min": 10,
-      "max": 32,
-      "step": 1,
-      "unit": "px",
-      "default": 16
-    },
-    {
-      "type": "range",
-      "id": "label_lh",
-      "label": "Line height (desktop)",
-      "min": 10,
-      "max": 50,
-      "step": 1,
-      "unit": "px",
-      "default": 19
-    },
-    {
-      "type": "range",
-      "id": "label_size_m",
-      "label": "Font size (mobile)",
-      "min": 10,
-      "max": 28,
-      "step": 1,
-      "unit": "px",
-      "default": 14
-    },
-    {
-      "type": "range",
-      "id": "label_lh_m",
-      "label": "Line height (mobile)",
-      "min": 10,
-      "max": 40,
-      "step": 1,
-      "unit": "px",
-      "default": 17
-    },
-    {
-      "type": "range",
-      "id": "label_gap",
-      "label": "Gap label ↔ text (desktop)",
-      "min": 0,
-      "max": 40,
-      "step": 1,
-      "unit": "px",
-      "default": 10
-    },
-    {
-      "type": "range",
-      "id": "label_gap_m",
-      "label": "Gap label ↔ text (mobile)",
-      "min": 0,
-      "max": 30,
-      "step": 1,
-      "unit": "px",
-      "default": 7
-    },
+    { "type": "range", "id": "label_size", "label": "Font size (desktop)", "min": 10, "max": 32, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "label_lh", "label": "Line height (desktop)", "min": 10, "max": 50, "step": 1, "unit": "px", "default": 19 },
+    { "type": "range", "id": "label_size_m", "label": "Font size (mobile)", "min": 10, "max": 28, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range", "id": "label_lh_m", "label": "Line height (mobile)", "min": 10, "max": 40, "step": 1, "unit": "px", "default": 17 },
+    { "type": "range", "id": "label_gap", "label": "Gap label ↔ text (desktop)", "min": 0, "max": 40, "step": 1, "unit": "px", "default": 10 },
+    { "type": "range", "id": "label_gap_m", "label": "Gap label ↔ text (mobile)", "min": 0, "max": 30, "step": 1, "unit": "px", "default": 7 },
 
     { "type": "header", "content": "Field values (typography)" },
     { "type": "color", "id": "value_color", "label": "Color", "default": "#000000" },
@@ -1095,56 +678,11 @@
       ],
       "default": "400"
     },
-    {
-      "type": "range",
-      "id": "value_size",
-      "label": "Font size (desktop)",
-      "min": 10,
-      "max": 32,
-      "step": 1,
-      "unit": "px",
-      "default": 16
-    },
-    {
-      "type": "range",
-      "id": "value_lh",
-      "label": "Line height (desktop)",
-      "min": 10,
-      "max": 50,
-      "step": 1,
-      "unit": "px",
-      "default": 24
-    },
-    {
-      "type": "range",
-      "id": "value_size_m",
-      "label": "Font size (mobile)",
-      "min": 10,
-      "max": 28,
-      "step": 1,
-      "unit": "px",
-      "default": 14
-    },
-    {
-      "type": "range",
-      "id": "value_lh_m",
-      "label": "Line height (mobile)",
-      "min": 10,
-      "max": 40,
-      "step": 1,
-      "unit": "px",
-      "default": 22
-    },
-    {
-      "type": "range",
-      "id": "value_maxw",
-      "label": "Max text width (0 = off)",
-      "min": 0,
-      "max": 400,
-      "step": 10,
-      "unit": "px",
-      "default": 210
-    },
+    { "type": "range", "id": "value_size", "label": "Font size (desktop)", "min": 10, "max": 32, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "value_lh", "label": "Line height (desktop)", "min": 10, "max": 50, "step": 1, "unit": "px", "default": 24 },
+    { "type": "range", "id": "value_size_m", "label": "Font size (mobile)", "min": 10, "max": 28, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range", "id": "value_lh_m", "label": "Line height (mobile)", "min": 10, "max": 40, "step": 1, "unit": "px", "default": 22 },
+    { "type": "range", "id": "value_maxw", "label": "Max text width (0 = off)", "min": 0, "max": 400, "step": 10, "unit": "px", "default": 210 },
     {
       "type": "select",
       "id": "link_underline",
@@ -1158,13 +696,7 @@
 
     { "type": "header", "content": "Field icons" },
     { "type": "checkbox", "id": "show_icons", "label": "Show icons", "default": true },
-    {
-      "type": "checkbox",
-      "id": "icon_recolor",
-      "label": "Recolor uploaded icons (CSS mask)",
-      "default": false,
-      "info": "Works with single-color icons on a transparent background."
-    },
+    { "type": "checkbox", "id": "icon_recolor", "label": "Recolor uploaded icons (CSS mask)", "default": false, "info": "Works with single-color icons on a transparent background." },
     { "type": "color", "id": "icon_color", "label": "Icon color", "default": "#111111" },
     {
       "type": "select",
@@ -1176,46 +708,10 @@
       ],
       "default": "start"
     },
-    {
-      "type": "range",
-      "id": "icon_size",
-      "label": "Size (desktop)",
-      "min": 8,
-      "max": 48,
-      "step": 1,
-      "unit": "px",
-      "default": 20
-    },
-    {
-      "type": "range",
-      "id": "icon_size_m",
-      "label": "Size (mobile)",
-      "min": 8,
-      "max": 40,
-      "step": 1,
-      "unit": "px",
-      "default": 16
-    },
-    {
-      "type": "range",
-      "id": "icon_gap",
-      "label": "Icon ↔ label gap (desktop)",
-      "min": 0,
-      "max": 30,
-      "step": 1,
-      "unit": "px",
-      "default": 5
-    },
-    {
-      "type": "range",
-      "id": "icon_gap_m",
-      "label": "Icon ↔ label gap (mobile)",
-      "min": 0,
-      "max": 30,
-      "step": 1,
-      "unit": "px",
-      "default": 5
-    },
+    { "type": "range", "id": "icon_size", "label": "Size (desktop)", "min": 8, "max": 48, "step": 1, "unit": "px", "default": 20 },
+    { "type": "range", "id": "icon_size_m", "label": "Size (mobile)", "min": 8, "max": 40, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "icon_gap", "label": "Icon ↔ label gap (desktop)", "min": 0, "max": 30, "step": 1, "unit": "px", "default": 5 },
+    { "type": "range", "id": "icon_gap_m", "label": "Icon ↔ label gap (mobile)", "min": 0, "max": 30, "step": 1, "unit": "px", "default": 5 },
     { "type": "image_picker", "id": "icon_address", "label": "Address icon" },
     { "type": "textarea", "id": "svg_address", "label": "Address icon — inline SVG" },
     { "type": "image_picker", "id": "icon_phone", "label": "Phone icon" },
@@ -1225,6 +721,8 @@
     { "type": "image_picker", "id": "icon_approaches", "label": "Approaches icon" },
     { "type": "textarea", "id": "svg_approaches", "label": "Approaches icon — inline SVG" }
   ],
-  "presets": [{ "name": "Branches" }]
+  "presets": [
+    { "name": "Branches" }
+  ]
 }
 {% endschema %}

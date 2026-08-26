@@ -322,6 +322,7 @@
         "title_size_m": 18,
         "title_lh_m": 22,
         "title_ls": 0,
+        "icon_access": "shopify://shop_images/51-group.svg",
         "svg_access": "",
         "access_color": "#111111",
         "access_size": 24,
