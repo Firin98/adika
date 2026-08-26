@@ -27,6 +27,7 @@
           "type": "slide",
           "settings": {
             "desktop_image": "shopify://shop_images/BANNER_DESK_1920_ADIKA_1.jpg",
+            "mobile_image": "shopify://shop_images/BANNER_DESK_1920_ADIKA_1_1.jpg",
             "subtitle": "New Collection",
             "title": "Discover Our Latest Styles",
             "text_content": "",
