@@ -4168,6 +4168,8 @@ searchanize styles */
 
 .snize-ac-results .snize-button {
   border-radius: 6px !important;
+  background-color: #000 !important;
+  border-radius: 0 !important;
 }
 .snize-ac-results-content {
   direction: rtl;
