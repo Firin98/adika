@@ -35,7 +35,8 @@
             "label_text": "צבע",
             "swatch_size": 20,
             "dim_unavailable": true,
-            "enable_prerender": true
+            "instant_mode": "ajax",
+            "preload_mode": "idle"
           }
         },
         "variant_picker": {
@@ -58,6 +59,19 @@
           "settings": {
             "show_dynamic_checkout": false,
             "show_gift_card_recipient": false
+          }
+        },
+        "amp_back_in_stock_app_block_LFpQPm": {
+          "type": "shopify://apps/amp-back-in-stock/blocks/app-block/bfa6a8c4-24e2-411a-9396-e35031b33f34",
+          "settings": {
+            "caption": "Email when available",
+            "font_size": 16,
+            "color": "#ffffff",
+            "background_color": "#000000",
+            "margin_top": 10,
+            "margin_bottom": 10,
+            "classes": "button button--full-width",
+            "style": "text-decoration:none"
           }
         },
         "variant_meta_UmykwD": {
@@ -180,6 +194,7 @@
         "variant_picker",
         "quantity_selector",
         "buy_buttons",
+        "amp_back_in_stock_app_block_LFpQPm",
         "variant_meta_UmykwD",
         "description",
         "collapsible_tab_r838AT",
@@ -260,7 +275,6 @@
         "image_ratio": "portrait",
         "image_display_mode": "default",
         "image_display_mode_mobile": "slider",
-        "swatch_gallery_reload": true,
         "image_shape": "default",
         "show_secondary_image": false,
         "show_wishlist": true,
