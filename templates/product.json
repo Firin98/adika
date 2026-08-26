@@ -28,6 +28,16 @@
           "type": "price",
           "settings": {}
         },
+        "color_group_86mqfn": {
+          "type": "color_group",
+          "settings": {
+            "show_label": true,
+            "label_text": "צבע",
+            "swatch_size": 36,
+            "dim_unavailable": true,
+            "enable_prerender": true
+          }
+        },
         "variant_picker": {
           "type": "variant_picker",
           "settings": {
@@ -166,6 +176,7 @@
         "vendor",
         "title",
         "price",
+        "color_group_86mqfn",
         "variant_picker",
         "quantity_selector",
         "buy_buttons",
