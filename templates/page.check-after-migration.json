@@ -24,10 +24,10 @@
       "type": "migration-check",
       "name": "Migration check",
       "settings": {
-        "heading": "Проверка миграции: было → стало",
+        "heading": "",
+        "filter": "problems",
+        "page": 1,
         "handles": "",
-        "collection": "",
-        "max_groups": 8,
         "image_ratio": "portrait",
         "show_badges": true,
         "show_wishlist": false,
