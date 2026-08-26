@@ -276,7 +276,7 @@
         "full_width": true,
         "section_color_scheme": "",
         "section_background": "",
-        "section_background_transparent": true,
+        "section_background_transparent": false,
         "section_use_secondary_background": false,
         "padding_top": 40,
         "padding_bottom": 52,
