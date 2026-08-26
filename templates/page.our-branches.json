@@ -221,11 +221,11 @@
             "text_color": "#000000",
             "font_weight": "400",
             "text_transform": "none",
-            "font_size": 16,
-            "line_height": 24,
+            "font_size": 14,
+            "line_height": 18,
             "margin_bottom": 0,
             "font_size_mobile": 14,
-            "line_height_mobile": 20,
+            "line_height_mobile": 18,
             "margin_bottom_mobile": 0
           }
         }
@@ -235,7 +235,7 @@
       ],
       "name": "Rich text better",
       "settings": {
-        "bg_color": "#FFEBED",
+        "bg_color": "#ffebed",
         "max_width": 0,
         "desktop_content_position": "center",
         "content_alignment": "center",
