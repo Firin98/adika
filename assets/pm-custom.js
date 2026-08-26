@@ -1133,218 +1133,6 @@ document.addEventListener("product-info:loaded", function (event) {
 });
 
 /* --------------------------------------------------------------------------
-   Color swatch -> per-variant gallery swap inside product cards.
-
-   Cards rendered by a section with "Swap images on color swatch" enabled
-   carry data-card-galleries: { "<color value>": [{u,w,h,a}, ...] }, built in
-   card-product.liquid from the variant featured image plus the custom.gallery
-   metafield. Only colors that actually have a gallery are in that map, so:
-     - color with a gallery      -> images are replaced (slider or static)
-     - color without a gallery   -> the original card markup is restored and
-                                    the existing behaviour takes over
-                                    (syncCardSliderWithSwatch below)
-   Both image display modes keep working: in slider mode the swiper slides are
-   rebuilt from one cloned slide, in static mode only the <img> attributes of
-   the first (and hover) image are rewritten, so the CSS hover swap is intact.
-   -------------------------------------------------------------------------- */
-var CARD_GALLERY_WIDTHS = [165, 360, 533, 720, 940, 1066];
-
-function cardGalleryData(wrapper) {
-  if (wrapper._cardGalleries !== undefined) return wrapper._cardGalleries;
-  var raw = wrapper.getAttribute("data-card-galleries");
-  var parsed = null;
-  if (raw) {
-    try {
-      parsed = JSON.parse(raw);
-    } catch (e) {
-      parsed = null;
-    }
-  }
-  wrapper._cardGalleries = parsed;
-  return parsed;
-}
-
-function cardGalleryUrl(base, width) {
-  return base + (base.indexOf("?") === -1 ? "?" : "&") + "width=" + width;
-}
-
-function applyCardGalleryImage(img, image) {
-  if (!img || !image || !image.u) return;
-  var width = parseInt(image.w, 10) || 0;
-  var parts = [];
-  CARD_GALLERY_WIDTHS.forEach(function (w) {
-    if (!width || width >= w) parts.push(cardGalleryUrl(image.u, w) + " " + w + "w");
-  });
-  if (width) parts.push(cardGalleryUrl(image.u, width) + " " + width + "w");
-
-  img.setAttribute("srcset", parts.join(", "));
-  img.setAttribute("src", cardGalleryUrl(image.u, 533));
-  img.setAttribute("alt", image.a || "");
-  if (width) img.setAttribute("width", width);
-  if (image.h) img.setAttribute("height", image.h);
-  // the card is on screen by the time a swatch is clicked
-  img.removeAttribute("loading");
-}
-
-function cardGallerySwiper(sliderElement) {
-  return sliderElement.swiper || sliderElement._cardSwiper || null;
-}
-
-function refreshCardGallerySwiper(sliderElement) {
-  var swiper = cardGallerySwiper(sliderElement);
-  if (!swiper) return;
-  try {
-    swiper.update();
-    swiper.slideTo(0, 0);
-    // a card that started with a single image has no hover scrub bound yet
-    initCardHoverScrub(sliderElement, swiper);
-  } catch (e) {
-    // ignore
-  }
-}
-
-function swapCardSliderImages(sliderElement, images) {
-  var track = sliderElement.querySelector(".swiper-wrapper");
-  if (!track) return;
-  if (track._originalHTML === undefined) track._originalHTML = track.innerHTML;
-
-  var template = track.querySelector(".swiper-slide");
-  if (!template) return;
-
-  var proto = template.cloneNode(true);
-  proto.removeAttribute("style");
-  proto.removeAttribute("data-media-id");
-  proto.classList.remove(
-    "swiper-slide-active",
-    "swiper-slide-next",
-    "swiper-slide-prev",
-    "swiper-slide-visible",
-    "swiper-slide-duplicate"
-  );
-
-  var fragment = document.createDocumentFragment();
-  images.forEach(function (image) {
-    var slide = proto.cloneNode(true);
-    applyCardGalleryImage(slide.querySelector("img"), image);
-    fragment.appendChild(slide);
-  });
-
-  track.innerHTML = "";
-  track.appendChild(fragment);
-  refreshCardGallerySwiper(sliderElement);
-}
-
-function restoreCardSliderImages(sliderElement, featuredMediaId) {
-  var track = sliderElement.querySelector(".swiper-wrapper");
-  if (!track || track._originalHTML === undefined) return;
-  track.innerHTML = track._originalHTML;
-  refreshCardGallerySwiper(sliderElement);
-
-  if (!featuredMediaId) return;
-  var swiper = cardGallerySwiper(sliderElement);
-  if (!swiper || !swiper.slides) return;
-  for (var i = 0; i < swiper.slides.length; i++) {
-    if (String(swiper.slides[i].dataset.mediaId) === String(featuredMediaId)) {
-      swiper.slideTo(i, 0);
-      break;
-    }
-  }
-}
-
-function swapCardStaticImages(mediaElement, images) {
-  if (mediaElement._originalHTML === undefined) mediaElement._originalHTML = mediaElement.innerHTML;
-  var imgs = mediaElement.querySelectorAll("img");
-  if (!imgs.length) return;
-  applyCardGalleryImage(imgs[0], images[0]);
-  // second image is the hover state - fall back to the first one
-  if (imgs[1]) applyCardGalleryImage(imgs[1], images[1] || images[0]);
-}
-
-function restoreCardStaticImages(mediaElement) {
-  if (mediaElement._originalHTML === undefined) return;
-  mediaElement.innerHTML = mediaElement._originalHTML;
-}
-
-var cardGallerySwapsBound = false;
-
-function initCardGallerySwaps() {
-  // one delegated listener covers cards added later (pagination, filters)
-  if (cardGallerySwapsBound) return;
-  cardGallerySwapsBound = true;
-
-  document.addEventListener("change", function (event) {
-    var input = event.target;
-    if (!input || !input.classList || !input.classList.contains("swatch-input__input")) return;
-
-    var wrapper = input.closest(".card-wrapper");
-    if (!wrapper || !wrapper.hasAttribute("data-card-galleries")) return;
-
-    var galleries = cardGalleryData(wrapper);
-    if (!galleries) return;
-
-    var value = (input.value || "").trim();
-    var images = galleries[value];
-    var hasImages = Boolean(images && images.length);
-
-    var sliderElement = wrapper.querySelector("[data-product-card-slider]");
-    if (sliderElement) {
-      if (hasImages) {
-        swapCardSliderImages(sliderElement, images);
-      } else {
-        restoreCardSliderImages(sliderElement, input.dataset.variantFeaturedMediaId);
-      }
-      return;
-    }
-
-    var mediaElement = wrapper.querySelector(".card__media .media");
-    if (!mediaElement) return;
-    if (hasImages) {
-      swapCardStaticImages(mediaElement, images);
-    } else {
-      restoreCardStaticImages(mediaElement);
-    }
-  });
-}
-
-initCardGallerySwaps();
-
-function syncCardSliderWithSwatch() {
-  document.addEventListener("change", event => {
-    const input = event.target;
-    if (!input || !input.classList || !input.classList.contains("swatch-input__input")) {
-      return;
-    }
-
-    const mediaId = input.dataset.variantFeaturedMediaId;
-
-    const card = input.closest(".card-wrapper");
-    if (!card) {
-      return;
-    }
-
-    const sliderElement = card.querySelector("[data-product-card-slider]");
-    if (!sliderElement) return;
-
-    const swiper = sliderElement.swiper || sliderElement._cardSwiper || sliderElement.productMediaMainSwiper;
-    if (!swiper) return;
-    let targetIndex = -1;
-    if (mediaId) {
-      targetIndex = Array.from(swiper.slides).findIndex(
-        slide => String(slide.dataset.mediaId) === String(mediaId)
-      );
-    }
-
-    if (targetIndex === -1 && swiper.slides.length > 0) {
-      targetIndex = 0;
-    }
-
-    if (targetIndex > -1 && targetIndex !== swiper.activeIndex) {
-      swiper.slideTo(targetIndex);
-    }
-  });
-}
-
-/* --------------------------------------------------------------------------
    Полоска размеров в карточке товара.
 
    Что чинится:
@@ -1724,7 +1512,6 @@ document.addEventListener("DOMContentLoaded", function () {
   initCollectionHeroLinksSwipers(document);
   initComplementaryProductsSwipers(document);
   initProductMediaGalleries(document);
-  syncCardSliderWithSwatch();
   watchCollectionGridUpdates(document);
 });
 
@@ -2424,3 +2211,223 @@ window.initImageSwatchMobileSync = initImageSwatchMobileSync;
 
 
  
+/* --------------------------------------------------------------------------
+   Colour switch inside product cards ("one colour = one product").
+
+   A swatch stands for a different product, so price, title, badges, sizes and
+   availability change with it - only replacing the images would make the card
+   lie. The replacement card is therefore rendered by the same Liquid through
+   the Section Rendering API (/products/<handle>?section_id=card-ajax, roughly
+   10 KB) and swapped into the grid.
+
+   Preloading is stricter than on the product page on purpose: a collection
+   holds dozens of cards, so warming every colour of every card is out of the
+   question. Requests start on intent only - entering the card with the mouse
+   (which buys the time it takes to reach the swatch) or pressing on a swatch -
+   are capped per page view, run one at a time, and are skipped on Save-Data,
+   on 2g and on low-memory devices.
+   -------------------------------------------------------------------------- */
+(function () {
+  var SECTION = "card-ajax";
+  var CARD_ENTER_DELAY = 90;
+  var MAX_PREFETCH = 12;
+  var FETCH_TIMEOUT = 10000;
+
+  var cache = new Map();
+  var prefetchCount = 0;
+  var inFlight = 0;
+  var enterTimer = null;
+
+  function connectionAllows() {
+    var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    if (navigator.deviceMemory && navigator.deviceMemory < 2) return false;
+    if (!connection) return true;
+    if (connection.saveData) return false;
+    if (/(^|-)2g$/.test(connection.effectiveType || "")) return false;
+    return true;
+  }
+
+  function cardUrl(url) {
+    return url + (url.indexOf("?") === -1 ? "?" : "&") + "section_id=" + SECTION;
+  }
+
+  function prefetch(url) {
+    if (!url) return null;
+    if (cache.has(url)) return cache.get(url);
+    if (prefetchCount >= MAX_PREFETCH || !connectionAllows()) return null;
+
+    prefetchCount++;
+    inFlight++;
+    var controller = new AbortController();
+    var timer = setTimeout(function () {
+      controller.abort();
+    }, FETCH_TIMEOUT);
+
+    var pending = fetch(cardUrl(url), {
+      signal: controller.signal,
+      credentials: "same-origin",
+      priority: "low",
+    })
+      .then(function (response) {
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        return response.text();
+      })
+      .then(function (text) {
+        clearTimeout(timer);
+        inFlight--;
+        return text;
+      })
+      .catch(function (error) {
+        clearTimeout(timer);
+        inFlight--;
+        cache.delete(url);
+        throw error;
+      });
+
+    cache.set(url, pending);
+    return pending;
+  }
+
+  /* Layout that belongs to the calling section (image ratio, slider mode) is
+     copied from the card being replaced, so a swapped card always matches the
+     grid it sits in even when the section settings differ from card-ajax. */
+  function carryLayout(oldCard, newCard) {
+    var pairs = [
+      [oldCard.querySelector(".card"), newCard.querySelector(".card")],
+      [oldCard.querySelector(".card__inner"), newCard.querySelector(".card__inner")],
+    ];
+    pairs.forEach(function (pair) {
+      if (pair[0] && pair[1] && pair[0].getAttribute("style")) {
+        pair[1].setAttribute("style", pair[0].getAttribute("style"));
+      }
+    });
+
+    var oldSlider = oldCard.querySelector("[data-product-card-slider]");
+    var newSlider = newCard.querySelector("[data-product-card-slider]");
+    if (oldSlider && newSlider) {
+      ["slider-off-desktop", "slider-off-mobile"].forEach(function (name) {
+        newSlider.classList.toggle(name, oldSlider.classList.contains(name));
+      });
+    }
+
+    var oldCardEl = oldCard.querySelector(".card");
+    var newCardEl = newCard.querySelector(".card");
+    if (oldCardEl && newCardEl && oldCardEl.classList.contains("card--image-slider-mobile")) {
+      newCardEl.classList.add("card--image-slider-mobile");
+    }
+  }
+
+  function reinitCard(card) {
+    if (typeof initProductCardSliders === "function") initProductCardSliders(card);
+    if (typeof initCardSizePickers === "function") initCardSizePickers(card);
+    if (typeof initCollectionGridEnhancements === "function") initCollectionGridEnhancements(card);
+
+    try {
+      if (window.WishListHero_SDK && typeof window.WishListHero_SDK.InitializeAddToWishListButton === "function") {
+        card.querySelectorAll(".wishlist-hero-custom-button").forEach(function (node) {
+          window.WishListHero_SDK.InitializeAddToWishListButton(node);
+        });
+      }
+    } catch (e) {
+      // the app is optional - never let it break the switch
+    }
+
+    document.dispatchEvent(new CustomEvent("card-color:swapped", { detail: { card: card } }));
+  }
+
+  function swapCard(link) {
+    var oldCard = link.closest(".card-wrapper");
+    var url = link.getAttribute("href");
+    if (!oldCard || !url) return;
+    if (oldCard.dataset.colorSwapBusy === "true") return;
+
+    oldCard.dataset.colorSwapBusy = "true";
+    link.classList.add("card__color-link--loading");
+
+    var pending = cache.get(url) || prefetch(url);
+    if (!pending) {
+      pending = fetch(cardUrl(url), { credentials: "same-origin" }).then(function (response) {
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        return response.text();
+      });
+    }
+
+    pending
+      .then(function (html) {
+        var parsed = new DOMParser().parseFromString(html, "text/html");
+        var newCard = parsed.querySelector(".card-wrapper");
+        if (!newCard) throw new Error("no card in the response");
+
+        carryLayout(oldCard, newCard);
+        oldCard.replaceWith(newCard);
+        reinitCard(newCard);
+      })
+      .catch(function () {
+        // anything unexpected: behave like the plain link it still is
+        window.location.href = url;
+      })
+      .finally(function () {
+        oldCard.dataset.colorSwapBusy = "false";
+        link.classList.remove("card__color-link--loading");
+      });
+  }
+
+  /* ---------------- intent ---------------- */
+
+  document.addEventListener(
+    "pointerenter",
+    function (event) {
+      if (event.pointerType !== "mouse") return;
+      var target = event.target;
+      if (!target || !target.closest) return;
+      var card = target.closest(".card-wrapper");
+      if (!card || !card.querySelector("[data-card-color-link]")) return;
+
+      clearTimeout(enterTimer);
+      enterTimer = setTimeout(function () {
+        // one at a time, so a fast sweep across a grid cannot burst requests
+        if (inFlight > 0) return;
+        var first = card.querySelector("[data-card-color-link]");
+        if (first) prefetch(first.getAttribute("href"));
+      }, CARD_ENTER_DELAY);
+    },
+    true
+  );
+
+  document.addEventListener(
+    "pointerenter",
+    function (event) {
+      if (event.pointerType !== "mouse") return;
+      var target = event.target;
+      if (!target || !target.closest) return;
+      var link = target.closest("[data-card-color-link]");
+      if (link) prefetch(link.getAttribute("href"));
+    },
+    true
+  );
+
+  document.addEventListener(
+    "pointerdown",
+    function (event) {
+      var target = event.target;
+      if (!target || !target.closest) return;
+      var link = target.closest("[data-card-color-link]");
+      if (link) prefetch(link.getAttribute("href"));
+    },
+    true
+  );
+
+  document.addEventListener("click", function (event) {
+    if (event.defaultPrevented) return;
+    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+    var target = event.target;
+    if (!target || !target.closest) return;
+    var link = target.closest("[data-card-color-link]");
+    if (!link) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    swapCard(link);
+  });
+})();

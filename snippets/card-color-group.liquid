@@ -1,0 +1,88 @@
+{% comment %}
+  Renders the colour row of a product card under the "one colour = one product"
+  model: every product listed in custom.other_colors becomes a swatch link.
+
+  Unlike the product page version this does not merge the linked products' own
+  lists: Shopify does not resolve nested list metafields anyway, and a
+  collection page renders this snippet for every card, so the extra loops would
+  cost for nothing. Fill custom.other_colors on every product of a group.
+
+  Order is by product id so the row looks identical on every card of the group.
+
+  Accepts:
+  - card_product: {Object} the product of this card (required)
+  - color_limit: {Number} how many swatches to show before a "+N" hint (default 5)
+
+  Usage:
+  {% render 'card-color-group', card_product: card_product %}
+{% endcomment %}
+
+{%- liquid
+  assign siblings = card_product.metafields.custom.other_colors.value
+  assign has_colors = false
+  if siblings and siblings.size > 0
+    assign has_colors = true
+  endif
+  assign visible_limit = color_limit | default: 5
+  assign sorted_colors = siblings | sort: 'id'
+-%}
+
+{%- if has_colors -%}
+  <div class="card__colors" data-card-colors>
+    {%- liquid
+      assign rendered_ids = ''
+      assign shown = 0
+      assign current_rendered = false
+      assign overflow = 0
+    -%}
+    {%- for color_product in sorted_colors -%}
+      {%- liquid
+        assign id_key = '|' | append: color_product.id | append: '|'
+        if color_product.id == blank
+          continue
+        endif
+        if rendered_ids contains id_key
+          continue
+        endif
+        assign rendered_ids = rendered_ids | append: id_key
+      -%}
+
+      {%- comment -%}the current product keeps its place in the id order{%- endcomment -%}
+      {%- unless current_rendered -%}
+        {%- if color_product.id > card_product.id -%}
+          {%- if shown < visible_limit -%}
+            {%- render 'card-color-group-item', color_product: card_product, is_current: true -%}
+            {%- assign shown = shown | plus: 1 -%}
+          {%- else -%}
+            {%- assign overflow = overflow | plus: 1 -%}
+          {%- endif -%}
+          {%- assign current_rendered = true -%}
+        {%- endif -%}
+      {%- endunless -%}
+
+      {%- if shown < visible_limit -%}
+        {%- if color_product.id == card_product.id -%}
+          {%- render 'card-color-group-item', color_product: card_product, is_current: true -%}
+          {%- assign current_rendered = true -%}
+        {%- else -%}
+          {%- render 'card-color-group-item', color_product: color_product, is_current: false -%}
+        {%- endif -%}
+        {%- assign shown = shown | plus: 1 -%}
+      {%- else -%}
+        {%- assign overflow = overflow | plus: 1 -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- unless current_rendered -%}
+      {%- if shown < visible_limit -%}
+        {%- render 'card-color-group-item', color_product: card_product, is_current: true -%}
+      {%- else -%}
+        {%- assign overflow = overflow | plus: 1 -%}
+      {%- endif -%}
+    {%- endunless -%}
+
+    {%- if overflow > 0 -%}
+      <span class="card__color-more">+{{ overflow }}</span>
+    {%- endif -%}
+  </div>
+{%- endif -%}

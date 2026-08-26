@@ -150,7 +150,6 @@
                     media_aspect_ratio: section.settings.image_ratio,
                     image_display_mode: section.settings.image_display_mode,
                   image_display_mode_mobile: section.settings.image_display_mode_mobile,
-                  swatch_gallery_reload: section.settings.swatch_gallery_reload,
                     image_shape: section.settings.image_shape,
                     show_secondary_image: section.settings.show_secondary_image,
                     show_vendor: section.settings.show_vendor,
@@ -278,7 +277,10 @@
   "tag": "section",
   "class": "section",
   "disabled_on": {
-    "groups": ["header", "footer"]
+    "groups": [
+      "header",
+      "footer"
+    ]
   },
   "settings": [
     {
@@ -504,13 +506,6 @@
         }
       ],
       "default": "slider"
-    },
-    {
-      "type": "checkbox",
-      "id": "swatch_gallery_reload",
-      "default": false,
-      "label": "Swap images on color swatch",
-      "info": "Clicking a color swatch loads that variant's featured image and its custom.gallery metafield images. Colors with no gallery behave as before."
     },
     {
       "type": "select",

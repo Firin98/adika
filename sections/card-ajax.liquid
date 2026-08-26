@@ -1,0 +1,90 @@
+{% comment %}
+  Renders a single product card, for the Section Rendering API only:
+    /products/<handle>?section_id=card-ajax
+  Used by the colour switcher in product cards - the replacement card is drawn
+  by the same Liquid as the grid, so badges, sizes, wishlist and quick add can
+  never drift from the real card.
+
+  This section is never placed on a template, so section.settings are the
+  defaults below. Layout that depends on the calling section (image ratio and
+  slider mode) is carried over from the replaced card by the JavaScript.
+{% endcomment %}
+
+{%- if product and product != empty -%}
+  {% render 'card-product',
+    card_product: product,
+    media_aspect_ratio: section.settings.image_ratio,
+    image_display_mode: section.settings.image_display_mode,
+    image_display_mode_mobile: section.settings.image_display_mode_mobile,
+    show_secondary_image: section.settings.show_secondary_image,
+    show_vendor: section.settings.show_vendor,
+    show_rating: section.settings.show_rating,
+    show_badges: section.settings.show_badges,
+    show_wishlist: section.settings.show_wishlist,
+    show_swatches: true,
+    quick_add: section.settings.quick_add,
+    section_id: 'card-ajax',
+    skip_styles: true,
+    lazy_load: false,
+    horizontal_quick_add: false
+  %}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Card (AJAX)",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Internal section used by the colour switcher in product cards. Do not add it to a template. Keep these values in sync with your collection grid."
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Image ratio",
+      "options": [
+        { "value": "adapt", "label": "Adapt to image" },
+        { "value": "portrait", "label": "Portrait" },
+        { "value": "square", "label": "Square" }
+      ],
+      "default": "portrait"
+    },
+    {
+      "type": "select",
+      "id": "image_display_mode",
+      "label": "Image display mode — desktop",
+      "options": [
+        { "value": "default", "label": "Default" },
+        { "value": "slider", "label": "Slider" }
+      ],
+      "default": "default"
+    },
+    {
+      "type": "select",
+      "id": "image_display_mode_mobile",
+      "label": "Image display mode — mobile",
+      "options": [
+        { "value": "default", "label": "Static image" },
+        { "value": "slider", "label": "Slider" }
+      ],
+      "default": "slider"
+    },
+    { "type": "checkbox", "id": "show_secondary_image", "label": "Show second image on hover", "default": true },
+    { "type": "checkbox", "id": "show_vendor", "label": "Show vendor", "default": false },
+    { "type": "checkbox", "id": "show_rating", "label": "Show rating", "default": false },
+    { "type": "checkbox", "id": "show_badges", "label": "Show badges", "default": true },
+    { "type": "checkbox", "id": "show_wishlist", "label": "Show wishlist", "default": true },
+    {
+      "type": "select",
+      "id": "quick_add",
+      "label": "Quick add",
+      "options": [
+        { "value": "none", "label": "None" },
+        { "value": "standard", "label": "Standard" },
+        { "value": "bulk", "label": "Bulk" }
+      ],
+      "default": "standard"
+    }
+  ]
+}
+{% endschema %}

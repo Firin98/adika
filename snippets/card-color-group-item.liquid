@@ -1,0 +1,47 @@
+{% comment %}
+  One swatch of a product card colour row.
+
+  The link keeps a real href, so middle-click, "open in new tab" and crawlers
+  behave normally; card-color-switch in pm-custom.js intercepts the plain click
+  and replaces the card in place instead.
+
+  Accepts:
+  - color_product: {Object} the product this swatch stands for (required)
+  - is_current: {Boolean} true for the product this card currently shows
+{% endcomment %}
+
+{%- liquid
+  assign swatch_color = color_product.metafields.custom.color.value | default: color_product.metafields.custom.color | default: '' | strip
+  assign swatch_label = color_product.metafields.custom.color_label.value | default: color_product.metafields.custom.color_label | default: '' | strip
+  if swatch_label == ''
+    assign swatch_label = color_product.title
+  endif
+
+  assign swatch_classes = 'swatch'
+  if swatch_color == ''
+    assign swatch_classes = swatch_classes | append: ' swatch--unavailable'
+  endif
+-%}
+
+{%- capture swatch_markup -%}
+  <span
+    class="{{ swatch_classes }}"
+    {% if swatch_color != '' %}style="--swatch--background: {{ swatch_color }};"{% endif %}
+  ></span>
+{%- endcapture -%}
+
+{%- if is_current -%}
+  <span class="card__color-item card__color-item--current" aria-current="true" title="{{ swatch_label | escape }}">
+    {{ swatch_markup }}
+  </span>
+{%- else -%}
+  <a
+    class="card__color-item card__color-link"
+    href="{{ color_product.url }}"
+    title="{{ swatch_label | escape }}"
+    aria-label="{{ swatch_label | escape }}"
+    data-card-color-link
+  >
+    {{ swatch_markup }}
+  </a>
+{%- endif -%}

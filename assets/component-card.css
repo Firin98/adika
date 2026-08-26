@@ -2640,3 +2640,44 @@
     visibility: hidden;
   }
 }
+
+/* ---------- Card colour row (one colour = one product) ---------- */
+.card__colors {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.6rem 0 0;
+  --swatch-input--size: 1.6rem;
+}
+
+.card__color-item {
+  --swatch-input--border-radius: 50%;
+  display: inline-block;
+  border-radius: 50%;
+  outline-offset: 0.2rem;
+  outline: 0.1rem solid transparent;
+  transition: outline-color var(--duration-short) ease;
+}
+
+.card__color-link {
+  cursor: pointer;
+}
+
+.card__color-item--current {
+  outline-color: rgb(var(--color-foreground));
+}
+
+.card__color-link:hover {
+  outline-color: rgba(var(--color-foreground), 0.5);
+}
+
+.card__color-link--loading {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.card__color-more {
+  font-size: 1.1rem;
+  color: rgba(var(--color-foreground), 0.6);
+}
