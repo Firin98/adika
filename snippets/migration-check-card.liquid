@@ -37,9 +37,9 @@
       {%- endif -%}
       {{ child_label | default: '—' }}
     </span>
-    <span>{{ child.variants.size }} размер(ов)</span>
-    <span{% if child.media.size == 0 %} class="migration-check__fact--bad"{% endif %}>{{ child.media.size }} фото</span>
-    <span>связей: {{ sibling_count }}</span>
-    {%- if child_hex == '' -%}<span class="migration-check__fact--bad">нет hex</span>{%- endif -%}
+    <span>{{ child.variants.size }} size(s)</span>
+    <span{% if child.media.size == 0 %} class="migration-check__fact--bad"{% endif %}>{{ child.media.size }} photo(s)</span>
+    <span>links: {{ sibling_count }}</span>
+    {%- if child_hex == '' -%}<span class="migration-check__fact--bad">no hex</span>{%- endif -%}
   </div>
 </div>

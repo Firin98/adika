@@ -14,11 +14,11 @@
 <div class="migration-check__group{% if flag != 'ok' %} migration-check__group--warn{% endif %}">
   <div class="migration-check__row migration-check__row--old">
     <div class="migration-check__label">
-      <span class="migration-check__badge migration-check__badge--old">Было</span>
+      <span class="migration-check__badge migration-check__badge--old">Before</span>
       <span class="migration-check__handle">{{ old_handle }}</span>
       {%- if old_product != empty and old_product.id != blank -%}
         <span class="migration-check__meta">
-          {{ old_product.variants.size }} вариант(ов) · {{ old_product.media.size }} фото
+          {{ old_product.variants.size }} variant(s) · {{ old_product.media.size }} photo(s)
         </span>
       {%- endif -%}
     </div>
@@ -26,7 +26,7 @@
       {%- if old_product == empty or old_product.id == blank -%}
         <div class="migration-check__missing">
           <strong>{{ old_handle }}</strong>
-          <span>старый товар не найден — возможно, уже удалён</span>
+          <span>old product not found - it may already be deleted</span>
         </div>
       {%- else -%}
         {% render 'card-product',
@@ -45,8 +45,8 @@
 
   <div class="migration-check__row migration-check__row--new">
     <div class="migration-check__label">
-      <span class="migration-check__badge migration-check__badge--new">Стало</span>
-      <span class="migration-check__meta">ожидается {{ kids.size }}</span>
+      <span class="migration-check__badge migration-check__badge--new">After</span>
+      <span class="migration-check__meta">{{ kids.size }} expected</span>
     </div>
     <div class="migration-check__cards">
       {%- liquid
@@ -65,7 +65,7 @@
         {%- if child == empty or child.id == blank -%}
           <div class="migration-check__missing">
             <strong>{{ clean }}</strong>
-            <span>не импортирован</span>
+            <span>not imported</span>
           </div>
           {%- continue -%}
         {%- endif -%}
@@ -91,9 +91,9 @@
     endif
   -%}
   <p class="{{ summary_class }}">
-    Товаров найдено: <strong>{{ found }}</strong> из <strong>{{ kids.size }}</strong>
-    {%- if missing_images > 0 %} · без фото: <strong>{{ missing_images }}</strong>{% endif -%}
-    {%- if missing_hex > 0 %} · без цвета: <strong>{{ missing_hex }}</strong>{% endif -%}
-    {%- if found == kids.size and missing_images == 0 and missing_hex == 0 %} · всё на месте{% endif -%}
+    Products found: <strong>{{ found }}</strong> of <strong>{{ kids.size }}</strong>
+    {%- if missing_images > 0 %} · without photos: <strong>{{ missing_images }}</strong>{% endif -%}
+    {%- if missing_hex > 0 %} · without a colour: <strong>{{ missing_hex }}</strong>{% endif -%}
+    {%- if found == kids.size and missing_images == 0 and missing_hex == 0 %} · all good{% endif -%}
   </p>
 </div>

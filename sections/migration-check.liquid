@@ -78,8 +78,8 @@
     {%- endfor -%}
     {%- if skipped > 0 -%}
       <p class="migration-check__note">
-        {{ skipped }} групп(ы) не показано: Liquid отдаёт максимум {{ lookup_budget }} товаров на страницу.
-        Уберите лишние handle из настроек.
+        {{ skipped }} group(s) not shown: Liquid allows only {{ lookup_budget }} products per page.
+        Remove some handles from the section settings.
       </p>
     {%- endif -%}
 
@@ -126,10 +126,10 @@
     {%- endfor -%}
 
     <p class="migration-check__note">
-      Страница <strong>{{ requested }}</strong> из <strong>{{ total_pages }}</strong> ·
-      групп на странице: {{ shown }} · всего групп в выборке: {{ matched }}.
-      {%- if requested > total_pages %} Такой страницы нет — уменьшите номер в настройках секции.{% endif %}
-      {%- unless only_problems %} Группы с проблемами идут первыми.{% endunless %}
+      Page <strong>{{ requested }}</strong> of <strong>{{ total_pages }}</strong> ·
+      groups on this page: {{ shown }} · groups in the selection: {{ matched }}.
+      {%- if requested > total_pages %} No such page - lower the number in the section settings.{% endif %}
+      {%- unless only_problems %} Groups with problems come first.{% endunless %}
     </p>
   {%- endif -%}
 </div>
@@ -147,7 +147,7 @@
   "tag": "section",
   "class": "section",
   "settings": [
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Проверка миграции: было → стало" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Migration check: before / after" },
     {
       "type": "select", "id": "filter", "label": "Which groups",
       "options": [
