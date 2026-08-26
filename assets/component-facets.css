@@ -916,7 +916,7 @@ a.active-facets__button.focused .active-facets__button-inner {
 }
 
 .mobile-facets__open-wrapper {
-  display: inline-block;
+  display: flex;
 }
 
 .mobile-facets__open {
