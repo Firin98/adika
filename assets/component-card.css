@@ -2681,3 +2681,32 @@
   font-size: 1.1rem;
   color: rgba(var(--color-foreground), 0.6);
 }
+
+/* Card bottom grid: keep the info column stable with or without the colour row.
+
+   The grid declares two columns (auto for the swatches, 1fr for the info).
+   .card__colors is rendered only when the product has sibling colours, so on a
+   card without them the info block landed in the first "auto" column: it
+   shrank to its content and pulled to the left. Pin each child to its own
+   column, and collapse the grid to a single full-width column when the colour
+   row is absent.
+
+   Note: the mobile layout (max-width: 749px) switches this container to flex,
+   where grid-column is inert and grid-template-columns is ignored, so these
+   rules do not affect it. */
+.card-information.card-information--grid > .card__colors {
+  grid-column: 1;
+}
+
+.card-information.card-information--grid > .card-information__item--right {
+  grid-column: 2;
+}
+
+.card-information.card-information--grid:not(:has(.card__colors)) {
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+.card-information.card-information--grid:not(:has(.card__colors)) > .card-information__item--right {
+  grid-column: 1;
+}
