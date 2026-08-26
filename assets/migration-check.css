@@ -154,3 +154,40 @@
     gap: 0.8rem;
   }
 }
+
+/* Pager - lets anyone browse the pages without opening the theme editor */
+.migration-check__pager {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 2.4rem 0 1.2rem;
+}
+
+.migration-check__page-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3.4rem;
+  padding: 0.6rem 1rem;
+  border: 0.1rem solid rgba(var(--color-foreground), 0.2);
+  border-radius: 0.4rem;
+  font-size: 1.3rem;
+  text-decoration: none;
+  color: rgb(var(--color-foreground));
+}
+
+.migration-check__page-link:hover {
+  border-color: rgb(var(--color-foreground));
+}
+
+.migration-check__page-link--current {
+  background: rgb(var(--color-foreground));
+  color: rgb(var(--color-background));
+  border-color: rgb(var(--color-foreground));
+  font-weight: 600;
+}
+
+.migration-check__page-link--off {
+  opacity: 0.35;
+  cursor: default;
+}

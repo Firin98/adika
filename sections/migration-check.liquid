@@ -9,6 +9,12 @@
   the section fills a page up to that budget and prints "page X of Y".
   Groups with problems are listed first.
 
+  Paging happens on the storefront through ?page=N, so anyone can browse
+  without opening the theme editor. Liquid cannot read arbitrary query
+  parameters, but the paginate tag does read ?page - collections.all.products
+  is paginated by 1 purely to borrow paginate.current_page from it. Its
+  products are never used, and it gives far more pages than this section needs.
+
   Delete this section and its three files once the migration is verified.
 {% endcomment %}
 
@@ -37,6 +43,7 @@
   endif
 -%}
 
+{%- paginate collections.all.products by 1 -%}
 <div class="migration-check page-width section-{{ section.id }}-padding" dir="rtl">
   <h2 class="migration-check__title">{{ section.settings.heading }}</h2>
 
@@ -91,7 +98,11 @@
       assign total_pages = 1
       assign shown = 0
       assign matched = 0
-      assign requested = section.settings.page
+      # ?page=N from the url; the section setting is only the fallback
+      assign requested = paginate.current_page | default: section.settings.page
+      if requested < 1
+        assign requested = 1
+      endif
     -%}
     {%- for entry in all_groups -%}
       {%- liquid
@@ -125,14 +136,38 @@
       {%- endif -%}
     {%- endfor -%}
 
+    <div class="migration-check__pager">
+      {%- assign base = request.path -%}
+      {%- if requested > 1 -%}
+        <a class="migration-check__page-link" href="{{ base }}?page={{ requested | minus: 1 }}" rel="prev">← Previous</a>
+      {%- else -%}
+        <span class="migration-check__page-link migration-check__page-link--off">← Previous</span>
+      {%- endif -%}
+
+      {%- for i in (1..total_pages) -%}
+        {%- if i == requested -%}
+          <span class="migration-check__page-link migration-check__page-link--current">{{ i }}</span>
+        {%- else -%}
+          <a class="migration-check__page-link" href="{{ base }}?page={{ i }}">{{ i }}</a>
+        {%- endif -%}
+      {%- endfor -%}
+
+      {%- if requested < total_pages -%}
+        <a class="migration-check__page-link" href="{{ base }}?page={{ requested | plus: 1 }}" rel="next">Next →</a>
+      {%- else -%}
+        <span class="migration-check__page-link migration-check__page-link--off">Next →</span>
+      {%- endif -%}
+    </div>
+
     <p class="migration-check__note">
       Page <strong>{{ requested }}</strong> of <strong>{{ total_pages }}</strong> ·
       groups on this page: {{ shown }} · groups in the selection: {{ matched }}.
-      {%- if requested > total_pages %} No such page - lower the number in the section settings.{% endif %}
+      {%- if shown == 0 %} Nothing on this page - use the links above.{% endif %}
       {%- unless only_problems %} Groups with problems come first.{% endunless %}
     </p>
   {%- endif -%}
 </div>
+{%- endpaginate -%}
 
 {%- style -%}
   .section-{{ section.id }}-padding {
@@ -156,8 +191,8 @@
       ],
       "default": "problems"
     },
-    { "type": "range", "id": "page", "min": 1, "max": 20, "step": 1, "label": "Page", "default": 1,
-      "info": "Liquid allows only 20 products per page, so the groups are paged. The page number of the last page is printed under the results." },
+    { "type": "range", "id": "page", "min": 1, "max": 20, "step": 1, "label": "Start page", "default": 1,
+      "info": "Only used when the url has no ?page parameter. Visitors switch pages with the links under the results." },
     {
       "type": "textarea", "id": "handles", "label": "Or check these old handles",
       "info": "One per line. Overrides the two settings above."
