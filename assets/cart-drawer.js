@@ -82,6 +82,24 @@ class CartDrawer extends HTMLElement {
   renderContents(parsedState) {
     this.querySelector('.drawer__inner').classList.contains('is-empty') &&
       this.querySelector('.drawer__inner').classList.remove('is-empty');
+
+    /* The is-empty class that hides .cart__contents sits on <cart-drawer>
+       itself, and the line above only clears it from .drawer__inner (where it
+       never is). Callers used to compensate one by one - product-form.js still
+       does - so any other caller left the drawer stuck in its empty state after
+       the first item was added. The state is taken from the freshly rendered
+       section, which also covers the cart going back to empty. */
+    const drawerSection = parsedState && parsedState.sections && parsedState.sections['cart-drawer'];
+    let shouldBeEmpty = null;
+    if (drawerSection) {
+      const sourceDrawer = this.getSectionDOM(drawerSection, 'cart-drawer');
+      if (sourceDrawer) shouldBeEmpty = sourceDrawer.classList.contains('is-empty');
+    }
+    if (shouldBeEmpty === null && parsedState && typeof parsedState.item_count === 'number') {
+      shouldBeEmpty = parsedState.item_count === 0;
+    }
+    if (shouldBeEmpty !== null) this.classList.toggle('is-empty', shouldBeEmpty);
+
     this.productId = parsedState.id;
     this.getSectionsToRender().forEach((section) => {
       const sectionElement = section.selector
