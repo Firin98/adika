@@ -11,6 +11,7 @@
   "sections": {
     "main": {
       "type": "main-page",
+      "disabled": true,
       "custom_css": [
         "{direction: rtl;}"
       ],
@@ -18,9 +19,50 @@
         "padding_top": 28,
         "padding_bottom": 28
       }
+    },
+    "adika_girl_C74bVC": {
+      "type": "adika-girl",
+      "name": "Adika Girl",
+      "settings": {
+        "heading": "Adika Girl",
+        "heading_size": "h1",
+        "description": "<p>מלאי את הפרטים ונחזור אלייך.</p>",
+        "form_target": "customer",
+        "label_first_name": "שם פרטי",
+        "label_last_name": "שם משפחה",
+        "label_email": "אימייל",
+        "label_phone": "טלפון",
+        "label_instagram": "קישור לאינסטגרם",
+        "placeholder_instagram": "@username",
+        "instagram_required": true,
+        "label_consent": "אני מעל גיל 18",
+        "value_consent": "כן",
+        "show_marketing_consent": true,
+        "label_marketing": "מסכימה לקבל דיוור שיווקי מאדיקה",
+        "label_submit": "שליחה",
+        "form_source": "Adika Girl",
+        "tag_base": "AdikaGirl",
+        "tag_prefix_first": "first:",
+        "tag_prefix_last": "last:",
+        "tag_prefix_email": "email:",
+        "tag_prefix_phone": "phone:",
+        "tag_phone_country_code": "+972",
+        "tag_prefix_instagram": "insta:",
+        "tag_consent": "age-18plus",
+        "message_success": "תודה! הפרטים נשלחו בהצלחה.",
+        "message_required": "שדה חובה",
+        "message_email": "כתובת אימייל לא תקינה",
+        "message_phone": "מספר טלפון לא תקין",
+        "message_consent": "יש לאשר שאת מעל גיל 18",
+        "message_marketing": "יש לאשר קבלת דיוור כדי להירשם",
+        "color_scheme": "",
+        "padding_top": 52,
+        "padding_bottom": 52
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "adika_girl_C74bVC"
   ]
 }
