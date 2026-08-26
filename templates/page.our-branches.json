@@ -214,26 +214,6 @@
     "rich_text_better_JjYtbV": {
       "type": "rich-text-better",
       "blocks": {
-        "heading_DATnAR": {
-          "type": "heading",
-          "settings": {
-            "heading": "Talk about your brand",
-            "show_line": false,
-            "line_width": 30,
-            "line_alignment": "center",
-            "line_spacing": 16,
-            "heading_size": "h2",
-            "text_color": "#000000",
-            "font_weight": "400",
-            "text_transform": "none",
-            "font_size": 16,
-            "line_height": 24,
-            "margin_bottom": 0,
-            "font_size_mobile": 14,
-            "line_height_mobile": 20,
-            "margin_bottom_mobile": 0
-          }
-        },
         "text_UNd7MD": {
           "type": "text",
           "settings": {
@@ -248,36 +228,19 @@
             "line_height_mobile": 20,
             "margin_bottom_mobile": 0
           }
-        },
-        "button_HFNUtQ": {
-          "type": "button",
-          "settings": {
-            "button_label": "Button label",
-            "button_link": "",
-            "button_style_secondary": false,
-            "button_label_2": "",
-            "button_link_2": "",
-            "button_style_secondary_2": false
-          }
         }
       },
       "block_order": [
-        "heading_DATnAR",
-        "text_UNd7MD",
-        "button_HFNUtQ"
+        "text_UNd7MD"
       ],
       "name": "Rich text better",
       "settings": {
-        "bg_color": "",
+        "bg_color": "#FFEBED",
         "max_width": 0,
         "desktop_content_position": "center",
         "content_alignment": "center",
         "color_scheme": "",
         "full_width": true,
-        "section_color_scheme": "",
-        "section_background": "",
-        "section_background_transparent": false,
-        "section_use_secondary_background": false,
         "padding_top": 40,
         "padding_bottom": 52,
         "padding_top_mobile": 36,
