@@ -161,6 +161,7 @@
     letter-spacing: var(--brn-s-ls);
     color: var(--brn-s-color);
     {% if section.settings.search_uppercase %}text-transform: uppercase;{% endif %}
+    text-align: {{ section.settings.search_align }};
   }
   .brn-{{ uid }} .brn__search-input::placeholder{ color: var(--brn-s-ph); opacity: 1; }
   .brn-{{ uid }} .brn__search-input::-webkit-search-cancel-button{ -webkit-appearance: none; appearance: none; }
@@ -403,7 +404,7 @@
             class="brn__search-input"
             type="search"
             data-brn-input
-            dir="{{ section.settings.search_dir }}"
+            {% if section.settings.search_dir != 'inherit' %}dir="{{ section.settings.search_dir }}"{% endif %}
             placeholder="{{ section.settings.search_placeholder | escape }}"
             aria-label="{{ section.settings.search_aria | default: section.settings.search_placeholder | escape }}"
             autocomplete="off">
@@ -788,11 +789,24 @@
       "id": "search_dir",
       "label": "Input text direction",
       "options": [
-        { "value": "auto", "label": "Auto" },
+        { "value": "inherit", "label": "Inherit from section (recommended)" },
         { "value": "rtl", "label": "RTL" },
-        { "value": "ltr", "label": "LTR" }
+        { "value": "ltr", "label": "LTR" },
+        { "value": "auto", "label": "Auto (by typed content)" }
       ],
-      "default": "auto"
+      "default": "inherit",
+      "info": "Auto decides by what is typed, so an empty field falls back to LTR and the placeholder jumps left."
+    },
+    {
+      "type": "select",
+      "id": "search_align",
+      "label": "Text alignment",
+      "options": [
+        { "value": "start", "label": "Start (right in RTL)" },
+        { "value": "center", "label": "Center" },
+        { "value": "end", "label": "End (left in RTL)" }
+      ],
+      "default": "start"
     },
     { "type": "checkbox", "id": "show_clear", "label": "Show clear button", "default": true },
     { "type": "text", "id": "clear_aria", "label": "Clear button aria-label", "default": "Clear search" },
