@@ -1,12 +1,9 @@
 {{ 'section-rich-text.css' | asset_url | stylesheet_tag }}
 
-
-
 {%- style -%}
-  #shopify-section-{{ section.id }},
-  #shopify-section-{{ section.id }} .rich-text-bg {
-    display: flex;
-    flex-direction: column;
+  #shopify-section-{{ section.id }} {
+  	display: flex;
+     flex-direction: column;
   }
    #shopify-section-{{ section.id }} .decoration_image {
      width: 100%;
@@ -35,245 +32,241 @@
   #shopify-section-{{ section.id }} strong {
     font-weight: 700 !important;
   }
-  {% if section.settings.bg_color != blank %}
-    #shopify-section-{{ section.id }} .content-container {
-      background-color: {{ section.settings.bg_color }};
-    }
-  {% endif %}
+  #shopify-section-{{ section.id }} .content-container {
+    background-color: {{ section.settings.bg_color }};
+  }
 {%- endstyle -%}
-<div class="rich-text-bg color-{{ section.settings.section_color_scheme }} gradient">
-  {% if section.settings.top_image != blank %}
-    {% assign top_image_classes = 'decoration_image' %}
-    {% if section.settings.top_image_mobile != blank %}
-      {% assign top_image_classes = 'decoration_image desktop' %}
-    {% endif %}
-    {{
-      section.settings.top_image
-      | image_url: width: 1600
-      | image_tag:
-        loading: 'lazy',
-        widths: '400, 800, 1200, 1600',
-        alt: section.settings.top_image.alt,
-        class: top_image_classes
-    }}
-  {% endif %}
+{% if section.settings.top_image != blank %}
+  {% assign top_image_classes = 'decoration_image' %}
   {% if section.settings.top_image_mobile != blank %}
-    {{
-      section.settings.top_image_mobile
-      | image_url: width: 1600
-      | image_tag:
-        loading: 'lazy',
-        widths: '400, 800, 1200, 1600',
-        alt: section.settings.top_image_mobile.alt,
-        class: 'decoration_image mobile'
-    }}
+    {% assign top_image_classes = 'decoration_image desktop' %}
   {% endif %}
-  <div class="isolate{% unless section.settings.full_width %} page-width{% endunless %}">
-    <div class="rich-text content-container color-{{ section.settings.color_scheme }} {% if section.settings.full_width %} rich-text--full-width content-container--full-width{% endif %} section-{{ section.id }}-padding">
-      <div class="rich-text__wrapper rich-text__wrapper--{{ section.settings.desktop_content_position }}{% if section.settings.full_width %} page-width{% endif %}">
-        <div class="rich-text__blocks {{ section.settings.content_alignment }}">
-          {%- for block in section.blocks -%}
-            {%- case block.type -%}
-              {%- when 'heading' -%}
-                <style>
-                  #block-{{ block.id }}-header {
-                    color: {{ block.settings.text_color }};
-                    font-weight: {{ block.settings.font_weight }};
-                    text-transform: {{ block.settings.text_transform }};
-                    margin-top: 0;
-                    /* Desktop */
-                    font-size: {{ block.settings.font_size }}px;
-                    line-height: {{ block.settings.line_height }}px;
-                    margin-bottom: {{ block.settings.margin_bottom }}px;
-                    position: relative;
-                    margin-inline: auto;
-                  }
-
-                  {%- if block.settings.show_line -%}
-                    #block-{{ block.id }}-header::after {
-                      content: "";
-                      display: block;
-                      width: {{ block.settings.line_width }}%;
-                      height: 2px;
-                      background-color: currentColor;
-                      margin-top: {{ block.settings.line_spacing }}px;
-
-                      {%- if block.settings.line_alignment == 'left' -%}
-                        margin-right: auto;
-                        margin-left: 0;
-                      {%- elsif block.settings.line_alignment == 'center' -%}
-                        margin-inline: auto;
-                      {%- else -%}
-                        margin-left: auto;
-                        margin-right: 0;
-                      {%- endif -%}
-                    }
-                  {%- endif -%}
-
-                  @media screen and (max-width: 749px) {
-                    #block-{{ block.id }}-header {
-                      /* Mobile */
-                      font-size: {{ block.settings.font_size_mobile }}px;
-                      line-height: {{ block.settings.line_height_mobile }}px;
-                      margin-bottom: {{ block.settings.margin_bottom_mobile }}px;
-                    }
-                  }
-                </style>
-                <{{ block.settings.heading_size }}
-                  id="block-{{ block.id }}-header"
-                  class="rich-text__heading rte inline-richtext {{ block.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
-                  {{ block.shopify_attributes }}
-                  {% if settings.animations_reveal_on_scroll %}
-                    data-cascade
-                    style="--animation-order: {{ forloop.index }};"
-                  {% endif %}
-                >
-                  {{ block.settings.heading }}
-                </{{ block.settings.heading_size }}>
-              {%- when 'caption' -%}
-                <p
-                  class="rich-text__caption {{ block.settings.text_style }} {{ block.settings.text_style }}--{{ block.settings.text_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
-                  {{ block.shopify_attributes }}
-                  {% if settings.animations_reveal_on_scroll %}
-                    data-cascade
-                    style="--animation-order: {{ forloop.index }};"
-                  {% endif %}
-                >
-                  {{ block.settings.caption | escape }}
-                </p>
-              {%- when 'divider' -%}
-                <div class="rich-text__divider divider-{{ block.id }}" {{ block.shopify_attributes }}>
-                  <span class="divider-line"></span>
-                </div>
-
-                <style>
+  {{
+    section.settings.top_image
+    | image_url: width: 1600
+    | image_tag:
+      loading: 'lazy',
+      widths: '400, 800, 1200, 1600',
+      alt: section.settings.top_image.alt,
+      class: top_image_classes
+  }}
+{% endif %}
+{% if section.settings.top_image_mobile != blank %}
+  {{
+    section.settings.top_image_mobile
+    | image_url: width: 1600
+    | image_tag:
+      loading: 'lazy',
+      widths: '400, 800, 1200, 1600',
+      alt: section.settings.top_image_mobile.alt,
+      class: 'decoration_image mobile'
+  }}
+{% endif %}
+<div class="isolate{% unless section.settings.full_width %} page-width{% endunless %}">
+  <div class="rich-text content-container color-{{ section.settings.color_scheme }} {% if section.settings.full_width %} rich-text--full-width content-container--full-width{% endif %} section-{{ section.id }}-padding">
+    <div class="rich-text__wrapper rich-text__wrapper--{{ section.settings.desktop_content_position }}{% if section.settings.full_width %} page-width{% endif %}">
+      <div class="rich-text__blocks {{ section.settings.content_alignment }}">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'heading' -%}
+              <style>
+                #block-{{ block.id }}-header {
+                  color: {{ block.settings.text_color }};
+                  font-weight: {{ block.settings.font_weight }};
+                  text-transform: {{ block.settings.text_transform }};
+                  margin-top: 0;
                   /* Desktop */
+                  font-size: {{ block.settings.font_size }}px;
+                  line-height: {{ block.settings.line_height }}px;
+                  margin-bottom: {{ block.settings.margin_bottom }}px;
+                  position: relative;
+                  margin-inline: auto;
+                }
+
+                {%- if block.settings.show_line -%}
+                  #block-{{ block.id }}-header::after {
+                    content: "";
+                    display: block;
+                    width: {{ block.settings.line_width }}%;
+                    height: 2px;
+                    background-color: currentColor;
+                    margin-top: {{ block.settings.line_spacing }}px;
+
+                    {%- if block.settings.line_alignment == 'left' -%}
+                      margin-right: auto;
+                      margin-left: 0;
+                    {%- elsif block.settings.line_alignment == 'center' -%}
+                      margin-inline: auto;
+                    {%- else -%}
+                      margin-left: auto;
+                      margin-right: 0;
+                    {%- endif -%}
+                  }
+                {%- endif -%}
+
+                @media screen and (max-width: 749px) {
+                  #block-{{ block.id }}-header {
+                    /* Mobile */
+                    font-size: {{ block.settings.font_size_mobile }}px;
+                    line-height: {{ block.settings.line_height_mobile }}px;
+                    margin-bottom: {{ block.settings.margin_bottom_mobile }}px;
+                  }
+                }
+              </style>
+              <{{ block.settings.heading_size }}
+                id="block-{{ block.id }}-header"
+                class="rich-text__heading rte inline-richtext {{ block.settings.heading_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+                {{ block.shopify_attributes }}
+                {% if settings.animations_reveal_on_scroll %}
+                  data-cascade
+                  style="--animation-order: {{ forloop.index }};"
+                {% endif %}
+              >
+                {{ block.settings.heading }}
+              </{{ block.settings.heading_size }}>
+            {%- when 'caption' -%}
+              <p
+                class="rich-text__caption {{ block.settings.text_style }} {{ block.settings.text_style }}--{{ block.settings.text_size }}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+                {{ block.shopify_attributes }}
+                {% if settings.animations_reveal_on_scroll %}
+                  data-cascade
+                  style="--animation-order: {{ forloop.index }};"
+                {% endif %}
+              >
+                {{ block.settings.caption | escape }}
+              </p>
+            {%- when 'divider' -%}
+              <div class="rich-text__divider divider-{{ block.id }}" {{ block.shopify_attributes }}>
+                <span class="divider-line"></span>
+              </div>
+
+              <style>
+                /* Десктопные настройки */
+                .divider-{{ block.id }} {
+                  display: flex;
+                  justify-content: {{ block.settings.align }};
+                  padding-top: {{ block.settings.padding_top }}px;
+                  padding-bottom: {{ block.settings.padding_bottom }}px;
+                }
+                .divider-{{ block.id }} .divider-line {
+                  display: block;
+                  background-color: {{ block.settings.bg_color }};
+                  width: {{ block.settings.width }}px;
+                  height: {{ block.settings.height }}px;
+                }
+
+                /* Мобильные настройки */
+                @media screen and (max-width: 749px) {
                   .divider-{{ block.id }} {
-                    display: flex;
-                    justify-content: {{ block.settings.align }};
-                    padding-top: {{ block.settings.padding_top }}px;
-                    padding-bottom: {{ block.settings.padding_bottom }}px;
+                    justify-content: {{ block.settings.align_mobile }};
+                    padding-top: {{ block.settings.padding_top_mobile }}px;
+                    padding-bottom: {{ block.settings.padding_bottom_mobile }}px;
                   }
                   .divider-{{ block.id }} .divider-line {
-                    display: block;
-                    background-color: {{ block.settings.bg_color }};
-                    width: {{ block.settings.width }}px;
-                    height: {{ block.settings.height }}px;
+                    width: {{ block.settings.width_mobile }}px;
+                    height: {{ block.settings.height_mobile }}px;
                   }
+                }
+              </style>
+            {%- when 'text' -%}
+              <style>
+                #block-{{ block.id }}.rich-text__text {
+                  color: {{ block.settings.text_color }};
+                  font-weight: {{ block.settings.font_weight }};
+                  text-transform: {{ block.settings.text_transform }};
 
-                  /* Mobile */
-                  @media screen and (max-width: 749px) {
-                    .divider-{{ block.id }} {
-                      justify-content: {{ block.settings.align_mobile }};
-                      padding-top: {{ block.settings.padding_top_mobile }}px;
-                      padding-bottom: {{ block.settings.padding_bottom_mobile }}px;
-                    }
-                    .divider-{{ block.id }} .divider-line {
-                      width: {{ block.settings.width_mobile }}px;
-                      height: {{ block.settings.height_mobile }}px;
-                    }
-                  }
-                </style>
-              {%- when 'text' -%}
-                <style>
+                  /* Desktop */
+                  font-size: {{ block.settings.font_size }}px;
+                  line-height: {{ block.settings.line_height }}px;
+                  margin-bottom: {{ block.settings.margin_bottom }}px;
+                }
+
+                @media screen and (max-width: 749px) {
                   #block-{{ block.id }}.rich-text__text {
-                    color: {{ block.settings.text_color }};
-                    font-weight: {{ block.settings.font_weight }};
-                    text-transform: {{ block.settings.text_transform }};
-
-                    /* Desktop */
-                    font-size: {{ block.settings.font_size }}px;
-                    line-height: {{ block.settings.line_height }}px;
-                    margin-bottom: {{ block.settings.margin_bottom }}px;
+                    /* Mobile */
+                    font-size: {{ block.settings.font_size_mobile }}px;
+                    line-height: {{ block.settings.line_height_mobile }}px;
+                    margin-bottom: {{ block.settings.margin_bottom_mobile }}px;
                   }
-
-                  @media screen and (max-width: 749px) {
-                    #block-{{ block.id }}.rich-text__text {
-                      /* Mobile */
-                      font-size: {{ block.settings.font_size_mobile }}px;
-                      line-height: {{ block.settings.line_height_mobile }}px;
-                      margin-bottom: {{ block.settings.margin_bottom_mobile }}px;
-                    }
-                  }
-                </style>
-                <div
-                  id="block-{{ block.id }}"
-                  class="rich-text__text rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
-                  {{ block.shopify_attributes }}
-                  {% if settings.animations_reveal_on_scroll %}
-                    data-cascade
-                    style="--animation-order: {{ forloop.index }};"
-                  {% endif %}
-                >
-                  {{ block.settings.text }}
-                </div>
-              {%- when 'button' -%}
-                <div
-                  class="rich-text__buttons{% if block.settings.button_label != blank and block.settings.button_label_2 != blank %} rich-text__buttons--multiple{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
-                  {{ block.shopify_attributes }}
-                  {% if settings.animations_reveal_on_scroll %}
-                    data-cascade
-                    style="--animation-order: {{ forloop.index }};"
-                  {% endif %}
-                >
-                  {%- if block.settings.button_label != blank -%}
-                    <a
-                      {% if block.settings.button_link == blank %}
-                        role="link" aria-disabled="true"
-                      {% else %}
-                        href="{{ block.settings.button_link }}"
-                      {% endif %}
-                      class="button{% if block.settings.button_style_secondary %} button--secondary{% else %} button--primary{% endif %}"
-                    >
-                      {{- block.settings.button_label | escape -}}
-                    </a>
-                  {%- endif -%}
-                  {%- if block.settings.button_label_2 != blank -%}
-                    <a
-                      {% if block.settings.button_link_2 == blank %}
-                        role="link" aria-disabled="true"
-                      {% else %}
-                        href="{{ block.settings.button_link_2 }}"
-                      {% endif %}
-                      class="button{% if block.settings.button_style_secondary_2 %} button--secondary{% else %} button--primary{% endif %}"
-                    >
-                      {{- block.settings.button_label_2 | escape -}}
-                    </a>
-                  {%- endif -%}
-                </div>
-            {%- endcase -%}
-          {%- endfor -%}
-        </div>
+                }
+              </style>
+              <div
+                id="block-{{ block.id }}"
+                class="rich-text__text rte{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+                {{ block.shopify_attributes }}
+                {% if settings.animations_reveal_on_scroll %}
+                  data-cascade
+                  style="--animation-order: {{ forloop.index }};"
+                {% endif %}
+              >
+                {{ block.settings.text }}
+              </div>
+            {%- when 'button' -%}
+              <div
+                class="rich-text__buttons{% if block.settings.button_label != blank and block.settings.button_label_2 != blank %} rich-text__buttons--multiple{% endif %}{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+                {{ block.shopify_attributes }}
+                {% if settings.animations_reveal_on_scroll %}
+                  data-cascade
+                  style="--animation-order: {{ forloop.index }};"
+                {% endif %}
+              >
+                {%- if block.settings.button_label != blank -%}
+                  <a
+                    {% if block.settings.button_link == blank %}
+                      role="link" aria-disabled="true"
+                    {% else %}
+                      href="{{ block.settings.button_link }}"
+                    {% endif %}
+                    class="button{% if block.settings.button_style_secondary %} button--secondary{% else %} button--primary{% endif %}"
+                  >
+                    {{- block.settings.button_label | escape -}}
+                  </a>
+                {%- endif -%}
+                {%- if block.settings.button_label_2 != blank -%}
+                  <a
+                    {% if block.settings.button_link_2 == blank %}
+                      role="link" aria-disabled="true"
+                    {% else %}
+                      href="{{ block.settings.button_link_2 }}"
+                    {% endif %}
+                    class="button{% if block.settings.button_style_secondary_2 %} button--secondary{% else %} button--primary{% endif %}"
+                  >
+                    {{- block.settings.button_label_2 | escape -}}
+                  </a>
+                {%- endif -%}
+              </div>
+          {%- endcase -%}
+        {%- endfor -%}
       </div>
     </div>
   </div>
-  {% if section.settings.bottom_image != blank %}
-    {% assign bottom_image_classes = 'decoration_image' %}
-    {% if section.settings.bottom_image_mobile != blank %}
-      {% assign bottom_image_classes = 'decoration_image desktop' %}
-    {% endif %}
-    {{
-      section.settings.bottom_image
-      | image_url: width: 1600
-      | image_tag:
-        loading: 'lazy',
-        widths: '400, 800, 1200, 1600',
-        alt: section.settings.bottom_image.alt,
-        class: bottom_image_classes
-    }}
-  {% endif %}
-  {% if section.settings.bottom_image_mobile != blank %}
-    {{
-      section.settings.bottom_image_mobile
-      | image_url: width: 1600
-      | image_tag:
-        loading: 'lazy',
-        widths: '400, 800, 1200, 1600',
-        alt: section.settings.bottom_image_mobile.alt,
-        class: 'decoration_image mobile'
-    }}
-  {% endif %}
 </div>
+{% if section.settings.bottom_image != blank %}
+  {% assign bottom_image_classes = 'decoration_image' %}
+  {% if section.settings.bottom_image_mobile != blank %}
+    {% assign bottom_image_classes = 'decoration_image desktop' %}
+  {% endif %}
+  {{
+    section.settings.bottom_image
+    | image_url: width: 1600
+    | image_tag:
+      loading: 'lazy',
+      widths: '400, 800, 1200, 1600',
+      alt: section.settings.bottom_image.alt,
+      class: bottom_image_classes
+  }}
+{% endif %}
+{% if section.settings.bottom_image_mobile != blank %}
+  {{
+    section.settings.bottom_image_mobile
+    | image_url: width: 1600
+    | image_tag:
+      loading: 'lazy',
+      widths: '400, 800, 1200, 1600',
+      alt: section.settings.bottom_image_mobile.alt,
+      class: 'decoration_image mobile'
+  }}
+{% endif %}
 {% schema %}
 {
   "name": "Rich text better",
@@ -310,8 +303,7 @@
     {
       "type": "color",
       "id": "bg_color",
-      "label": "Content background",
-      "info": "Paints only the text container, not the whole section. Use the Section background group below for the full-width color."
+      "label": "Background of section"
     },
     {
       "type": "range",
@@ -374,37 +366,6 @@
       "id": "full_width",
       "default": true,
       "label": "t:sections.rich-text.settings.full_width.label"
-    },
-    {
-      "type": "header",
-      "content": "Section background"
-    },
-    {
-      "type": "color_scheme",
-      "id": "section_color_scheme",
-      "label": "Section color scheme",
-      "info": "Background for the whole section, edge to edge, behind the decoration images and the content container.",
-      "default": "scheme-1"
-    },
-    {
-      "type": "color",
-      "id": "section_background",
-      "label": "Custom section background",
-      "info": "Overrides everything below. Leave empty to use the options below."
-    },
-    {
-      "type": "checkbox",
-      "id": "section_background_transparent",
-      "label": "No section background",
-      "info": "On by default, so the section paints nothing and the page shows through. Uncheck to use the section color scheme.",
-      "default": true
-    },
-    {
-      "type": "checkbox",
-      "id": "section_use_secondary_background",
-      "label": "Use the scheme secondary background",
-      "info": "Paints the section with the color scheme's secondary background instead of its main one. Ignored when a custom background or No section background is set.",
-      "default": false
     },
     {
       "type": "header",
@@ -656,7 +617,7 @@
             {
               "value": "span",
               "label": "span"
-            }
+            },
           ],
           "default": "h2",
           "label": "t:sections.all.heading_size.label"
