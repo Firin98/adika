@@ -33,7 +33,7 @@
           "settings": {
             "show_label": true,
             "label_text": "צבע",
-            "swatch_size": 36,
+            "swatch_size": 20,
             "dim_unavailable": true,
             "enable_prerender": true
           }
