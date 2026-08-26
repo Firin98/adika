@@ -76,6 +76,23 @@
     --brn-icon-gap: {{ section.settings.icon_gap }}px;
     --brn-icon-color: {{ section.settings.icon_color }};
 
+    --brn-s-mb: {{ section.settings.search_mb }}px;
+    --brn-s-h: {{ section.settings.search_h }}px;
+    --brn-s-px: {{ section.settings.search_px }}px;
+    --brn-s-gap: {{ section.settings.search_gap }}px;
+    --brn-s-bw: {{ section.settings.search_border_w }}px;
+    --brn-s-bc: {{ section.settings.search_border_color }};
+    --brn-s-bc-focus: {{ section.settings.search_border_focus }};
+    --brn-s-radius: {{ section.settings.search_radius }}px;
+    --brn-s-bg: {{ section.settings.search_bg }};
+    --brn-s-fs: {{ section.settings.search_size }}px;
+    --brn-s-lh: {{ section.settings.search_lh }}px;
+    --brn-s-ls: {{ section.settings.search_ls }}px;
+    --brn-s-color: {{ section.settings.search_color }};
+    --brn-s-ph: {{ section.settings.search_ph_color }};
+    --brn-s-icon: {{ section.settings.search_icon_size }}px;
+    --brn-s-icon-color: {{ section.settings.search_icon_color }};
+
     --brn-h-fs: {{ section.settings.heading_size }}px;
     --brn-h-lh: {{ section.settings.heading_lh }}px;
     --brn-h-color: {{ section.settings.heading_color }};
@@ -97,6 +114,92 @@
     color: var(--brn-h-color);
     text-align: {{ section.settings.heading_align }};
   }
+
+  .brn-{{ uid }} .brn__inner{ display: flex; flex-direction: column; }
+  .brn-{{ uid }} .brn__heading{ order: 0; }
+  .brn-{{ uid }} .brn__search{ order: {% if section.settings.search_position == 'below' %}3{% else %}1{% endif %}; {% if section.settings.search_position == 'below' %}margin-top{% else %}margin-bottom{% endif %}: var(--brn-s-mb); }
+  .brn-{{ uid }} .brn__noresults{ order: 2; }
+  .brn-{{ uid }} .brn__grid{ order: 2; }
+
+  .brn-{{ uid }} .brn__search-box{
+    display: flex;
+    align-items: center;
+    gap: var(--brn-s-gap);
+    min-height: var(--brn-s-h);
+    padding-inline: var(--brn-s-px);
+    background: var(--brn-s-bg);
+    border: var(--brn-s-bw) solid var(--brn-s-bc);
+    border-radius: var(--brn-s-radius);
+    {% if section.settings.search_icon_position == 'end' %}flex-direction: row-reverse;{% endif %}
+  }
+  .brn-{{ uid }} .brn__search-box:focus-within{ border-color: var(--brn-s-bc-focus); }
+
+  .brn-{{ uid }} .brn__search-icon{
+    flex: 0 0 auto;
+    width: var(--brn-s-icon);
+    height: var(--brn-s-icon);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--brn-s-icon-color);
+  }
+  .brn-{{ uid }} .brn__search-icon svg{ width: 100%; height: 100%; display: block; }
+  .brn-{{ uid }} .brn__search-icon img{ width: 100%; height: 100%; object-fit: contain; display: block; }
+
+  .brn-{{ uid }} .brn__search-input{
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    outline: none;
+    background: transparent;
+    box-shadow: none;
+    font-family: inherit;
+    font-size: var(--brn-s-fs);
+    line-height: var(--brn-s-lh);
+    letter-spacing: var(--brn-s-ls);
+    color: var(--brn-s-color);
+    {% if section.settings.search_uppercase %}text-transform: uppercase;{% endif %}
+  }
+  .brn-{{ uid }} .brn__search-input::placeholder{ color: var(--brn-s-ph); opacity: 1; }
+  .brn-{{ uid }} .brn__search-input::-webkit-search-cancel-button{ -webkit-appearance: none; appearance: none; }
+
+  .brn-{{ uid }} .brn__search-clear{
+    flex: 0 0 auto;
+    width: var(--brn-s-icon);
+    height: var(--brn-s-icon);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--brn-s-icon-color);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .brn-{{ uid }} .brn__search-clear[hidden]{ display: none; }
+  .brn-{{ uid }} .brn__search-clear svg{ width: 100%; height: 100%; display: block; }
+
+  .brn-{{ uid }} .brn__search-status{
+    margin: {{ section.settings.status_mt }}px 0 0;
+    font-size: {{ section.settings.status_size }}px;
+    line-height: {{ section.settings.status_lh }}px;
+    color: {{ section.settings.status_color }};
+  }
+  .brn-{{ uid }} .brn__search-status:empty{ display: none; }
+
+  .brn-{{ uid }} .brn__card.is-hidden{ display: none; }
+
+  .brn-{{ uid }} .brn__noresults{
+    display: none;
+    padding: {{ section.settings.noresults_pad }}px;
+    text-align: {{ section.settings.noresults_align }};
+    font-size: {{ section.settings.noresults_size }}px;
+    line-height: {{ section.settings.noresults_lh }}px;
+    color: {{ section.settings.noresults_color }};
+  }
+  .brn-{{ uid }}.brn--empty .brn__noresults{ display: block; }
 
   .brn-{{ uid }} .brn__grid{ display: grid; grid-template-columns: 1fr; gap: var(--brn-gap); }
 
@@ -255,6 +358,13 @@
       --brn-icon-size: {{ section.settings.icon_size_m }}px;
       --brn-icon-gap: {{ section.settings.icon_gap_m }}px;
 
+      --brn-s-mb: {{ section.settings.search_mb_m }}px;
+      --brn-s-h: {{ section.settings.search_h_m }}px;
+      --brn-s-px: {{ section.settings.search_px_m }}px;
+      --brn-s-fs: {{ section.settings.search_size_m }}px;
+      --brn-s-lh: {{ section.settings.search_lh_m }}px;
+      --brn-s-icon: {{ section.settings.search_icon_size_m }}px;
+
       --brn-h-fs: {{ section.settings.heading_size_m }}px;
       --brn-h-lh: {{ section.settings.heading_lh_m }}px;
       --brn-h-mb: {{ section.settings.heading_mb_m }}px;
@@ -267,14 +377,52 @@
   }
 {%- endstyle -%}
 
-<div class="brn brn-{{ uid }}" dir="{{ section.settings.direction }}">
+<div class="brn brn-{{ uid }}" id="brn-{{ uid }}" dir="{{ section.settings.direction }}">
   <div class="brn__inner">
 
     {%- if section.settings.heading != blank -%}
       <h2 class="brn__heading">{{ section.settings.heading }}</h2>
     {%- endif -%}
 
+    {%- if section.settings.show_search -%}
+      <div class="brn__search">
+        <div class="brn__search-box">
+          {%- if section.settings.show_search_icon -%}
+            <span class="brn__search-icon" aria-hidden="true">
+              {%- if section.settings.svg_search != blank -%}
+                {{ section.settings.svg_search }}
+              {%- elsif section.settings.icon_search != blank -%}
+                {{ section.settings.icon_search | image_url: width: 96 | image_tag: loading: 'lazy', alt: '', widths: '24,48,96' }}
+              {%- else -%}
+                <svg viewBox="0 0 24 24" fill="none" focusable="false"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14Zm0-1.5a8.5 8.5 0 0 1 6.6 13.85l4.03 4.02a.75.75 0 1 1-1.06 1.06l-4.03-4.02A8.5 8.5 0 1 1 11 2.5Z" fill="currentColor"/></svg>
+              {%- endif -%}
+            </span>
+          {%- endif -%}
+
+          <input
+            class="brn__search-input"
+            type="search"
+            data-brn-input
+            dir="{{ section.settings.search_dir }}"
+            placeholder="{{ section.settings.search_placeholder | escape }}"
+            aria-label="{{ section.settings.search_aria | default: section.settings.search_placeholder | escape }}"
+            autocomplete="off">
+
+          {%- if section.settings.show_clear -%}
+            <button class="brn__search-clear" type="button" data-brn-clear hidden aria-label="{{ section.settings.clear_aria | escape }}">
+              <svg viewBox="0 0 24 24" fill="none" focusable="false" aria-hidden="true"><path d="M6.4 5.34 12 10.94l5.6-5.6 1.06 1.06-5.6 5.6 5.6 5.6-1.06 1.06-5.6-5.6-5.6 5.6-1.06-1.06 5.6-5.6-5.6-5.6L6.4 5.34Z" fill="currentColor"/></svg>
+            </button>
+          {%- endif -%}
+        </div>
+
+        {%- if section.settings.show_count -%}
+          <p class="brn__search-status" data-brn-status aria-live="polite"></p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
     {%- if entries.size > 0 -%}
+      <div class="brn__noresults" data-brn-noresults>{{ section.settings.noresults_text }}</div>
       <div class="brn__grid">
         {%- for entry in entries limit: lim -%}
 
@@ -346,7 +494,12 @@
             {%- capture h_phone -%}<p><a href="tel:{{ tel }}">{{ phone_txt }}</a></p>{%- endcapture -%}
           {%- endif -%}
 
-          <div class="brn__card">
+          {%- capture card_hay -%}
+            {{ e_name }} {{ h_address | strip_html }} {{ h_phone | strip_html }} {{ h_hours | strip_html }} {{ h_appr | strip_html }}
+            {%- if acc_str contains 'true' %} {{ section.settings.access_aria }}{% endif -%}
+          {%- endcapture -%}
+
+          <div class="brn__card" data-brn-item data-search="{{ card_hay | strip_html | strip | escape }}">
 
             <div class="brn__head">
               {%- if section.settings.show_title and e_name != blank -%}
@@ -465,6 +618,97 @@
   </div>
 </div>
 
+{%- if section.settings.show_search -%}
+<script>
+  (function () {
+    var root = document.getElementById('brn-{{ uid }}');
+    if (!root || root.dataset.brnInit === '1') return;
+    root.dataset.brnInit = '1';
+
+    var input = root.querySelector('[data-brn-input]');
+    if (!input) return;
+
+    var cards = Array.prototype.slice.call(root.querySelectorAll('[data-brn-item]'));
+    var statusEl = root.querySelector('[data-brn-status]');
+    var clearBtn = root.querySelector('[data-brn-clear]');
+
+    var delay = {{ section.settings.search_delay }};
+    var minChars = {{ section.settings.search_min_chars }};
+    var mode = '{{ section.settings.search_trigger }}';
+    var tpl = {{ section.settings.status_template | json }};
+    var timer = null;
+
+    var reStrip;
+    try { reStrip = new RegExp('[^\\p{L}\\p{N}]+', 'gu'); }
+    catch (e) { reStrip = /[^a-z0-9֐-׿]+/g; }
+
+    function norm(v) {
+      return (v == null ? '' : String(v)).toLowerCase().replace(/\s+/g, ' ').trim();
+    }
+    function alnum(v) {
+      return norm(v).replace(reStrip, '');
+    }
+
+    var data = cards.map(function (el) {
+      var raw = el.getAttribute('data-search') || '';
+      return { el: el, n: norm(raw), a: alnum(raw) };
+    });
+
+    function apply() {
+      var q = norm(input.value);
+      var qa = alnum(input.value);
+      var visible = 0;
+      var filtering = q.length >= minChars;
+
+      data.forEach(function (d) {
+        var hit = true;
+        if (filtering) {
+          hit = d.n.indexOf(q) !== -1 || (qa.length > 0 && d.a.indexOf(qa) !== -1);
+        }
+        d.el.classList.toggle('is-hidden', !hit);
+        if (hit) visible++;
+      });
+
+      root.classList.toggle('brn--empty', filtering && visible === 0);
+
+      if (statusEl) {
+        statusEl.textContent = filtering
+          ? String(tpl).replace('[count]', visible).replace('[total]', data.length)
+          : '';
+      }
+      if (clearBtn) clearBtn.hidden = input.value.length === 0;
+    }
+
+    function schedule() {
+      if (clearBtn) clearBtn.hidden = input.value.length === 0;
+      clearTimeout(timer);
+      timer = setTimeout(apply, delay);
+    }
+
+    if (mode === 'submit') {
+      input.addEventListener('change', apply);
+      input.addEventListener('blur', apply);
+    } else {
+      input.addEventListener('input', schedule);
+    }
+
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); clearTimeout(timer); apply(); }
+      if (e.key === 'Escape') { input.value = ''; clearTimeout(timer); apply(); }
+    });
+
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function () {
+        input.value = '';
+        clearTimeout(timer);
+        apply();
+        input.focus();
+      });
+    }
+  })();
+</script>
+{%- endif -%}
+
 {% schema %}
 {
   "name": "Branches",
@@ -512,6 +756,112 @@
     { "type": "text", "id": "label_hours", "label": "Working time label", "default": "שעות פעילות:" },
     { "type": "text", "id": "label_approaches", "label": "Approaches label", "default": "גישות:" },
     { "type": "text", "id": "access_aria", "label": "Accessibility icon aria-label", "default": "הסניף מונגש לבעלי המוגבלויות" },
+
+    { "type": "header", "content": "Search bar" },
+    { "type": "checkbox", "id": "show_search", "label": "Show search", "default": true },
+    {
+      "type": "select",
+      "id": "search_position",
+      "label": "Position",
+      "options": [
+        { "value": "above", "label": "Above the cards" },
+        { "value": "below", "label": "Below the cards" }
+      ],
+      "default": "above"
+    },
+    { "type": "text", "id": "search_placeholder", "label": "Placeholder", "default": "\u05d7\u05d9\u05e4\u05d5\u05e9 \u05e1\u05e0\u05d9\u05e4\u05d9\u05dd" },
+    { "type": "text", "id": "search_aria", "label": "Input aria-label", "default": "Search branches" },
+    {
+      "type": "select",
+      "id": "search_trigger",
+      "label": "Filter trigger",
+      "options": [
+        { "value": "typing", "label": "While typing (delayed)" },
+        { "value": "submit", "label": "On Enter or leaving the field" }
+      ],
+      "default": "typing"
+    },
+    { "type": "range", "id": "search_delay", "label": "Delay before filtering", "min": 0, "max": 3000, "step": 100, "unit": "ms", "default": 600, "info": "Enter applies the filter immediately. Above ~700ms users think the search is broken." },
+    { "type": "range", "id": "search_min_chars", "label": "Minimum characters", "min": 1, "max": 5, "step": 1, "default": 1 },
+    {
+      "type": "select",
+      "id": "search_dir",
+      "label": "Input text direction",
+      "options": [
+        { "value": "auto", "label": "Auto" },
+        { "value": "rtl", "label": "RTL" },
+        { "value": "ltr", "label": "LTR" }
+      ],
+      "default": "auto"
+    },
+    { "type": "checkbox", "id": "show_clear", "label": "Show clear button", "default": true },
+    { "type": "text", "id": "clear_aria", "label": "Clear button aria-label", "default": "Clear search" },
+
+    { "type": "header", "content": "Search bar — box" },
+    { "type": "color", "id": "search_bg", "label": "Background", "default": "#ffffff" },
+    { "type": "color", "id": "search_border_color", "label": "Border color", "default": "#EAEAEA" },
+    { "type": "color", "id": "search_border_focus", "label": "Border color on focus", "default": "#B6B7B7" },
+    { "type": "range", "id": "search_border_w", "label": "Border width", "min": 0, "max": 6, "step": 1, "unit": "px", "default": 1 },
+    { "type": "range", "id": "search_radius", "label": "Radius", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 0 },
+    { "type": "range", "id": "search_h", "label": "Height (desktop)", "min": 28, "max": 100, "step": 1, "unit": "px", "default": 47 },
+    { "type": "range", "id": "search_h_m", "label": "Height (mobile)", "min": 24, "max": 80, "step": 1, "unit": "px", "default": 36 },
+    { "type": "range", "id": "search_px", "label": "Padding sides (desktop)", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 20 },
+    { "type": "range", "id": "search_px_m", "label": "Padding sides (mobile)", "min": 0, "max": 40, "step": 1, "unit": "px", "default": 20 },
+    { "type": "range", "id": "search_gap", "label": "Icon \u2194 text gap", "min": 0, "max": 30, "step": 1, "unit": "px", "default": 5 },
+    { "type": "range", "id": "search_mb", "label": "Gap to cards (desktop)", "min": 0, "max": 80, "step": 1, "unit": "px", "default": 15 },
+    { "type": "range", "id": "search_mb_m", "label": "Gap to cards (mobile)", "min": 0, "max": 60, "step": 1, "unit": "px", "default": 10 },
+
+    { "type": "header", "content": "Search bar — text" },
+    { "type": "color", "id": "search_color", "label": "Typed text color", "default": "#000000" },
+    { "type": "color", "id": "search_ph_color", "label": "Placeholder color", "default": "#6D6D6D" },
+    { "type": "checkbox", "id": "search_uppercase", "label": "Uppercase", "default": true },
+    { "type": "range", "id": "search_size", "label": "Font size (desktop)", "min": 10, "max": 32, "step": 1, "unit": "px", "default": 14 },
+    { "type": "range", "id": "search_lh", "label": "Line height (desktop)", "min": 10, "max": 50, "step": 1, "unit": "px", "default": 17 },
+    { "type": "range", "id": "search_size_m", "label": "Font size (mobile)", "min": 10, "max": 28, "step": 1, "unit": "px", "default": 12 },
+    { "type": "range", "id": "search_lh_m", "label": "Line height (mobile)", "min": 10, "max": 40, "step": 1, "unit": "px", "default": 15 },
+    { "type": "range", "id": "search_ls", "label": "Letter spacing", "min": -2, "max": 5, "step": 0.1, "unit": "px", "default": 0 },
+
+    { "type": "header", "content": "Search bar — icon" },
+    { "type": "checkbox", "id": "show_search_icon", "label": "Show icon", "default": true },
+    { "type": "image_picker", "id": "icon_search", "label": "Icon" },
+    { "type": "textarea", "id": "svg_search", "label": "Icon \u2014 inline SVG", "info": "Leave both empty to use the built-in magnifier." },
+    { "type": "color", "id": "search_icon_color", "label": "Icon color", "default": "#000000" },
+    {
+      "type": "select",
+      "id": "search_icon_position",
+      "label": "Icon position",
+      "options": [
+        { "value": "start", "label": "Start (before the field)" },
+        { "value": "end", "label": "End (after the field)" }
+      ],
+      "default": "start"
+    },
+    { "type": "range", "id": "search_icon_size", "label": "Size (desktop)", "min": 8, "max": 40, "step": 1, "unit": "px", "default": 15 },
+    { "type": "range", "id": "search_icon_size_m", "label": "Size (mobile)", "min": 8, "max": 32, "step": 1, "unit": "px", "default": 15 },
+
+    { "type": "header", "content": "Search bar — results" },
+    { "type": "checkbox", "id": "show_count", "label": "Show results count", "default": false },
+    { "type": "text", "id": "status_template", "label": "Count template", "default": "[count] / [total]", "info": "Tokens: [count], [total]" },
+    { "type": "color", "id": "status_color", "label": "Count color", "default": "#6D6D6D" },
+    { "type": "range", "id": "status_size", "label": "Count font size", "min": 10, "max": 28, "step": 1, "unit": "px", "default": 13 },
+    { "type": "range", "id": "status_lh", "label": "Count line height", "min": 10, "max": 40, "step": 1, "unit": "px", "default": 18 },
+    { "type": "range", "id": "status_mt", "label": "Count top margin", "min": 0, "max": 40, "step": 1, "unit": "px", "default": 8 },
+    { "type": "text", "id": "noresults_text", "label": "No results text", "default": "\u05dc\u05d0 \u05e0\u05de\u05e6\u05d0\u05d5 \u05e1\u05e0\u05d9\u05e4\u05d9\u05dd" },
+    { "type": "color", "id": "noresults_color", "label": "No results color", "default": "#6D6D6D" },
+    {
+      "type": "select",
+      "id": "noresults_align",
+      "label": "No results alignment",
+      "options": [
+        { "value": "start", "label": "Start" },
+        { "value": "center", "label": "Center" },
+        { "value": "end", "label": "End" }
+      ],
+      "default": "center"
+    },
+    { "type": "range", "id": "noresults_size", "label": "No results font size", "min": 10, "max": 32, "step": 1, "unit": "px", "default": 16 },
+    { "type": "range", "id": "noresults_lh", "label": "No results line height", "min": 10, "max": 50, "step": 1, "unit": "px", "default": 24 },
+    { "type": "range", "id": "noresults_pad", "label": "No results padding", "min": 0, "max": 80, "step": 1, "unit": "px", "default": 30 },
 
     { "type": "header", "content": "Section layout" },
     {
