@@ -1,0 +1,148 @@
+{% comment %}
+  Renders the colour group of a product as swatch links: the product itself
+  plus every product listed in its custom.other_colors metafield.
+
+  Group building is transitive - the lists of the linked products are merged
+  in as well, so linking every product of a group to one "hub" product is
+  enough; filling the full list on each product also works and changes nothing.
+
+  Order is by product id, identical on every page of the group, and the current
+  product keeps its place in that order instead of being pulled to the front.
+
+  Accepts:
+  - product: {Object} the current product (required)
+  - show_label: {Boolean} print the current colour name next to the swatches
+  - label_text: {String} prefix for that name, e.g. "צבע"
+  - swatch_size: {Number} swatch diameter in px
+  - dim_unavailable: {Boolean} fade the swatches of sold-out products
+  - enable_prerender: {Boolean} emit the speculation rules for instant clicks
+
+  Usage:
+  {% render 'product-color-group', product: product %}
+{% endcomment %}
+
+{%- liquid
+  assign direct_links = product.metafields.custom.other_colors.value
+  assign candidates = direct_links
+
+  # merge the linked products' own lists (transitive union). The loop runs over
+  # direct_links, never over the growing array, so it cannot feed itself.
+  if direct_links and direct_links.size > 0
+    for linked_product in direct_links
+      assign nested_links = linked_product.metafields.custom.other_colors.value
+      if nested_links and nested_links.size > 0
+        assign candidates = candidates | concat: nested_links
+      endif
+    endfor
+  endif
+
+  assign has_group = false
+  if candidates and candidates.size > 0
+    assign has_group = true
+  endif
+
+  assign sorted_products = candidates | sort: 'id'
+  assign current_label = product.metafields.custom.color_label.value | default: product.metafields.custom.color_label | default: '' | strip
+  assign label_prefix = label_text | default: '' | strip
+  assign swatch_size_px = swatch_size | default: 36
+-%}
+
+{%- if has_group -%}
+  <div
+    class="product-color-group"
+    style="--swatch-input--size: {{ swatch_size_px }}px;"
+  >
+    {%- if show_label and current_label != '' -%}
+      <div class="product-color-group__label">
+        {%- if label_prefix != '' -%}
+          <span class="product-color-group__label-prefix">{{ label_prefix | escape }}:</span>
+        {%- endif -%}
+        <span class="product-color-group__label-value">{{ current_label }}</span>
+      </div>
+    {%- endif -%}
+
+    <div class="product-color-group__list" role="list">
+      {%- liquid
+        assign rendered_ids = ''
+        assign current_rendered = false
+      -%}
+      {%- for group_product in sorted_products -%}
+        {%- liquid
+          assign id_key = '|' | append: group_product.id | append: '|'
+          if group_product.id == blank
+            continue
+          endif
+          if rendered_ids contains id_key
+            continue
+          endif
+        -%}
+
+        {%- comment -%}
+          The current product is not always present in the merged lists, so it
+          is injected at the position its id would occupy.
+        {%- endcomment -%}
+        {%- unless current_rendered -%}
+          {%- if group_product.id > product.id -%}
+            {%- render 'product-color-group-item',
+              group_product: product,
+              is_current: true,
+              dim_unavailable: dim_unavailable
+            -%}
+            {%- liquid
+              assign current_rendered = true
+              assign rendered_ids = rendered_ids | append: '|' | append: product.id | append: '|'
+            -%}
+          {%- endif -%}
+        {%- endunless -%}
+
+        {%- if group_product.id == product.id -%}
+          {%- render 'product-color-group-item',
+            group_product: product,
+            is_current: true,
+            dim_unavailable: dim_unavailable
+          -%}
+          {%- assign current_rendered = true -%}
+        {%- else -%}
+          {%- render 'product-color-group-item',
+            group_product: group_product,
+            is_current: false,
+            dim_unavailable: dim_unavailable
+          -%}
+        {%- endif -%}
+
+        {%- assign rendered_ids = rendered_ids | append: id_key -%}
+      {%- endfor -%}
+
+      {%- unless current_rendered -%}
+        {%- comment -%}current product has the highest id in the group{%- endcomment -%}
+        {%- render 'product-color-group-item',
+          group_product: product,
+          is_current: true,
+          dim_unavailable: dim_unavailable
+        -%}
+      {%- endunless -%}
+    </div>
+  </div>
+
+  {%- if enable_prerender -%}
+    {%- comment -%}
+      Speculation rules: the browser prerenders the linked colour page after a
+      short hover or on pointer down, so the click lands on a page that is
+      already rendered. Chrome and Edge apply their own throttling (two
+      speculations at a time, disabled on Save-Data, low battery or memory
+      pressure), which is what keeps this from looking like scraping. Other
+      browsers ignore the tag and navigate normally.
+    {%- endcomment -%}
+    <script type="speculationrules">
+      {
+        "prerender": [
+          {
+            "source": "document",
+            "where": { "selector_matches": ".product-color-group__link" },
+            "eagerness": "moderate"
+          }
+        ]
+      }
+    </script>
+  {%- endif -%}
+{%- endif -%}

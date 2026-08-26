@@ -1,0 +1,73 @@
+{% comment %}
+  Renders one swatch of the product colour group.
+
+  The current colour is a <span>, not a link: there is nothing to navigate to,
+  and it keeps the speculation rules selector free of a self-referencing URL.
+
+  Accepts:
+  - group_product: {Object} the product this swatch stands for (required)
+  - is_current: {Boolean} true for the product being viewed
+  - dim_unavailable: {Boolean} fade the swatch when the product is sold out
+
+  Usage:
+  {% render 'product-color-group-item', group_product: p, is_current: false %}
+{% endcomment %}
+
+{%- liquid
+  # the metafield can be a Color type (object) or plain text - both render as a
+  # string, and the trailing default keeps a missing metafield comparable
+  assign swatch_color = group_product.metafields.custom.color.value | default: group_product.metafields.custom.color | default: '' | strip
+  assign swatch_label = group_product.metafields.custom.color_label.value | default: group_product.metafields.custom.color_label | default: '' | strip
+  if swatch_label == ''
+    assign swatch_label = group_product.title
+  endif
+
+  assign is_sold_out = false
+  if dim_unavailable and group_product.available == false
+    assign is_sold_out = true
+  endif
+
+  assign item_classes = 'product-color-group__item'
+  if is_current
+    assign item_classes = item_classes | append: ' product-color-group__item--current'
+  else
+    assign item_classes = item_classes | append: ' product-color-group__link'
+  endif
+  if is_sold_out
+    assign item_classes = item_classes | append: ' product-color-group__item--soldout'
+  endif
+
+  assign swatch_classes = 'swatch'
+  if swatch_color == ''
+    assign swatch_classes = swatch_classes | append: ' swatch--unavailable'
+  endif
+-%}
+
+{%- capture swatch_markup -%}
+  <span
+    class="{{ swatch_classes }}"
+    {% if swatch_color != '' %}style="--swatch--background: {{ swatch_color }};"{% endif %}
+  ></span>
+{%- endcapture -%}
+
+{%- if is_current -%}
+  <span
+    class="{{ item_classes }}"
+    role="listitem"
+    aria-current="true"
+    title="{{ swatch_label | escape }}"
+  >
+    {{ swatch_markup }}
+    <span class="visually-hidden">{{ swatch_label }}</span>
+  </span>
+{%- else -%}
+  <a
+    class="{{ item_classes }}"
+    role="listitem"
+    href="{{ group_product.url }}"
+    title="{{ swatch_label | escape }}"
+    aria-label="{{ swatch_label | escape }}"
+  >
+    {{ swatch_markup }}
+  </a>
+{%- endif -%}

@@ -1608,3 +1608,63 @@ product-info .wishlist-hero-custom-button.wishlisthero-floating button {
 .product__spec-footer {
   margin-top: 1rem;
 }
+
+/* ---------- Product colour group (custom.other_colors swatches) ---------- */
+.product-color-group {
+  margin: 1.2rem 0 0;
+}
+
+.product-color-group__label {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 0.8rem;
+  font-size: 1.4rem;
+}
+
+.product-color-group__label-prefix {
+  color: rgba(var(--color-foreground), 0.7);
+}
+
+.product-color-group__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* mirrors .swatch-input__input + .swatch-input__label, but for links */
+.product-color-group__item {
+  --swatch-input--border-radius: 50%;
+  display: inline-block;
+  max-width: 100%;
+  border-radius: var(--swatch-input--border-radius);
+  outline-offset: 0.2rem;
+  outline-color: transparent;
+  outline-style: solid;
+  outline-width: 0.1rem;
+  transition-property: outline-color, outline-width, box-shadow;
+  transition-duration: var(--duration-short);
+  transition-timing-function: ease;
+  forced-color-adjust: none;
+}
+
+.product-color-group__link {
+  cursor: pointer;
+}
+
+/* current colour: same ring as a checked swatch input */
+.product-color-group__item--current {
+  outline: 0.1rem solid rgb(var(--color-foreground));
+}
+
+.product-color-group__link:hover {
+  outline: 0.2rem solid rgba(var(--color-foreground), 1);
+}
+
+.product-color-group__link:focus-visible {
+  outline: 0.2rem solid rgba(var(--color-foreground), 0.5);
+  box-shadow: 0 0 0 0.2rem rgb(var(--color-background)), 0 0 0.1rem 0.5rem rgba(var(--color-foreground), 0.25);
+}
+
+.product-color-group__item--soldout .swatch {
+  opacity: 0.4;
+}

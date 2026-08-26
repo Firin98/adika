@@ -261,6 +261,22 @@
                       </span>
                     {%- endif -%}
                   </div>
+                {%- when 'color_group' -%}
+                  {%- comment -%}
+                    Colour group block: the product plus everything in its
+                    custom.other_colors list, as swatch links. See
+                    snippets/product-color-group.liquid for the grouping rules.
+                  {%- endcomment -%}
+                  <div {{ block.shopify_attributes }}>
+                    {%- render 'product-color-group',
+                      product: product,
+                      show_label: block.settings.show_label,
+                      label_text: block.settings.label_text,
+                      swatch_size: block.settings.swatch_size,
+                      dim_unavailable: block.settings.dim_unavailable,
+                      enable_prerender: block.settings.enable_prerender
+                    -%}
+                  </div>
                 {%- when 'custom_liquid' -%}
                   {{ block.settings.custom_liquid }}
                 {%- when 'collapsible_tab' -%}
@@ -969,6 +985,52 @@
           "id": "color_label",
           "label": "Color code label",
           "info": "Optional text shown before the value"
+        }
+      ]
+    },
+    {
+      "type": "color_group",
+      "name": "Color group",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Shows this product and every product in its custom.other_colors metafield as colour swatches. Colour comes from custom.color, the name from custom.color_label. Linking each product of a group to one other product is enough - the rest is resolved through their own lists."
+        },
+        {
+          "type": "checkbox",
+          "id": "show_label",
+          "label": "Show colour name",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "label_text",
+          "label": "Colour name prefix",
+          "default": "צבע"
+        },
+        {
+          "type": "range",
+          "id": "swatch_size",
+          "min": 20,
+          "max": 60,
+          "step": 2,
+          "unit": "px",
+          "label": "Swatch size",
+          "default": 36
+        },
+        {
+          "type": "checkbox",
+          "id": "dim_unavailable",
+          "label": "Fade sold-out colours",
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "enable_prerender",
+          "label": "Preload colour pages",
+          "default": true,
+          "info": "Chrome and Edge prerender the linked page on hover or pointer down, so the click is instant. The browser throttles this itself; other browsers navigate normally."
         }
       ]
     },
