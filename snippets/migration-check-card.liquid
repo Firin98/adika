@@ -1,0 +1,45 @@
+{% comment %}
+  One card of a migrated product plus the facts worth checking at a glance:
+  its colour swatch, how many photos it got and how many sizes it kept.
+
+  Accepts:
+  - child: {Object} the new product (required)
+  - section: {Object} the calling section, for card display settings
+{% endcomment %}
+
+{%- liquid
+  assign child_hex = child.metafields.custom.color.value | default: child.metafields.custom.color | default: '' | strip
+  assign child_label = child.metafields.custom.color_label.value | default: child.metafields.custom.color_label | default: '' | strip
+  assign siblings = child.metafields.custom.other_colors.value
+  assign sibling_count = 0
+  if siblings and siblings.size > 0
+    assign sibling_count = siblings.size
+  endif
+-%}
+
+<div class="migration-check__card{% if child.media.size == 0 %} migration-check__card--noimage{% endif %}">
+  {% render 'card-product',
+    card_product: child,
+    media_aspect_ratio: section.settings.image_ratio,
+    show_badges: section.settings.show_badges,
+    show_wishlist: section.settings.show_wishlist,
+    show_swatches: true,
+    quick_add: 'none',
+    section_id: section.id,
+    skip_styles: true
+  %}
+  <div class="migration-check__facts">
+    <span class="migration-check__swatch-wrap">
+      {%- if child_hex != '' -%}
+        <span class="swatch" style="--swatch--background: {{ child_hex }}; --swatch-input--size: 1.4rem;"></span>
+      {%- else -%}
+        <span class="swatch swatch--unavailable" style="--swatch-input--size: 1.4rem;"></span>
+      {%- endif -%}
+      {{ child_label | default: '—' }}
+    </span>
+    <span>{{ child.variants.size }} размер(ов)</span>
+    <span{% if child.media.size == 0 %} class="migration-check__fact--bad"{% endif %}>{{ child.media.size }} фото</span>
+    <span>связей: {{ sibling_count }}</span>
+    {%- if child_hex == '' -%}<span class="migration-check__fact--bad">нет hex</span>{%- endif -%}
+  </div>
+</div>

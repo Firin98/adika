@@ -1,0 +1,125 @@
+{% comment %}
+  One "before / after" block of the migration check: the old product on the
+  first row, the products it became on the second.
+
+  Accepts:
+  - old_product: {Object} the product that was split (required)
+  - section: {Object} the calling section, for card display settings
+  - from_collection: {Boolean} true when the children come from a collection
+    (no all_products lookups), false when they are looked up by handle
+  - code_list: {Array} colour codes of the old product (handle mode)
+  - expected: {Number} how many products should exist (handle mode)
+  - source_collection: {Object} collection to scan for children (collection mode)
+{% endcomment %}
+
+{%- liquid
+  assign old_handle = old_product.handle
+  assign old_images = old_product.media.size
+-%}
+
+<div class="migration-check__group">
+  <div class="migration-check__row migration-check__row--old">
+    <div class="migration-check__label">
+      <span class="migration-check__badge migration-check__badge--old">Было</span>
+      <span class="migration-check__handle">{{ old_handle }}</span>
+      <span class="migration-check__meta">{{ old_product.variants.size }} вариант(ов) · {{ old_images }} фото</span>
+    </div>
+    <div class="migration-check__cards migration-check__cards--single">
+      {% render 'card-product',
+        card_product: old_product,
+        media_aspect_ratio: section.settings.image_ratio,
+        show_badges: section.settings.show_badges,
+        show_wishlist: section.settings.show_wishlist,
+        show_swatches: false,
+        quick_add: 'none',
+        section_id: section.id,
+        skip_styles: true
+      %}
+    </div>
+  </div>
+
+  <div class="migration-check__row migration-check__row--new">
+    <div class="migration-check__label">
+      <span class="migration-check__badge migration-check__badge--new">Стало</span>
+    </div>
+    <div class="migration-check__cards">
+      {%- liquid
+        assign found = 0
+        assign missing_images = 0
+        assign missing_hex = 0
+      -%}
+
+      {%- if from_collection -%}
+        {%- for child in source_collection.products -%}
+          {%- liquid
+            assign parent = child.metafields.custom.handle.value | default: '' | strip
+            if parent != old_handle or child.handle == old_handle
+              continue
+            endif
+            assign found = found | plus: 1
+            if child.media.size == 0
+              assign missing_images = missing_images | plus: 1
+            endif
+            assign child_hex = child.metafields.custom.color.value | default: child.metafields.custom.color | default: '' | strip
+            if child_hex == ''
+              assign missing_hex = missing_hex | plus: 1
+            endif
+          -%}
+          {%- render 'migration-check-card', child: child, section: section -%}
+        {%- endfor -%}
+      {%- else -%}
+        {%- for code in code_list -%}
+          {%- liquid
+            assign clean_code = code | strip
+            if clean_code == ''
+              continue
+            endif
+            assign child_handle = old_handle | append: '-' | append: clean_code
+            assign child = all_products[child_handle]
+          -%}
+          {%- if child == empty or child.id == blank -%}
+            <div class="migration-check__missing">
+              <strong>{{ child_handle }}</strong>
+              <span>не импортирован</span>
+            </div>
+            {%- continue -%}
+          {%- endif -%}
+          {%- liquid
+            assign found = found | plus: 1
+            if child.media.size == 0
+              assign missing_images = missing_images | plus: 1
+            endif
+            assign child_hex = child.metafields.custom.color.value | default: child.metafields.custom.color | default: '' | strip
+            if child_hex == ''
+              assign missing_hex = missing_hex | plus: 1
+            endif
+          -%}
+          {%- render 'migration-check-card', child: child, section: section -%}
+        {%- endfor -%}
+      {%- endif -%}
+
+      {%- if found == 0 -%}
+        <div class="migration-check__missing">
+          <strong>ничего не найдено</strong>
+          <span>новые товары ещё не импортированы или лежат в другой коллекции</span>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- liquid
+    assign summary_class = 'migration-check__summary'
+    if from_collection == false and found != expected
+      assign summary_class = summary_class | append: ' migration-check__summary--warn'
+    endif
+    if missing_images > 0 or missing_hex > 0
+      assign summary_class = summary_class | append: ' migration-check__summary--warn'
+    endif
+  -%}
+  <p class="{{ summary_class }}">
+    Получилось товаров: <strong>{{ found }}</strong>
+    {%- unless from_collection %} из ожидаемых <strong>{{ expected }}</strong>{% endunless -%}
+    {%- if missing_images > 0 %} · без фото: <strong>{{ missing_images }}</strong>{% endif -%}
+    {%- if missing_hex > 0 %} · без цвета: <strong>{{ missing_hex }}</strong>{% endif -%}
+  </p>
+</div>

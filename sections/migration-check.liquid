@@ -1,0 +1,179 @@
+{% comment %}
+  Migration check - a temporary section for eyeballing the "1 product = 1 colour"
+  split. For every old product it prints one row with that product, and directly
+  under it a row with the products it became.
+
+  Two ways to feed it:
+    - "Old product handles": a list of handles, one per line. Uses all_products,
+      which Shopify limits to 20 unique handles per page, so the section counts
+      its own budget and says when it had to stop.
+    - "Collection": no lookup limit. Old and new products live in the same
+      collection right after the import, so both rows are read straight from it.
+
+  New products are recognised by their metafields: custom.handle holds the old
+  handle, and for a new product it differs from its own handle.
+
+  Delete this section once the migration is verified.
+{% endcomment %}
+
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'migration-check.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign handle_list = section.settings.handles | newline_to_br | split: '<br />'
+  assign use_handles = false
+  if section.settings.handles != blank
+    assign use_handles = true
+  endif
+  assign lookup_budget = 20
+-%}
+
+<div class="migration-check page-width section-{{ section.id }}-padding" dir="rtl">
+  <h2 class="migration-check__title">{{ section.settings.heading }}</h2>
+
+  {%- if use_handles -%}
+    {%- liquid
+      assign used_lookups = 0
+      assign skipped_groups = 0
+    -%}
+    {%- for raw_handle in handle_list -%}
+      {%- liquid
+        assign old_handle = raw_handle | strip_newlines | strip
+        if old_handle == ''
+          continue
+        endif
+      -%}
+      {%- assign old_product = all_products[old_handle] -%}
+      {%- if old_product == empty or old_product.id == blank -%}
+        <div class="migration-check__group migration-check__group--error">
+          <p class="migration-check__error">Товар «{{ old_handle }}» не найден в магазине</p>
+        </div>
+        {%- continue -%}
+      {%- endif -%}
+
+      {%- liquid
+        # colour option of the old product, to know how many products to expect
+        assign colour_option = blank
+        for option in old_product.options_with_values
+          assign option_name = option.name | downcase
+          if option_name contains 'color' or option_name contains 'colour' or option_name contains 'צבע'
+            assign colour_option = option
+            break
+          endif
+        endfor
+
+        assign colour_codes = ''
+        for variant in old_product.variants
+          assign code = variant.metafields.custom.color_code.value | default: '' | strip
+          if code != ''
+            assign code_key = '|' | append: code | append: '|'
+            unless colour_codes contains code_key
+              assign colour_codes = colour_codes | append: code_key
+            endunless
+          endif
+        endfor
+        assign code_list = colour_codes | split: '|' | uniq
+        assign expected = code_list.size
+
+        assign needed = expected | plus: 1
+        assign remaining = lookup_budget | minus: used_lookups
+      -%}
+
+      {%- if needed > remaining -%}
+        {%- assign skipped_groups = skipped_groups | plus: 1 -%}
+        {%- continue -%}
+      {%- endif -%}
+      {%- assign used_lookups = used_lookups | plus: needed -%}
+
+      {%- render 'migration-check-group',
+        old_product: old_product,
+        code_list: code_list,
+        expected: expected,
+        section: section,
+        from_collection: false
+      -%}
+    {%- endfor -%}
+
+    {%- if skipped_groups > 0 -%}
+      <p class="migration-check__note">
+        Показаны не все: Shopify отдаёт максимум {{ lookup_budget }} товаров через all_products на страницу,
+        поэтому {{ skipped_groups }} групп(ы) пропущено. Уберите лишние handle или используйте режим коллекции.
+      </p>
+    {%- endif -%}
+
+  {%- elsif section.settings.collection != blank -%}
+    {%- liquid
+      assign source = section.settings.collection
+      assign shown = 0
+    -%}
+    {%- for candidate in source.products limit: 50 -%}
+      {%- liquid
+        assign old_key = candidate.metafields.custom.handle.value | default: '' | strip
+        # an old product points at itself; a new one points at its parent
+        if old_key != '' and old_key != candidate.handle
+          continue
+        endif
+        if shown >= section.settings.max_groups
+          break
+        endif
+        assign shown = shown | plus: 1
+      -%}
+      {%- render 'migration-check-group',
+        old_product: candidate,
+        source_collection: source,
+        section: section,
+        from_collection: true
+      -%}
+    {%- endfor -%}
+
+    {%- if shown == 0 -%}
+      <p class="migration-check__note">
+        В коллекции не нашлось ни одного «старого» товара. Проверьте, что и старые, и новые товары лежат в ней,
+        либо впишите handle вручную.
+      </p>
+    {%- endif -%}
+  {%- else -%}
+    <p class="migration-check__note">Выберите коллекцию или впишите handle старых товаров в настройках секции.</p>
+  {%- endif -%}
+</div>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+  }
+{%- endstyle -%}
+
+{% schema %}
+{
+  "name": "Migration check",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Проверка миграции: было → стало" },
+    {
+      "type": "textarea",
+      "id": "handles",
+      "label": "Old product handles",
+      "info": "One per line. Uses all_products (max 20 products per page, the section says when it stops). Leave empty to use the collection below."
+    },
+    { "type": "collection", "id": "collection", "label": "Collection with old and new products" },
+    { "type": "range", "id": "max_groups", "min": 1, "max": 20, "step": 1, "label": "Groups per page (collection mode)", "default": 8 },
+    { "type": "header", "content": "Card display" },
+    {
+      "type": "select", "id": "image_ratio", "label": "Image ratio",
+      "options": [
+        { "value": "portrait", "label": "Portrait" },
+        { "value": "square", "label": "Square" },
+        { "value": "adapt", "label": "Adapt" }
+      ],
+      "default": "portrait"
+    },
+    { "type": "checkbox", "id": "show_badges", "label": "Show badges", "default": true },
+    { "type": "checkbox", "id": "show_wishlist", "label": "Show wishlist", "default": false },
+    { "type": "range", "id": "padding_top", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Top padding", "default": 40 },
+    { "type": "range", "id": "padding_bottom", "min": 0, "max": 100, "step": 4, "unit": "px", "label": "Bottom padding", "default": 40 }
+  ],
+  "presets": [{ "name": "Migration check" }]
+}
+{% endschema %}
