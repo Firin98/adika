@@ -123,6 +123,27 @@ class CartItems extends window.StandardEvents.createViewEventElement(HTMLElement
               targetElement.replaceWith(sourceElement);
             }
           }
+
+          /* The is-empty state lives on <cart-drawer> itself and on the empty
+             block, neither of which is part of the replaced selectors above.
+             Left alone, a first item added into an empty cart keeps the class
+             that hides .cart__contents, so the drawer shows recommendations
+             only. Both directions are synced from the freshly rendered
+             section, so this also covers emptying the cart. */
+          const sourceDrawer = html.querySelector('cart-drawer');
+          const targetDrawer = document.querySelector('cart-drawer');
+          if (sourceDrawer && targetDrawer) {
+            targetDrawer.classList.toggle('is-empty', sourceDrawer.classList.contains('is-empty'));
+          }
+
+          const sourceEmptyBlock = html.querySelector('.drawer__inner-empty');
+          const targetEmptyBlock = document.querySelector('.drawer__inner-empty');
+          const drawerInner = document.querySelector('#CartDrawer .drawer__inner');
+          if (targetEmptyBlock && !sourceEmptyBlock) {
+            targetEmptyBlock.remove();
+          } else if (!targetEmptyBlock && sourceEmptyBlock && drawerInner) {
+            drawerInner.prepend(sourceEmptyBlock);
+          }
         })
         .catch((e) => {
           console.error(e);
@@ -134,6 +155,8 @@ class CartItems extends window.StandardEvents.createViewEventElement(HTMLElement
           const html = new DOMParser().parseFromString(responseText, 'text/html');
           const sourceQty = html.querySelector('cart-items');
           this.innerHTML = sourceQty.innerHTML;
+          // same reason as the drawer branch: the class sits on the element
+          this.classList.toggle('is-empty', sourceQty.classList.contains('is-empty'));
         })
         .catch((e) => {
           console.error(e);
