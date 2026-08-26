@@ -63,6 +63,7 @@
         },
         "amp_back_in_stock_app_block_LFpQPm": {
           "type": "shopify://apps/amp-back-in-stock/blocks/app-block/bfa6a8c4-24e2-411a-9396-e35031b33f34",
+          "disabled": true,
           "settings": {
             "caption": "Email when available",
             "font_size": 16,
