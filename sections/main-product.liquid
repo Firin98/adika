@@ -215,8 +215,8 @@
                 {%- when 'variant_meta' -%}
                   {%- liquid
                     assign vm_variant = product.selected_or_first_available_variant
-                    assign vm_handle = vm_variant.metafields.custom.handle.value
-                    assign vm_color = vm_variant.metafields.custom.color_code.value
+                    assign vm_handle = product.metafields.custom.handle.value
+                    assign vm_color = product.metafields.custom.color_code.value
 
                     assign vm_show_handle = false
                     if block.settings.show_handle and vm_handle and vm_handle != blank
