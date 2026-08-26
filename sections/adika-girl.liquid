@@ -1,0 +1,387 @@
+{% comment %}
+  Adika Girl - registration form.
+
+  Two submission targets, chosen in the section settings:
+
+  - "customer" (default): {% form 'customer' %}, the newsletter form. Creates a
+    customer with first name, last name, email and marketing consent. Phone,
+    Instagram and the age confirmation are carried in contact[tags] with the
+    prefixes configured below, because the customer form takes no other fields.
+    A Shopify Flow reads those tags, writes them into customer metafields and
+    then removes the transport tags again.
+
+  - "contact": {% form 'contact' %}, which accepts arbitrary contact[...]
+    fields and emails all of them to the shop. No customer record is created.
+
+  Validation: native constraints (required / type / pattern) keep the form from
+  being submitted; adika-girl-form.js replaces the browser bubbles with the
+  inline messages configured below and assembles the tag string.
+{% endcomment %}
+
+{{ 'section-adika-girl.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'adika-girl-form.js' | asset_url }}" defer="defer"></script>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign form_id = 'AdikaGirl-' | append: section.id
+  assign is_customer_form = false
+  if section.settings.form_target == 'customer'
+    assign is_customer_form = true
+  endif
+-%}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div
+    class="adika-girl page-width page-width--narrow section-{{ section.id }}-padding"
+    dir="rtl"
+    data-message-required="{{ section.settings.message_required | escape }}"
+    data-message-email="{{ section.settings.message_email | escape }}"
+    data-message-phone="{{ section.settings.message_phone | escape }}"
+    data-message-consent="{{ section.settings.message_consent | escape }}"
+    data-message-marketing="{{ section.settings.message_marketing | escape }}"
+    data-tag-base="{{ section.settings.tag_base | escape }}"
+    data-tag-prefix-first="{{ section.settings.tag_prefix_first | escape }}"
+    data-tag-prefix-last="{{ section.settings.tag_prefix_last | escape }}"
+    data-tag-prefix-email="{{ section.settings.tag_prefix_email | escape }}"
+    data-tag-prefix-phone="{{ section.settings.tag_prefix_phone | escape }}"
+    data-tag-prefix-instagram="{{ section.settings.tag_prefix_instagram | escape }}"
+    data-tag-phone-country-code="{{ section.settings.tag_phone_country_code | escape }}"
+    data-tag-consent="{{ section.settings.tag_consent | escape }}"
+  >
+    {%- if section.settings.heading != blank or section.settings.description != blank -%}
+      <div class="adika-girl__intro">
+        {%- if section.settings.heading != blank -%}
+          <h2 class="title inline-richtext {{ section.settings.heading_size }}">
+            {{ section.settings.heading }}
+          </h2>
+        {%- endif -%}
+        {%- if section.settings.description != blank -%}
+          <div class="adika-girl__description rte">{{ section.settings.description }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- comment -%}
+      The form tag type cannot be a variable, so the two targets are branched
+      here and share one field snippet.
+    {%- endcomment -%}
+    {%- if is_customer_form -%}
+      {%- form 'customer', id: form_id, class: 'adika-girl__form' -%}
+        {%- render 'adika-girl-fields',
+          form: form,
+          section: section,
+          form_id: form_id,
+          is_customer_form: true
+        -%}
+      {%- endform -%}
+    {%- else -%}
+      {%- form 'contact', id: form_id, class: 'adika-girl__form' -%}
+        {%- render 'adika-girl-fields',
+          form: form,
+          section: section,
+          form_id: form_id,
+          is_customer_form: false
+        -%}
+      {%- endform -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Adika Girl",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": [
+      "header",
+      "footer"
+    ]
+  },
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Adika Girl"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "label": "Heading size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "Small"
+        },
+        {
+          "value": "h1",
+          "label": "Medium"
+        },
+        {
+          "value": "h0",
+          "label": "Large"
+        }
+      ],
+      "default": "h1"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>מלאי את הפרטים ונחזור אלייך.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Where submissions go"
+    },
+    {
+      "type": "select",
+      "id": "form_target",
+      "label": "Submission target",
+      "options": [
+        {
+          "value": "customer",
+          "label": "Customer (newsletter form + tags)"
+        },
+        {
+          "value": "contact",
+          "label": "Email to the shop (contact form)"
+        }
+      ],
+      "default": "customer",
+      "info": "Customer: creates a subscriber; phone, Instagram and the age confirmation travel as tags for a Flow to move into metafields. Email: every field is emailed, no customer is created."
+    },
+    {
+      "type": "header",
+      "content": "Field labels",
+      "info": "Each label is also the field name in the notification email."
+    },
+    {
+      "type": "text",
+      "id": "label_first_name",
+      "label": "First name",
+      "default": "שם פרטי"
+    },
+    {
+      "type": "text",
+      "id": "label_last_name",
+      "label": "Last name",
+      "default": "שם משפחה"
+    },
+    {
+      "type": "text",
+      "id": "label_email",
+      "label": "Email",
+      "default": "אימייל"
+    },
+    {
+      "type": "text",
+      "id": "label_phone",
+      "label": "Phone number",
+      "default": "טלפון"
+    },
+    {
+      "type": "text",
+      "id": "label_instagram",
+      "label": "Instagram link",
+      "default": "קישור לאינסטגרם"
+    },
+    {
+      "type": "text",
+      "id": "placeholder_instagram",
+      "label": "Instagram placeholder",
+      "default": "@username",
+      "info": "A bare handle is turned into a full instagram.com link on submit."
+    },
+    {
+      "type": "checkbox",
+      "id": "instagram_required",
+      "label": "Instagram is required",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "label_consent",
+      "label": "Age checkbox",
+      "default": "אני מעל גיל 18"
+    },
+    {
+      "type": "text",
+      "id": "value_consent",
+      "label": "Age checkbox value in the email",
+      "default": "כן"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_marketing_consent",
+      "label": "Marketing consent checkbox",
+      "default": true,
+      "info": "Customer target only. The newsletter form subscribes on submit, so consent must be explicit. Unchecked: the text below is shown as a notice instead."
+    },
+    {
+      "type": "text",
+      "id": "label_marketing",
+      "label": "Marketing consent text",
+      "default": "מסכימה לקבל דיוור שיווקי מאדיקה"
+    },
+    {
+      "type": "text",
+      "id": "label_submit",
+      "label": "Submit button",
+      "default": "שליחה"
+    },
+    {
+      "type": "text",
+      "id": "form_source",
+      "label": "Form name in the email",
+      "default": "Adika Girl",
+      "info": "Contact target only. Sent as a hidden field so these emails can be filtered."
+    },
+    {
+      "type": "header",
+      "content": "Tags (customer target)",
+      "info": "Every field is sent as a tag so a Shopify Flow can copy them into customer metafields and then delete the tags. One space is added after each prefix."
+    },
+    {
+      "type": "text",
+      "id": "tag_base",
+      "label": "Campaign tag",
+      "default": "AdikaGirl"
+    },
+    {
+      "type": "text",
+      "id": "tag_prefix_first",
+      "label": "First name tag prefix",
+      "default": "first:"
+    },
+    {
+      "type": "text",
+      "id": "tag_prefix_last",
+      "label": "Last name tag prefix",
+      "default": "last:"
+    },
+    {
+      "type": "text",
+      "id": "tag_prefix_email",
+      "label": "Email tag prefix",
+      "default": "email:"
+    },
+    {
+      "type": "text",
+      "id": "tag_prefix_phone",
+      "label": "Phone tag prefix",
+      "default": "phone:",
+      "info": "One space is added after the prefix, e.g. 'phone: +972521234567'."
+    },
+    {
+      "type": "text",
+      "id": "tag_phone_country_code",
+      "label": "Phone country code",
+      "default": "+972",
+      "info": "A number starting with 0 is rewritten with this code. Leave empty to keep the number as typed."
+    },
+    {
+      "type": "text",
+      "id": "tag_prefix_instagram",
+      "label": "Instagram tag prefix",
+      "default": "insta:",
+      "info": "One space is added after the prefix, e.g. 'insta: @adikaGirl'."
+    },
+    {
+      "type": "text",
+      "id": "tag_consent",
+      "label": "Age confirmed tag",
+      "default": "age-18plus"
+    },
+    {
+      "type": "header",
+      "content": "Messages"
+    },
+    {
+      "type": "text",
+      "id": "message_success",
+      "label": "Success message",
+      "default": "תודה! הפרטים נשלחו בהצלחה."
+    },
+    {
+      "type": "text",
+      "id": "message_required",
+      "label": "Empty field",
+      "default": "שדה חובה"
+    },
+    {
+      "type": "text",
+      "id": "message_email",
+      "label": "Invalid email",
+      "default": "כתובת אימייל לא תקינה"
+    },
+    {
+      "type": "text",
+      "id": "message_phone",
+      "label": "Invalid phone number",
+      "default": "מספר טלפון לא תקין"
+    },
+    {
+      "type": "text",
+      "id": "message_consent",
+      "label": "Age not confirmed",
+      "default": "יש לאשר שאת מעל גיל 18"
+    },
+    {
+      "type": "text",
+      "id": "message_marketing",
+      "label": "Marketing consent not given",
+      "default": "יש לאשר קבלת דיוור כדי להירשם"
+    },
+    {
+      "type": "header",
+      "content": "Appearance"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 52
+    }
+  ],
+  "presets": [
+    {
+      "name": "Adika Girl"
+    }
+  ]
+}
+{% endschema %}

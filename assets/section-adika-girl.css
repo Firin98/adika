@@ -1,0 +1,131 @@
+/* Adika Girl registration form.
+   The theme applies RTL per component rather than globally, so this section
+   sets its own direction. */
+
+.adika-girl {
+  direction: rtl;
+  text-align: right;
+  --adika-girl-error-color: #c0392b;
+}
+
+.adika-girl__intro {
+  margin-bottom: 2.4rem;
+}
+
+.adika-girl__description {
+  margin: 0.8rem 0 0;
+}
+
+.adika-girl__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.2rem 1.6rem;
+}
+
+@media screen and (min-width: 750px) {
+  .adika-girl__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .adika-girl__field--full {
+    grid-column: 1 / -1;
+  }
+}
+
+.adika-girl__field .field {
+  margin: 0;
+}
+
+.adika-girl__field .field__input,
+.adika-girl__field .field__label {
+  text-align: right;
+}
+
+/* the floating label sits on the right edge in RTL */
+.adika-girl__field .field__label {
+  right: 1.5rem;
+  left: auto;
+}
+
+.adika-girl__error {
+  display: block;
+  margin-top: 0.4rem;
+  color: var(--adika-girl-error-color);
+  font-size: 1.2rem;
+  line-height: 1.4;
+}
+
+.adika-girl__error[hidden] {
+  display: none;
+}
+
+/* invalid state: outline the Dawn field wrapper */
+.adika-girl__field.adika-girl__field--invalid .field:after {
+  box-shadow: 0 0 0 var(--inputs-border-width) var(--adika-girl-error-color);
+  outline: 0;
+  border-color: var(--adika-girl-error-color);
+}
+
+.adika-girl__consent {
+  margin-top: 2rem;
+}
+
+.adika-girl__consent-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.adika-girl__checkbox {
+  flex: 0 0 auto;
+  width: 1.8rem;
+  height: 1.8rem;
+  margin: 0.2rem 0 0;
+  accent-color: rgb(var(--color-foreground));
+  cursor: pointer;
+}
+
+.adika-girl__consent-label {
+  cursor: pointer;
+  line-height: 1.5;
+}
+
+.adika-girl__consent--invalid .adika-girl__checkbox {
+  outline: 0.2rem solid var(--adika-girl-error-color);
+  outline-offset: 0.2rem;
+}
+
+.adika-girl__actions {
+  margin-top: 2.4rem;
+}
+
+.adika-girl__submit {
+  min-width: 20rem;
+}
+
+.adika-girl__success {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+}
+
+.adika-girl__success .icon {
+  width: 1.8rem;
+  height: 1.8rem;
+}
+
+.adika-girl__form-errors {
+  margin-bottom: 2rem;
+  color: var(--adika-girl-error-color);
+}
+
+.adika-girl__consent + .adika-girl__consent {
+  margin-top: 1.2rem;
+}
+
+.adika-girl__notice {
+  margin: 1.6rem 0 0;
+  font-size: 1.3rem;
+  color: rgba(var(--color-foreground), 0.75);
+}

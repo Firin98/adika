@@ -1,0 +1,244 @@
+{% comment %}
+  Fields of the Adika Girl form. Rendered inside either {% form 'customer' %}
+  or {% form 'contact' %}, so the markup lives here instead of being duplicated.
+
+  Accepts:
+  - form: {Object} the Liquid form object of the wrapping form tag
+  - section: {Object} the section, for its settings
+  - form_id: {String} id prefix for every field
+  - is_customer_form: {Boolean} true for the newsletter (customer) target
+
+  In customer mode only first name, last name and email are posted as real
+  fields; phone, Instagram and the age confirmation are carried in
+  contact[tags] (assembled by adika-girl-form.js) because the customer form
+  accepts no other fields. A Shopify Flow then copies those tags into
+  customer metafields and removes them again.
+{% endcomment %}
+
+{%- liquid
+  assign label_first_name = section.settings.label_first_name | default: 'שם פרטי'
+  assign label_last_name = section.settings.label_last_name | default: 'שם משפחה'
+  assign label_email = section.settings.label_email | default: 'אימייל'
+  assign label_phone = section.settings.label_phone | default: 'טלפון'
+  assign label_instagram = section.settings.label_instagram | default: 'קישור לאינסטגרם'
+  assign label_consent = section.settings.label_consent | default: 'אני מעל גיל 18'
+
+  # In customer mode the extra fields carry no name attribute: unnamed inputs
+  # are never submitted, so nothing unexpected reaches Shopify.
+  if is_customer_form
+    assign name_first = 'contact[first_name]'
+    assign name_last = 'contact[last_name]'
+    assign name_phone = ''
+    assign name_instagram = ''
+    assign name_consent = ''
+  else
+    assign name_first = 'contact[' | append: label_first_name | append: ']'
+    assign name_last = 'contact[' | append: label_last_name | append: ']'
+    assign name_phone = 'contact[' | append: label_phone | append: ']'
+    assign name_instagram = 'contact[' | append: label_instagram | append: ']'
+    assign name_consent = 'contact[' | append: label_consent | append: ']'
+  endif
+-%}
+
+{%- if form.posted_successfully? -%}
+  <h3 class="form-status form-status-list form__message adika-girl__success" tabindex="-1" autofocus>
+    {{- 'icon-success.svg' | inline_asset_content -}}
+    {{ section.settings.message_success }}
+  </h3>
+{%- else -%}
+  {%- if form.errors -%}
+    <div class="adika-girl__form-errors form__message" role="alert" tabindex="-1" autofocus>
+      <span class="svg-wrapper">
+        {{- 'icon-error.svg' | inline_asset_content -}}
+      </span>
+      {{ form.errors.translated_fields.email | capitalize }}
+      {{ form.errors.messages.email }}
+    </div>
+  {%- endif -%}
+
+  <div class="adika-girl__grid">
+    <div class="adika-girl__field">
+      <div class="field">
+        <input
+          class="field__input"
+          type="text"
+          id="{{ form_id }}-first-name"
+          name="{{ name_first }}"
+          value="{{ form.first_name | escape }}"
+          autocomplete="given-name"
+          placeholder="{{ label_first_name | escape }}"
+          data-first-name-input
+          required
+          aria-required="true"
+        >
+        <label class="field__label" for="{{ form_id }}-first-name">
+          {{- label_first_name }} <span aria-hidden="true">*</span>
+        </label>
+      </div>
+      <small class="adika-girl__error" id="{{ form_id }}-first-name-error" hidden></small>
+    </div>
+
+    <div class="adika-girl__field">
+      <div class="field">
+        <input
+          class="field__input"
+          type="text"
+          id="{{ form_id }}-last-name"
+          name="{{ name_last }}"
+          value="{{ form.last_name | escape }}"
+          autocomplete="family-name"
+          placeholder="{{ label_last_name | escape }}"
+          data-last-name-input
+          required
+          aria-required="true"
+        >
+        <label class="field__label" for="{{ form_id }}-last-name">
+          {{- label_last_name }} <span aria-hidden="true">*</span>
+        </label>
+      </div>
+      <small class="adika-girl__error" id="{{ form_id }}-last-name-error" hidden></small>
+    </div>
+
+    <div class="adika-girl__field">
+      <div class="field">
+        <input
+          class="field__input"
+          type="email"
+          id="{{ form_id }}-email"
+          name="contact[email]"
+          value="{{ form.email | escape }}"
+          autocomplete="email"
+          spellcheck="false"
+          autocapitalize="off"
+          placeholder="{{ label_email | escape }}"
+          data-email-input
+          required
+          aria-required="true"
+        >
+        <label class="field__label" for="{{ form_id }}-email">
+          {{- label_email }} <span aria-hidden="true">*</span>
+        </label>
+      </div>
+      <small class="adika-girl__error" id="{{ form_id }}-email-error" hidden></small>
+    </div>
+
+    <div class="adika-girl__field">
+      <div class="field">
+        <input
+          class="field__input"
+          type="tel"
+          id="{{ form_id }}-phone"
+          {% if name_phone != blank %}name="{{ name_phone }}"{% endif %}
+          value="{{ form.phone | escape }}"
+          autocomplete="tel"
+          inputmode="tel"
+          pattern="[0-9+() -]{7,20}"
+          data-error-message="{{ section.settings.message_phone | escape }}"
+          placeholder="{{ label_phone | escape }}"
+          data-phone-input
+          required
+          aria-required="true"
+        >
+        <label class="field__label" for="{{ form_id }}-phone">
+          {{- label_phone }} <span aria-hidden="true">*</span>
+        </label>
+      </div>
+      <small class="adika-girl__error" id="{{ form_id }}-phone-error" hidden></small>
+    </div>
+
+    <div class="adika-girl__field adika-girl__field--full">
+      <div class="field">
+        <input
+          class="field__input"
+          type="text"
+          id="{{ form_id }}-instagram"
+          {% if name_instagram != blank %}name="{{ name_instagram }}"{% endif %}
+          autocomplete="off"
+          spellcheck="false"
+          autocapitalize="off"
+          dir="ltr"
+          placeholder="{{ section.settings.placeholder_instagram | escape }}"
+          data-instagram-input
+          {% if section.settings.instagram_required %}
+            required
+            aria-required="true"
+          {% endif %}
+        >
+        <label class="field__label" for="{{ form_id }}-instagram">
+          {{- label_instagram }}
+          {%- if section.settings.instagram_required %} <span aria-hidden="true">*</span>{% endif -%}
+        </label>
+      </div>
+      <small class="adika-girl__error" id="{{ form_id }}-instagram-error" hidden></small>
+    </div>
+  </div>
+
+  <div class="adika-girl__consent">
+    <div class="adika-girl__consent-row">
+      <input
+        class="adika-girl__checkbox"
+        type="checkbox"
+        id="{{ form_id }}-consent"
+        {% if name_consent != blank %}name="{{ name_consent }}"{% endif %}
+        value="{{ section.settings.value_consent | escape }}"
+        data-consent-input
+        required
+        aria-required="true"
+      >
+      <label class="adika-girl__consent-label" for="{{ form_id }}-consent">
+        {{- label_consent }} <span aria-hidden="true">*</span>
+      </label>
+    </div>
+    <small class="adika-girl__error" id="{{ form_id }}-consent-error" hidden></small>
+  </div>
+
+  {%- if is_customer_form -%}
+    {%- comment -%}
+      The customer form subscribes the person on submit, so the marketing
+      consent has to be explicit rather than implied.
+    {%- endcomment -%}
+    {%- if section.settings.show_marketing_consent -%}
+      <div class="adika-girl__consent">
+        <div class="adika-girl__consent-row">
+          <input
+            class="adika-girl__checkbox"
+            type="checkbox"
+            id="{{ form_id }}-marketing"
+            data-marketing-input
+            required
+            aria-required="true"
+          >
+          <label class="adika-girl__consent-label" for="{{ form_id }}-marketing">
+            {{- section.settings.label_marketing }} <span aria-hidden="true">*</span>
+          </label>
+        </div>
+        <small class="adika-girl__error" id="{{ form_id }}-marketing-error" hidden></small>
+      </div>
+    {%- else -%}
+      <p class="adika-girl__notice">{{ section.settings.label_marketing }}</p>
+    {%- endif -%}
+
+    <input type="hidden" name="contact[accepts_marketing]" value="true">
+    {%- comment -%}
+      Transport for the fields the customer form cannot take. Pre-filled with
+      the base tag so a customer is still tagged when JavaScript is off.
+    {%- endcomment -%}
+    <input
+      type="hidden"
+      name="contact[tags]"
+      value="{{ section.settings.tag_base | escape }}"
+      data-tags-input
+    >
+  {%- else -%}
+    {%- if section.settings.form_source != blank -%}
+      <input type="hidden" name="contact[Form]" value="{{ section.settings.form_source | escape }}">
+    {%- endif -%}
+  {%- endif -%}
+
+  <div class="adika-girl__actions">
+    <button type="submit" class="button adika-girl__submit">
+      {{ section.settings.label_submit }}
+      {%- render 'loading-spinner' -%}
+    </button>
+  </div>
+{%- endif -%}
