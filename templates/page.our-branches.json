@@ -26,7 +26,9 @@
         "slide_DP77g3": {
           "type": "slide",
           "settings": {
+            "desktop_video": "",
             "desktop_image": "shopify://shop_images/BANNER_DESK_1920_ADIKA_1.jpg",
+            "mobile_video": "",
             "mobile_image": "shopify://shop_images/BANNER_DESK_1920_ADIKA_1_1.jpg",
             "subtitle": "",
             "title": "OUR BRANCHES",
@@ -76,7 +78,7 @@
             "title_font_size": 72,
             "title_line_height": 72,
             "title_font_weight": "300",
-            "title_color": "#FFFFFF",
+            "title_color": "#ffffff",
             "title_margin_bottom": 0,
             "title_text_decoration": "none",
             "title_direction": true,
@@ -84,7 +86,7 @@
             "title_font_size_mobile": 24,
             "title_line_height_mobile": 30,
             "title_font_weight_mobile": "300",
-            "title_color_mobile": "#FFFFFF",
+            "title_color_mobile": "#ffffff",
             "title_margin_bottom_mobile": 0,
             "title_text_decoration_mobile": "none",
             "text_content_font_size": 14,
@@ -208,10 +210,84 @@
         "margin_top_mobile": 0,
         "margin_bottom_mobile": 0
       }
+    },
+    "rich_text_better_JjYtbV": {
+      "type": "rich-text-better",
+      "blocks": {
+        "heading_DATnAR": {
+          "type": "heading",
+          "settings": {
+            "heading": "Talk about your brand",
+            "show_line": false,
+            "line_width": 30,
+            "line_alignment": "center",
+            "line_spacing": 16,
+            "heading_size": "h2",
+            "text_color": "#000000",
+            "font_weight": "400",
+            "text_transform": "none",
+            "font_size": 16,
+            "line_height": 24,
+            "margin_bottom": 0,
+            "font_size_mobile": 14,
+            "line_height_mobile": 20,
+            "margin_bottom_mobile": 0
+          }
+        },
+        "text_UNd7MD": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Share information about your brand with your customers.</p>",
+            "text_color": "#000000",
+            "font_weight": "400",
+            "text_transform": "none",
+            "font_size": 16,
+            "line_height": 24,
+            "margin_bottom": 0,
+            "font_size_mobile": 14,
+            "line_height_mobile": 20,
+            "margin_bottom_mobile": 0
+          }
+        },
+        "button_HFNUtQ": {
+          "type": "button",
+          "settings": {
+            "button_label": "Button label",
+            "button_link": "",
+            "button_style_secondary": false,
+            "button_label_2": "",
+            "button_link_2": "",
+            "button_style_secondary_2": false
+          }
+        }
+      },
+      "block_order": [
+        "heading_DATnAR",
+        "text_UNd7MD",
+        "button_HFNUtQ"
+      ],
+      "name": "Rich text better",
+      "settings": {
+        "bg_color": "",
+        "max_width": 0,
+        "desktop_content_position": "center",
+        "content_alignment": "center",
+        "color_scheme": "",
+        "full_width": true,
+        "section_color_scheme": "",
+        "section_background": "",
+        "section_background_transparent": true,
+        "section_use_secondary_background": false,
+        "padding_top": 40,
+        "padding_bottom": 52,
+        "padding_top_mobile": 36,
+        "padding_bottom_mobile": 36
+      }
     }
   },
   "order": [
     "main",
-    "main_banner_slider_bGiHiy"
+    "main_banner_slider_bGiHiy",
+    "rich_text_better_JjYtbV"
   ]
 }

@@ -1,13 +1,6 @@
 {{ 'section-rich-text.css' | asset_url | stylesheet_tag }}
 
-{%- render 'section-background',
-  section_id: section.id,
-  target: '.rich-text-bg',
-  color_scheme: section.settings.section_color_scheme,
-  background: section.settings.section_background,
-  background_transparent: section.settings.section_background_transparent,
-  use_secondary_background: section.settings.section_use_secondary_background
--%}
+
 
 {%- style -%}
   #shopify-section-{{ section.id }},
