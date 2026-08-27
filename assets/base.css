@@ -4210,3 +4210,9 @@ body:has(#Details-menu-drawer-container[open]) .smart-accessibility-widget .sa-w
 body:has(#Details-menu-drawer-container[open]) #glassix-widget-launcher-container {
   display: none !important;  
 }
+.smart-accessibility-widget .sa-widget__cta.bottom-left {
+  bottom: 15px !important;
+  left: 17px !important;
+  height: 35px;
+  width: 35px;
+}
