@@ -4202,3 +4202,11 @@ searchanize styles */
 .snize-ac-results-multicolumn-list .snize-description {
 	text-align: right;
 }
+
+/*
+ hide  icons when opened menu
+*/
+body:has(#Details-menu-drawer-container[opne]) .smart-accessibility-widget .sa-widget__cta.bottom-left,
+body:has(#Details-menu-drawer-container[opne]) #glassix-widget-launcher-container {
+  display: none;  
+}
