@@ -21,6 +21,7 @@
     },
     "refund_form_GKWqDB": {
       "type": "refund-form",
+      "disabled": true,
       "custom_css": [
         "{padding: 0 15px !important;}"
       ],
@@ -50,6 +51,7 @@
     },
     "custom_liquid_bCtThD": {
       "type": "custom-liquid",
+      "disabled": true,
       "name": "t:sections.custom-liquid.presets.name",
       "settings": {
         "custom_liquid": "<div class=\"globo-formbuilder\" data-id=\"MTYxNTkw\"></div>",
