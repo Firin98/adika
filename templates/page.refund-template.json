@@ -21,7 +21,6 @@
     },
     "refund_form_GKWqDB": {
       "type": "refund-form",
-      "disabled": true,
       "custom_css": [
         "{padding: 0 15px !important;}"
       ],
