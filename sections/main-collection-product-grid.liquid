@@ -240,7 +240,14 @@
     {{ 'mask-arch.svg' | inline_asset_content }}
   {%- endif -%}
 </div>
-
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    window.ajaxinateInstance = new Ajaxinate({
+      container: '#product-grid',
+      pagination: '.infinite_next',
+    });
+  }, false);
+</script>
 {% schema %}
 {
   "name": "t:sections.main-collection-product-grid.name",
