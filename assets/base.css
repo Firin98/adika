@@ -4211,8 +4211,8 @@ body:has(#Details-menu-drawer-container[open]) #glassix-widget-launcher-containe
   display: none !important;  
 }
 #MainContent ~ .shopify-block.shopify-app-block:has(.smart-accessibility-widget) .smart-accessibility-widget .sa-widget__cta.bottom-left {
-  bottom: 15px !important;
+  bottom: 20px !important;
   left: 17px !important;
-  height: 35px;
-  width: 35px;
+  height: 40px;
+  width: 40px;
 }
