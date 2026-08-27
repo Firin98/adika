@@ -21,6 +21,7 @@
     },
     "refund_form_GKWqDB": {
       "type": "refund-form",
+      "disabled": true,
       "custom_css": [
         "{padding: 0 15px !important;}"
       ],
@@ -39,7 +40,7 @@
         "label_submit": "שליחה",
         "show_phone": true,
         "form_width": 600,
-        "input_background": "#F0F0F0",
+        "input_background": "#f0f0f0",
         "input_border_radius": 0,
         "textarea_height": 100,
         "button_background": "#000000",
@@ -47,10 +48,21 @@
         "padding_top": 0,
         "padding_bottom": 40
       }
+    },
+    "custom_liquid_bCtThD": {
+      "type": "custom-liquid",
+      "name": "t:sections.custom-liquid.presets.name",
+      "settings": {
+        "custom_liquid": "<div class=\"globo-formbuilder\" data-id=\"MTYxNTkw\"></div>",
+        "color_scheme": "",
+        "padding_top": 40,
+        "padding_bottom": 52
+      }
     }
   },
   "order": [
     "main",
-    "refund_form_GKWqDB"
+    "refund_form_GKWqDB",
+    "custom_liquid_bCtThD"
   ]
 }
