@@ -25,7 +25,13 @@
           "settings": {
             "heading": "הירשמי לניוזלטר שלנו",
             "subheading": "רוצה להיות הראשונה לדעת על דרופים חדשים, סיילים וטרנדים חמים? תשאירי לנו פרטים ואנחנו על זה",
-            "show_phone": false
+            "show_phone": false,
+            "show_consent": true,
+            "consent_text": "קראתי ואני מאשר/ת את",
+            "consent_link_label": "מדיניות הפרטיות",
+            "consent_link": "shopify://policies/privacy-policy",
+            "consent_error": "יש לאשר את מדיניות הפרטיות",
+            "subscribed_message": "כבר רשומה לניוזלטר שלנו"
           }
         },
         "link_list_qCD4Bt": {
