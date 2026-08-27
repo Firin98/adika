@@ -4221,3 +4221,31 @@ body:has(#Details-menu-drawer-container[open]) #glassix-widget-launcher-containe
   right: 40px !important;
   left: auto !important;
 }
+.refund_form .gfb-style-material_filled .globo-form-control:not([data-type=file2],
+.refund_form [data-type=imageOptions],
+.refund_form [data-type=rating-level],
+.refund_form [data-type=feedback],
+.refund_form [data-type=matrix],
+.refund_form [data-type=rating-star2],
+.refund_form [data-type=checkbox],
+.refund_form [data-type=radio],
+.refund_form [data-type=colorSwatches],
+.refund_form [data-type=rangeSlider],
+.refund_form [data-type=switcher],
+.refund_form [data-type=button],
+.refund_form [data-type=signature]):not([data-type=file]) .globo-label.gfb__label__shink, 
+.refund_form .gfb-style-material_filled .globo-form-control:not([data-type=file2],
+.refund_form [data-type=imageOptions],
+.refund_form [data-type=rating-level],
+.refund_form [data-type=feedback],
+.refund_form [data-type=matrix],
+.refund_form [data-type=rating-star2],
+.refund_form [data-type=checkbox],
+.refund_form [data-type=radio],
+.refund_form [data-type=colorSwatches],
+.refund_form [data-type=rangeSlider],
+.refund_form [data-type=switcher],
+.refund_form [data-type=button],
+.refund_form [data-type=signature]):not([data-type=file]) .globo-label.gfb__label__filled {
+  transform: none !important;
+}
