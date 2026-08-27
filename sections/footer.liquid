@@ -283,19 +283,61 @@
                               </div>
                             {%- endif -%}
 
-                            {%- if block.settings.checkbox_label != blank -%}
+                            {%- comment -%}
+                              Consent checkbox. Required: the submit button is
+                              native, so the browser blocks the post until the
+                              box is ticked. The privacy link falls back to the
+                              shop policy URL when no page is picked, so it can
+                              never point at a 404.
+                            {%- endcomment -%}
+                            {%- if block.settings.show_consent -%}
+                              {%- liquid
+                                assign consent_url = block.settings.consent_link
+                                if consent_url == blank
+                                  assign consent_url = shop.privacy_policy.url
+                                endif
+                                if consent_url == blank
+                                  assign consent_url = '/policies/privacy-policy'
+                                endif
+                              -%}
                               <div class="email-signup-form__checkbox">
                                 <input
                                   type="checkbox"
-                                  id="EmailSignup-terms--{{ block.id }}"
+                                  id="EmailSignup-consent--{{ block.id }}"
                                   name="contact[terms]"
                                   value="accepted"
                                   class="email-signup-form__checkbox-input"
+                                  required
+                                  aria-required="true"
                                 >
-                                <label for="EmailSignup-terms--{{ block.id }}" class="email-signup-form__checkbox-label">
-                                  {{ block.settings.checkbox_label }}
+                                <label for="EmailSignup-consent--{{ block.id }}" class="email-signup-form__checkbox-label">
+                                  {%- comment -%}
+                                    No whitespace trimming between the text and the link:
+                                    trimming would glue the link to the last Hebrew word.
+                                  {%- endcomment -%}
+                                  {{ block.settings.consent_text }}
+                                  {% if block.settings.consent_link_label != blank %}<a
+                                      class="email-signup-form__checkbox-link"
+                                      href="{{ consent_url }}"
+                                      target="_blank"
+                                      rel="noopener"
+                                    >{{ block.settings.consent_link_label }}</a>{% endif %}
                                 </label>
                               </div>
+                              <script>
+                                (function () {
+                                  var input = document.getElementById('EmailSignup-consent--{{ block.id }}');
+                                  if (!input) return;
+                                  // Without this the browser shows its own message in its own
+                                  // language - English for most visitors of a Hebrew store.
+                                  var message = {{ block.settings.consent_error | default: 'יש לאשר את מדיניות הפרטיות' | json }};
+                                  var sync = function () {
+                                    input.setCustomValidity(input.checked ? '' : message);
+                                  };
+                                  input.addEventListener('change', sync);
+                                  sync();
+                                })();
+                              </script>
                             {%- endif -%}
 
                             {%- if form.errors -%}
@@ -631,10 +673,40 @@ window.access4u = {
           "default": false
         },
         {
-          "type": "richtext",
-          "id": "checkbox_label",
-          "default": "<p>והי עובדה מבוססת שדעתו של הקורא תהיה</p>",
-          "label": "Checkbox label"
+          "type": "header",
+          "content": "Consent checkbox"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_consent",
+          "label": "Show consent checkbox",
+          "default": true,
+          "info": "Required. The form cannot be submitted until it is ticked."
+        },
+        {
+          "type": "text",
+          "id": "consent_text",
+          "default": "קראתי ואני מאשר/ת את",
+          "label": "Consent text"
+        },
+        {
+          "type": "text",
+          "id": "consent_link_label",
+          "default": "מדיניות הפרטיות",
+          "label": "Privacy link text",
+          "info": "Leave empty to show the consent text without a link."
+        },
+        {
+          "type": "url",
+          "id": "consent_link",
+          "label": "Privacy policy page",
+          "info": "Leave empty to use the store privacy policy."
+        },
+        {
+          "type": "text",
+          "id": "consent_error",
+          "default": "יש לאשר את מדיניות הפרטיות",
+          "label": "Consent error message"
         },
         {
           "type": "text",

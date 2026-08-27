@@ -25,8 +25,7 @@
           "settings": {
             "heading": "הירשמי לניוזלטר שלנו",
             "subheading": "רוצה להיות הראשונה לדעת על דרופים חדשים, סיילים וטרנדים חמים? תשאירי לנו פרטים ואנחנו על זה",
-            "show_phone": false,
-            "checkbox_label": ""
+            "show_phone": false
           }
         },
         "link_list_qCD4Bt": {
