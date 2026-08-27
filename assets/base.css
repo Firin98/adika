@@ -4210,7 +4210,7 @@ body:has(#Details-menu-drawer-container[open]) .smart-accessibility-widget .sa-w
 body:has(#Details-menu-drawer-container[open]) #glassix-widget-launcher-container {
   display: none !important;  
 }
-#MainContent ~ .smart-accessibility-widget .sa-widget__cta.bottom-left {
+#MainContent ~ .shopify-block.shopify-app-block:has(.smart-accessibility-widget) .smart-accessibility-widget .sa-widget__cta.bottom-left {
   bottom: 15px !important;
   left: 17px !important;
   height: 35px;
