@@ -152,7 +152,7 @@
             "title": "",
             "text": "",
             "link_label": "",
-            "link": "shopify://collections/tops-and-t-shirts"
+            "link": "shopify://collections/tops-and-t-shirts-1"
           }
         },
         "column_TNFk6N": {
@@ -224,7 +224,6 @@
         "image_ratio": "portrait",
         "image_display_mode": "slider",
         "image_display_mode_mobile": "slider",
-        "swatch_gallery_reload": false,
         "image_shape": "default",
         "show_secondary_image": false,
         "show_wishlist": true,
@@ -291,7 +290,6 @@
         "image_ratio": "portrait",
         "image_display_mode": "default",
         "image_display_mode_mobile": "slider",
-        "swatch_gallery_reload": true,
         "image_shape": "default",
         "show_secondary_image": false,
         "show_wishlist": true,
