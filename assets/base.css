@@ -4206,7 +4206,7 @@ searchanize styles */
 /*
  hide  icons when opened menu
 */
-body:has(#Details-menu-drawer-container[opne]) .smart-accessibility-widget .sa-widget__cta.bottom-left,
-body:has(#Details-menu-drawer-container[opne]) #glassix-widget-launcher-container {
-  display: none;  
+body:has(#Details-menu-drawer-container[open]) .smart-accessibility-widget .sa-widget__cta.bottom-left,
+body:has(#Details-menu-drawer-container[open]) #glassix-widget-launcher-container {
+  display: none !important;  
 }
