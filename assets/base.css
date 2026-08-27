@@ -4216,3 +4216,8 @@ body:has(#Details-menu-drawer-container[open]) #glassix-widget-launcher-containe
   height: 40px;
   width: 40px;
 }
+
+.refund_form .globo-label {
+  right: 40px !important;
+  left: 0 !important;
+}
