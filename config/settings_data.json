@@ -220,6 +220,11 @@
         "type": "shopify://apps/powerful-form-builder/blocks/app-embed/e4bcb1eb-35b2-42e6-bc37-bfe0e1542c9d",
         "disabled": false,
         "settings": {}
+      },
+      "12709932091377444302": {
+        "type": "shopify://apps/shabbat-mode/blocks/shabbat-mode/bd0f61f5-1a70-4a30-ae3f-061baa0c095f",
+        "disabled": false,
+        "settings": {}
       }
     },
     "color_schemes": {
