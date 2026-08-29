@@ -223,7 +223,7 @@
       },
       "12709932091377444302": {
         "type": "shopify://apps/shabbat-mode/blocks/shabbat-mode/bd0f61f5-1a70-4a30-ae3f-061baa0c095f",
-        "disabled": false,
+        "disabled": true,
         "settings": {}
       }
     },
