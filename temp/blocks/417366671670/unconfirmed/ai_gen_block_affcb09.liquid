@@ -1,6 +1,292 @@
+{% doc %}
+  @prompt
+    I want popup that will show just a video I will upload here
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-video-popup-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-video-popup__trigger-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 12px 24px;
+    border: {{ block.settings.button_border_width }}px solid {{ block.settings.button_border_color }};
+    border-radius: {{ block.settings.button_radius }}px;
+    background: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .ai-video-popup__trigger-{{ ai_gen_id }}:focus-visible,
+  .ai-video-popup__close-{{ ai_gen_id }}:focus-visible {
+    outline: 3px solid {{ block.settings.focus_color }};
+    outline-offset: 3px;
+  }
+
+  .ai-video-popup__trigger-{{ ai_gen_id }}:hover {
+    opacity: 0.88;
+  }
+
+  .ai-video-popup__icon-{{ ai_gen_id }} {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+
+  .ai-video-popup__dialog-{{ ai_gen_id }} {
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(0, 0, 0, 0.78);
+  }
+
+  .ai-video-popup__dialog-{{ ai_gen_id }}[open] {
+    display: flex;
+  }
+
+  .ai-video-popup__content-{{ ai_gen_id }} {
+    position: relative;
+    width: min(900px, 100%);
+    max-height: 90vh;
+    padding: 12px;
+    background: {{ block.settings.popup_background }};
+    border-radius: {{ block.settings.popup_radius }}px;
+  }
+
+  .ai-video-popup__video-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    max-height: calc(90vh - 24px);
+    object-fit: contain;
+    background: #000000;
+  }
+
+  .ai-video-popup__close-{{ ai_gen_id }} {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: {{ block.settings.close_background }};
+    color: {{ block.settings.close_color }};
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-video-popup__dialog-{{ ai_gen_id }} {
+      padding: 16px;
+    }
+  }
+{% endstyle %}
+
+<video-popup-{{ ai_gen_id }} class="ai-video-popup-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <button
+    type="button"
+    class="ai-video-popup__trigger-{{ ai_gen_id }}"
+    aria-haspopup="dialog"
+    aria-controls="ai-video-popup-dialog-{{ ai_gen_id }}"
+  >
+    <svg class="ai-video-popup__icon-{{ ai_gen_id }}" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M8 5.14v13.72a1 1 0 0 0 1.52.86l10.08-6.86a1 1 0 0 0 0-1.72L9.52 4.28A1 1 0 0 0 8 5.14Z"></path>
+    </svg>
+    <span>{{ block.settings.button_label }}</span>
+  </button>
+
+  <dialog id="ai-video-popup-dialog-{{ ai_gen_id }}" class="ai-video-popup__dialog-{{ ai_gen_id }}" aria-label="{{ block.settings.dialog_label | escape }}">
+    <div class="ai-video-popup__content-{{ ai_gen_id }}">
+      <button type="button" class="ai-video-popup__close-{{ ai_gen_id }}" aria-label="{{ block.settings.close_label | escape }}">&times;</button>
+      {% if block.settings.video != blank %}
+        {{ block.settings.video | video_tag: class: 'ai-video-popup__video-' | append: ai_gen_id, controls: true, playsinline: true, preload: 'metadata' }}
+      {% else %}
+        <p>{{ block.settings.empty_message }}</p>
+      {% endif %}
+    </div>
+  </dialog>
+</video-popup-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class VideoPopup{{ ai_gen_id }} extends HTMLElement {
+      connectedCallback() {
+        this.trigger = this.querySelector('.ai-video-popup__trigger-{{ ai_gen_id }}');
+        this.dialog = this.querySelector('.ai-video-popup__dialog-{{ ai_gen_id }}');
+        this.closeButton = this.querySelector('.ai-video-popup__close-{{ ai_gen_id }}');
+        this.video = this.querySelector('video');
+        if (!this.trigger || !this.dialog || !this.closeButton) return;
+        this.trigger.addEventListener('click', () => {
+          this.dialog.showModal();
+          if (this.video) this.video.play();
+        });
+        this.closeButton.addEventListener('click', () => this.close());
+        this.dialog.addEventListener('click', (event) => {
+          if (event.target === this.dialog) this.close();
+        });
+        this.dialog.addEventListener('cancel', () => this.close());
+      }
+      close() {
+        if (this.video) this.video.pause();
+        this.dialog.close();
+        this.trigger.focus();
+      }
+    }
+    if (!customElements.get('video-popup-{{ ai_gen_id }}')) {
+      customElements.define('video-popup-{{ ai_gen_id }}', VideoPopup{{ ai_gen_id }});
+    }
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Video popup",
+  "settings": [
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Watch video"
+    },
+    {
+      "type": "text",
+      "id": "dialog_label",
+      "label": "Dialog label",
+      "default": "Video player"
+    },
+    {
+      "type": "text",
+      "id": "close_label",
+      "label": "Close label",
+      "default": "Close video"
+    },
+    {
+      "type": "text",
+      "id": "empty_message",
+      "label": "Empty message",
+      "default": "Add a video to this block."
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Button style"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_border_color",
+      "label": "Border",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "button_border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "label": "Corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Popup style"
+    },
+    {
+      "type": "color",
+      "id": "popup_background",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "close_background",
+      "label": "Close background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "close_color",
+      "label": "Close icon",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "focus_color",
+      "label": "Focus outline",
+      "default": "#1A73E8"
+    },
+    {
+      "type": "range",
+      "id": "popup_radius",
+      "label": "Corner radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video popup"
+    }
+  ],
+  "tag": null,
+  "class": "video-popup-block"
+}
 {% endschema %}
