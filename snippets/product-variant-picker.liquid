@@ -47,7 +47,7 @@
         endif
 
         assign show_size_guide = false
-        if option_name_downcase == 'size' and block.settings.enable_size_guide and block.settings.size_guide_page != blank
+        if option_name_downcase == 'size' or option_name_downcase == 'מידה' and block.settings.enable_size_guide and block.settings.size_guide_page != blank
           assign show_size_guide = true
         endif
       -%}
