@@ -82,7 +82,7 @@
         <fieldset class="js product-form__input product-form__input--pill 123">
           <legend class="form__label{% if show_size_guide %} product-form__label-with-size-guide{% endif %}">
             <span>{{ option_label }}</span>
-            {%- if show_size_guide or true -%}
+            {%- if show_size_guide -%}
               <modal-opener
                 class="product-popup-modal__opener product-form__size-guide"
                 data-modal="#SizeGuideModal-{{ block.id }}"
