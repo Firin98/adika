@@ -109,7 +109,7 @@
         <div class="product-form__input product-form__input--dropdown">
           <label class="form__label{% if show_size_guide %} product-form__label-with-size-guide{% endif %}" for="Option-{{ section.id }}-{{ forloop.index0 }}">
             <span>{{ option_label }}</span>
-            {%- if show_size_guide -%}
+            {%- if show_size_guide or true -%}
               <modal-opener
                 class="product-popup-modal__opener product-form__size-guide"
                 data-modal="#SizeGuideModal-{{ block.id }}"
