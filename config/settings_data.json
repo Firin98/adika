@@ -154,11 +154,6 @@
     },
     "content_for_index": [],
     "blocks": {
-      "15551562133269743879": {
-        "type": "shopify://apps/codeinspire-accessibility-tool/blocks/app-embed/9c320235-d5d5-4e1c-baf6-809572578ea3",
-        "disabled": false,
-        "settings": {}
-      },
       "7870687481494312845": {
         "type": "shopify://apps/wishlist-hero/blocks/app-embed/a9a5079b-59e8-47cb-b659-ecf1c60b9b72",
         "disabled": false,
@@ -224,6 +219,11 @@
       "12709932091377444302": {
         "type": "shopify://apps/shabbat-mode/blocks/shabbat-mode/bd0f61f5-1a70-4a30-ae3f-061baa0c095f",
         "disabled": false,
+        "settings": {}
+      },
+      "15551562133269743879": {
+        "type": "shopify://apps/codeinspire-accessibility-tool/blocks/app-embed/9c320235-d5d5-4e1c-baf6-809572578ea3",
+        "disabled": true,
         "settings": {}
       }
     },
