@@ -345,7 +345,8 @@
       if (Shopify.designMode) {
         document.documentElement.classList.add('shopify-design-mode');
       }
-   
+    </script>
+    {% render 'adika-accessibility' %}
   </head>
 
   <body data-template-suffix="{{ template.suffix }}" class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %} template-suffix-{{ template.suffix }} template-{{ template }}  template-name-{{ template.name }} ">
