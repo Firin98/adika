@@ -241,9 +241,9 @@
     "image_banner_9TcxKP": {
       "type": "image-banner",
       "settings": {
-        "image": "shopify://shop_images/adika_desk_banner_2_b1d25b35-317e-413b-9942-ba1917114d80.jpg",
-        "image_mobile": "shopify://shop_images/adika_mob_banner_2_7e41a283-bbfb-4806-8d65-7226f7395ce3.jpg",
-        "global_url": "shopify://collections/all",
+        "image": "shopify://shop_images/adika_desk_banner_2_5ca9dbd9-1bae-4899-ba4c-482d36d8a339.jpg",
+        "image_mobile": "shopify://shop_images/adika_mob_banner_2_1bb60ea5-b92c-427d-8338-8b7b18c303c6.jpg",
+        "global_url": "shopify://collections/adika-x-odeya",
         "image_overlay_opacity": 0,
         "image_height": "adapt",
         "desktop_content_position": "bottom-center",
