@@ -12,8 +12,8 @@
     "image_banner": {
       "type": "image-banner",
       "settings": {
-        "image": "shopify://shop_images/adika_desk_banner_1_31acb08f-b567-4eb0-b547-51c75f217b81.jpg",
-        "image_mobile": "shopify://shop_images/adika_mob_banner_1_293a11bd-9dd2-4b24-a457-53c92b145899.jpg",
+        "image": "shopify://shop_images/adika_desk_banner_1_4647996c-0669-48c2-95f4-e6ede36ae9c8.png",
+        "image_mobile": "shopify://shop_images/adika_mob_banner_1_63b1fd89-84d1-4cb4-9432-9b10e6e31af8.jpg",
         "global_url": "shopify://collections/holiday",
         "image_overlay_opacity": 0,
         "image_height": "adapt",
