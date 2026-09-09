@@ -4220,3 +4220,11 @@ body:has(#Details-menu-drawer-container[open]) #glassix-widget-launcher-containe
 .globo-form-id-161590 .globo-form-app .globo-label, .globo-form-id-161590 .globo-form-app .globo-form-control label.globo-label, .globo-form-id-161590 .globo-form-app .globo-form-control label.globo-label span.label-content {
   text-align: right !important;
 }
+
+
+@media all and (max-width: 900px) {
+  .fix_ur_web_enable_icon {
+    height: 30px !important;
+    width: 30px !important;
+  }
+}
