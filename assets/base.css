@@ -4223,7 +4223,7 @@ body:has(#Details-menu-drawer-container[open]) #glassix-widget-launcher-containe
 
 
 @media all and (max-width: 900px) {
-  .fix_ur_web_enable_icon {
+  #fix_ur_web_enable_icon_id {
     height: 30px !important;
     width: 30px !important;
   }
