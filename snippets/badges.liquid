@@ -142,15 +142,24 @@
             <span>{{- 'products.product.sold_out' | t -}}</span>
           </span>
         {%- else -%}
-          {%- if discount_percent > 0 -%}
-            <span
-              id="{{ badge_id_prefix }}-{{ section_id }}-{{ badge_product.id }}"
-              class="badge badge--{{ corner_class }} badge--sale color-{{ settings.sale_badge_color_scheme }}"
-              {% if sale_badge_style != blank %}style="{{ sale_badge_style }}"{% endif %}
-            >
-              <span>SALE</span>
-            </span>
-          {%- endif -%}
+          {%- comment -%}
+            SALE badge disabled. The discount is already stated by the
+            "N% OFF" badge in the bottom left corner, which is rendered
+            separately below and is NOT affected by this block. Nothing else
+            in the theme prints a SALE badge: the pair in price.liquid has
+            been dead since it was wrapped in "if show_badges and false".
+            To bring it back, remove this comment wrapper.
+
+            {%- if discount_percent > 0 -%}
+              <span
+                id="{{ badge_id_prefix }}-{{ section_id }}-{{ badge_product.id }}"
+                class="badge badge--{{ corner_class }} badge--sale color-{{ settings.sale_badge_color_scheme }}"
+                {% if sale_badge_style != blank %}style="{{ sale_badge_style }}"{% endif %}
+              >
+                <span>SALE</span>
+              </span>
+            {%- endif -%}
+          {%- endcomment -%}
           {%- if is_back_in_stock -%}
             <span
               id="{{ badge_id_prefix }}-back-in-stock-{{ section_id }}-{{ badge_product.id }}"
