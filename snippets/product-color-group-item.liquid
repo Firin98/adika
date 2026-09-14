@@ -41,6 +41,17 @@
   if swatch_color == ''
     assign swatch_classes = swatch_classes | append: ' swatch--unavailable'
   endif
+
+  # A white swatch on a white card reads as an empty hole rather than a colour,
+  # because .card__information .swatch removes the shared border. Flag pale
+  # colours so the CSS can draw a faint ring instead of hardcoding #ffffff -
+  # cream and beige have the same problem. color_brightness returns 0-255:
+  # white 255, cream 248, beige 242, light denim 190, pink 212, camel 160, so
+  # 235 catches every colour that disappears and nothing that does not.
+  assign swatch_brightness = swatch_color | color_brightness
+  if swatch_color != '' and swatch_brightness > 235
+    assign swatch_classes = swatch_classes | append: ' swatch--light'
+  endif
 -%}
 
 {%- capture swatch_markup -%}

@@ -2710,3 +2710,36 @@
 .card-information.card-information--grid:not(:has(.card__colors)) > .card-information__item--right {
   grid-column: 1;
 }
+
+/* Card colour row: self-contained swatch styling.
+
+   The shared rules live in component-swatch.css, but card-product.liquid has
+   its stylesheet tag commented out, so on a card grid that file only arrives
+   when something else on the page pulls it in (facets on a collection page,
+   the product page). On a home page featured collection nothing does, and the
+   circles would render unsized and transparent. These declarations mirror
+   component-swatch.css so the colour row never depends on it. */
+.card__colors .swatch {
+  display: block;
+  width: var(--swatch-input--size, 1.6rem);
+  max-width: 100%;
+  aspect-ratio: 1 / 1;
+  background: var(--swatch--background);
+  background-size: cover;
+  background-origin: border-box;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+/* White, cream and beige on a white card read as an empty hole rather than a
+   colour. The ring is an inset shadow, not a border: .card__information .swatch
+   sets border:none, and a border would also shrink the circle relative to its
+   neighbours. The swatch--light class is set in Liquid from color_brightness,
+   so the rule follows the colour rather than a hardcoded #ffffff. */
+.card__colors .swatch--light {
+  box-shadow: inset 0 0 0 0.1rem rgba(var(--color-foreground), 0.28);
+}
+
+.card__colors .swatch--unavailable {
+  border: 0.1rem dashed rgba(var(--color-foreground), 0.5);
+}

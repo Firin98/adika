@@ -23,3 +23,17 @@
   border-style: dashed;
   border-color: rgba(var(--color-foreground), 0.5);
 }
+
+/* Pale colours (white, cream, beige) on a light background.
+
+   Two declarations, because the swatch is styled differently in the two places
+   it appears. The inset shadow is the ring inside a product card, where
+   ".card__information .swatch" sets border:none - and where a real border
+   would also eat into the circle through box-sizing and make the pale swatch
+   visibly smaller than its neighbours. The border-color covers everywhere the
+   shared border survives (product page, facets, variant picker); inside a card
+   it is inert, since the more specific border:none wins. */
+.swatch--light {
+  box-shadow: inset 0 0 0 0.1rem rgba(var(--color-foreground), 0.28);
+  border-color: rgba(var(--color-foreground), 0.28);
+}
