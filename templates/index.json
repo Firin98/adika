@@ -243,7 +243,7 @@
       "settings": {
         "image": "shopify://shop_images/adika_desk_banner_1-1.png",
         "image_mobile": "shopify://shop_images/adika_mob_banner_1-1.jpg",
-        "global_url": "shopify://collections/adika-x-odeya",
+        "global_url": "shopify://collections/new-in",
         "image_overlay_opacity": 0,
         "image_height": "adapt",
         "desktop_content_position": "bottom-center",
