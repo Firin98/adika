@@ -270,6 +270,38 @@
         "is_sensea_hero": false
       }
     },
+    "image_banner_bVNJqU": {
+      "type": "image-banner",
+      "settings": {
+        "image": "shopify://shop_images/adika_desk_banner_2_28ef189b-a1a6-4304-b47d-efa460ef7728.jpg",
+        "image_mobile": "shopify://shop_images/adika_mob_banner_2_1ee03df4-a17c-455b-ae74-05f9bbb75d0d.jpg",
+        "global_url": "shopify://collections/adika-x-odeya",
+        "image_overlay_opacity": 0,
+        "image_height": "adapt",
+        "desktop_content_position": "bottom-center",
+        "show_text_box": false,
+        "is_container": false,
+        "show_line_separator": false,
+        "desktop_content_alignment": "center",
+        "desktop_justify_content": "center",
+        "color_scheme": "scheme-3",
+        "image_behavior": "none",
+        "mobile_content_alignment": "center",
+        "mobile_content_position": "bottom",
+        "stack_images_on_mobile": false,
+        "show_text_below": false,
+        "button_label_1": "",
+        "button_link_1": "",
+        "button_style_secondary_1": false,
+        "button_style_link_1": false,
+        "banner_type": "default",
+        "is_container_2": false,
+        "margin_top": 0,
+        "margin_top_mobile": 0,
+        "max_width": 0,
+        "is_sensea_hero": false
+      }
+    },
     "featured_collection_rhRtaE": {
       "type": "featured-collection",
       "settings": {
@@ -311,6 +343,7 @@
     "multicolumn_eJEh6f",
     "featured_collection",
     "image_banner_9TcxKP",
+    "image_banner_bVNJqU",
     "featured_collection_rhRtaE"
   ]
 }
