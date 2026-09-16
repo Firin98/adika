@@ -138,27 +138,27 @@
         "column_bhkHfK": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/d117370ade67624c5dc554d5342c490d.jpg",
+            "image": "shopify://shop_images/CAT_trends_0ef1857b-ffca-4c16-a088-195fd7d1dc5f.jpg",
             "title": "",
             "text": "",
             "link_label": "",
-            "link": "shopify://collections/new-in"
+            "link": "shopify://collections/hot-trends"
           }
         },
         "column_iw9Urj": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/CAT_top_fb670069-3430-49c6-bfbb-01433ca24e0b.jpg",
+            "image": "shopify://shop_images/CAT_comfy_ea42a469-2b8e-405f-bdc6-c02044e4e1c0.jpg",
             "title": "",
             "text": "",
             "link_label": "",
-            "link": "shopify://collections/tops-and-t-shirts-1"
+            "link": "shopify://collections/comfy"
           }
         },
         "column_TNFk6N": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/CAT_trends_c4378422-45bb-4dff-9a11-0f0fda084d59.jpg",
+            "image": "shopify://shop_images/CAT_top_c9e543d5-2f1b-46c5-a744-084e7f5232eb.jpg",
             "title": "",
             "text": "",
             "link_label": "",
