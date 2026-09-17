@@ -1,7 +1,19 @@
+{%- comment -%}
+  Header search field.
+
+  Neither branch carries small-hide / medium-hide. Those classes are
+  "display: none !important" below 990px, so they used to remove the search
+  field from every phone and tablet. The predictive branch had already been
+  neutralised by renaming them to small-hide1 / medium-hide1 - a rename does
+  nothing, the classes simply stopped matching - but the plain search-form
+  branch kept the real ones. With predictive search switched off in the theme
+  settings, that is the branch the storefront renders, so the field vanished
+  on mobile.
+{%- endcomment -%}
 {%- if settings.predictive_search_enabled -%}
-  <predictive-search class="search-modal__form small-hide1 medium-hide1   search-modal__form--desktop" data-loading-text="{{ 'accessibility.loading' | t }}">
+  <predictive-search class="search-modal__form search-modal__form--desktop" data-loading-text="{{ 'accessibility.loading' | t }}">
 {%- else -%}
-  <search-form class="search-modal__form  small-hide medium-hide    search-modal__form--desktop">
+  <search-form class="search-modal__form search-modal__form--desktop">
 {%- endif -%}
 <form action="{{ routes.search_url }}" method="get" role="search" class="search search-modal__form1">
   <div class="field">
