@@ -234,6 +234,7 @@
                     updateSourceFromDestination('Variant-Meta') in
                     assets/product-info.js.
                   {%- endcomment -%}
+                   <div class="hidden">{{  product.metafields.custom | json  }}</div>
                   <div
                     id="Variant-Meta-{{ section.id }}"
                     class="product__variant-meta caption-with-letter-spacing{% unless vm_show_handle or vm_show_color %} hidden{% endunless %}"
