@@ -296,7 +296,7 @@
         "button_style_link_1": false,
         "banner_type": "default",
         "is_container_2": false,
-        "margin_top": 0,
+        "margin_top": 10,
         "margin_top_mobile": 0,
         "max_width": 0,
         "is_sensea_hero": false
