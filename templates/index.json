@@ -241,8 +241,8 @@
     "image_banner_bVNJqU": {
       "type": "image-banner",
       "settings": {
-        "image": "shopify://shop_images/adika_baners_1.png",
-        "image_mobile": "shopify://shop_images/adika_baners_4.png",
+        "image": "shopify://shop_images/Artboard_1.jpg",
+        "image_mobile": "shopify://shop_images/Artboard_2.jpg",
         "global_url": "shopify://collections/adika-x-odeya",
         "image_overlay_opacity": 0,
         "image_height": "adapt",
