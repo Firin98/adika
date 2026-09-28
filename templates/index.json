@@ -14,7 +14,7 @@
       "settings": {
         "image": "shopify://shop_images/adika_baners_3.png",
         "image_mobile": "shopify://shop_images/adika_baners_2.png",
-        "global_url": "shopify://collections/30-off",
+        "global_url": "shopify://collections/sets",
         "image_overlay_opacity": 0,
         "image_height": "adapt",
         "desktop_content_position": "bottom-center",
