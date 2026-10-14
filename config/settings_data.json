@@ -132,7 +132,7 @@
     "show_vendor": false,
     "show_cart_note": false,
     "cart_drawer_collection": "",
-    "cart_drawer_recommendations_collection": "",
+    "cart_drawer_recommendations_collection": "october-sale",
     "cart_color_scheme": "scheme-1",
     "cart_free_shipping_threshold": "299",
     "sections": {

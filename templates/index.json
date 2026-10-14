@@ -320,7 +320,6 @@
         "first_block_on_page": false,
         "layout": "full_bleed",
         "slide_height": "large",
-        "slide_height_mobile": "medium",
         "slider_visual": "dots",
         "is_slider_visual_outside": false,
         "auto_rotate": false,
