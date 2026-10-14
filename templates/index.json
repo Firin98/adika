@@ -49,7 +49,9 @@
           "type": "slide",
           "settings": {
             "desktop_video_file": "shopify://files/videos/adika_desk_banner_11.mp4",
+            "desktop_video": "",
             "mobile_video_file": "shopify://files/videos/adika_desk_banner_mob_1.mp4",
+            "mobile_video": "",
             "subtitle": "",
             "title": "",
             "text_content": "",
@@ -320,6 +322,7 @@
         "first_block_on_page": false,
         "layout": "full_bleed",
         "slide_height": "large",
+        "slide_height_mobile": "adapt_image",
         "slider_visual": "dots",
         "is_slider_visual_outside": false,
         "auto_rotate": false,
@@ -341,7 +344,7 @@
             "title": "",
             "text": "",
             "link_label": "",
-            "link": "shopify://collections/new-in"
+            "link": "shopify://collections/שמלות-וחצאיות"
           }
         },
         "column_iw9Urj": {
