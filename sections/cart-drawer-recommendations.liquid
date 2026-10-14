@@ -96,6 +96,20 @@
   }
 </style>
 
+{%- liquid
+  # Source of the products for this block:
+  # - the collection picked in Theme settings > Cart > Cart drawer, when it has products;
+  # - otherwise Shopify's automatically generated product recommendations.
+  assign cdr_products = blank
+  assign cdr_collection_products = settings.cart_drawer_recommendations_collection.products
+
+  if cdr_collection_products.size > 0
+    assign cdr_products = cdr_collection_products
+  elsif recommendations.performed and recommendations.products_count > 0
+    assign cdr_products = recommendations.products
+  endif
+-%}
+
 <div class="color-{{ section.settings.color_scheme }} gradient">
   <cart-drawer-recommendations
     class="related-products"
@@ -103,14 +117,14 @@
     data-section-id="{{ section.id }}"
     data-product-id="{{ product.id }}"
   >
-    {%- if recommendations.performed and recommendations.products_count > 0 -%}
+    {%- if cdr_products != blank -%}
       <div class="cdr-slider">
         <div class="swiper swiper--cdr">
           <div class="swiper-wrapper">
-            {%- for recommendation in recommendations.products -%}
+            {%- for cdr_product in cdr_products limit: 4 -%}
               <div class="swiper-slide">
                 {%- render 'card-product-rec',
-                  card_product: recommendation,
+                  card_product: cdr_product,
                   section_id: section.id,
                   lazy_load: false,
                   image_ratio: section.settings.image_ratio

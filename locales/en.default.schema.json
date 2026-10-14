@@ -344,6 +344,10 @@
           "collection": {
             "label": "Collection",
             "info": "Shown when cart drawer is empty"
+          },
+          "recommendations_collection": {
+            "label": "Recommendations collection",
+            "info": "Products from this collection fill the cart drawer recommendations. Leave empty to use Shopify's automatic product recommendations."
           }
         }
       }
