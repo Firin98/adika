@@ -11,10 +11,11 @@
   "sections": {
     "image_banner": {
       "type": "image-banner",
+      "disabled": true,
       "settings": {
-        "image": "shopify://shop_images/Artboard_4.jpg",
-        "image_mobile": "shopify://shop_images/Artboard_3.jpg",
-        "global_url": "shopify://collections/sets",
+        "image": "shopify://shop_images/Banner_web_1920X820_-_3.png",
+        "image_mobile": "shopify://shop_images/Banner_Mob_1080X1350_-_1.png",
+        "global_url": "shopify://collections/all",
         "image_overlay_opacity": 0,
         "image_height": "adapt",
         "desktop_content_position": "bottom-center",
@@ -41,11 +42,198 @@
         "is_sensea_hero": false
       }
     },
+    "main_banner_slider_jBXMEH": {
+      "type": "main-banner-slider",
+      "blocks": {
+        "slide_nJa7yx": {
+          "type": "slide",
+          "settings": {
+            "desktop_video_file": "shopify://files/videos/adika_desk_banner_11.mp4",
+            "mobile_video_file": "shopify://files/videos/adika_desk_banner_mob_1.mp4",
+            "subtitle": "",
+            "title": "",
+            "text_content": "",
+            "button_text": "",
+            "button_link": "",
+            "banner_link": "",
+            "position_mode": "preset",
+            "position_preset": "center",
+            "edge_offset": 5,
+            "manual_position_top": 50,
+            "manual_position_right": 50,
+            "position_mode_mobile": "preset",
+            "position_preset_mobile": "center",
+            "edge_offset_mobile": 5,
+            "manual_position_top_mobile": 50,
+            "manual_position_right_mobile": 50,
+            "text_block_bg_color": "",
+            "text_block_border_radius": 0,
+            "text_block_padding_top": 30,
+            "text_block_padding_right": 40,
+            "text_block_padding_bottom": 30,
+            "text_block_padding_left": 40,
+            "text_block_max_width": 600,
+            "text_align": "center",
+            "hide_block_mobile": false,
+            "text_block_border_radius_mobile": 0,
+            "text_block_padding_top_mobile": 20,
+            "text_block_padding_right_mobile": 25,
+            "text_block_padding_bottom_mobile": 20,
+            "text_block_padding_left_mobile": 25,
+            "text_align_mobile": "center",
+            "subtitle_font_size": 14,
+            "subtitle_line_height": 20,
+            "subtitle_font_weight": "400",
+            "subtitle_color": "#666666",
+            "subtitle_margin_bottom": 10,
+            "subtitle_text_decoration": "none",
+            "subtitle_hide_mobile": false,
+            "subtitle_font_size_mobile": 12,
+            "subtitle_line_height_mobile": 18,
+            "subtitle_font_weight_mobile": "400",
+            "subtitle_color_mobile": "#666666",
+            "subtitle_margin_bottom_mobile": 10,
+            "subtitle_text_decoration_mobile": "none",
+            "subtitle_direction": false,
+            "title_font_size": 32,
+            "title_line_height": 40,
+            "title_font_weight": "700",
+            "title_color": "#000000",
+            "title_margin_bottom": 20,
+            "title_text_decoration": "none",
+            "title_direction": false,
+            "title_hide_mobile": false,
+            "title_font_size_mobile": 24,
+            "title_line_height_mobile": 30,
+            "title_font_weight_mobile": "700",
+            "title_color_mobile": "#000000",
+            "title_margin_bottom_mobile": 15,
+            "title_text_decoration_mobile": "none",
+            "text_content_font_size": 14,
+            "text_content_line_height": 20,
+            "text_content_font_weight": "400",
+            "text_content_color": "#666666",
+            "text_content_margin_bottom": 10,
+            "text_content_text_decoration": "none",
+            "text_content_direction": false,
+            "text_content_hide_mobile": false,
+            "text_content_font_size_mobile": 12,
+            "text_content_line_height_mobile": 18,
+            "text_content_font_weight_mobile": "400",
+            "text_content_color_mobile": "#666666",
+            "text_content_margin_bottom_mobile": 10,
+            "text_content_text_decoration_mobile": "none",
+            "custom_class_button": "",
+            "button_min_width": 150,
+            "button_min_height": 45,
+            "button_bg_color": "#000000",
+            "button_text_color": "#ffffff",
+            "button_border_radius": 5,
+            "button_border_width": 1,
+            "button_border_color": "#000000",
+            "button_bg_color_hover": "#ffffff",
+            "button_text_color_hover": "#000000",
+            "button_border_color_hover": "#000000",
+            "button_min_width_mobile": 120,
+            "button_min_height_mobile": 40,
+            "button_bg_color_mobile": "#000000",
+            "button_text_color_mobile": "#ffffff",
+            "button_border_radius_mobile": 5,
+            "button_border_width_mobile": 1,
+            "button_border_color_mobile": "#000000",
+            "button_bg_color_mobile_hover": "#ffffff",
+            "button_text_color_mobile_hover": "#000000",
+            "button_border_color_mobile_hover": "#000000",
+            "button_text_2": "",
+            "button_link_2": "",
+            "buttons_layout": "row",
+            "buttons_gap": 16,
+            "buttons_layout_mobile": "row",
+            "buttons_gap_mobile": 10,
+            "custom_class_button_2": "",
+            "button_min_width_2": 150,
+            "button_min_height_2": 45,
+            "button_bg_color_2": "#ffffff",
+            "button_text_color_2": "#000000",
+            "button_border_radius_2": 5,
+            "button_border_width_2": 1,
+            "button_border_color_2": "#000000",
+            "button_bg_color_2_hover": "#000000",
+            "button_text_color_2_hover": "#ffffff",
+            "button_border_color_2_hover": "#000000",
+            "button_min_width_mobile_2": 120,
+            "button_min_height_mobile_2": 40,
+            "button_bg_color_mobile_2": "#ffffff",
+            "button_text_color_mobile_2": "#000000",
+            "button_border_radius_mobile_2": 5,
+            "button_border_width_mobile_2": 1,
+            "button_border_color_mobile_2": "#000000",
+            "button_bg_color_mobile_2_hover": "#000000",
+            "button_text_color_mobile_2_hover": "#ffffff",
+            "button_border_color_mobile_2_hover": "#000000"
+          }
+        }
+      },
+      "block_order": [
+        "slide_nJa7yx"
+      ],
+      "name": "Main banner slider",
+      "settings": {
+        "slider_autoplay": false,
+        "slider_autoplay_delay": 5000,
+        "slider_pause_hover": true,
+        "slider_loop": true,
+        "slider_speed": 500,
+        "slider_effect": "slide",
+        "slide_height_mode": "tallest",
+        "drag_threshold": 10,
+        "show_arrows": true,
+        "arrows_hide_mobile": false,
+        "arrow_color": "#ffffff",
+        "arrow_show_bg": false,
+        "arrow_bg_color": "#000000",
+        "arrow_size": 44,
+        "arrow_icon_size": 18,
+        "show_pagination": true,
+        "pagination_dynamic": true,
+        "pagination_dynamic_main": 3,
+        "pagination_position": "inside",
+        "pagination_align": "center",
+        "pagination_offset": 20,
+        "pagination_edge_offset": 20,
+        "pagination_bullet_size": 8,
+        "pagination_bullet_size_active": 12,
+        "pagination_bullet_gap": 10,
+        "pagination_color": "#ffffff",
+        "pagination_opacity": 50,
+        "pagination_active_color": "#ffffff",
+        "pagination_active_opacity": 100,
+        "pagination_hide_mobile": false,
+        "pagination_offset_mobile": 12,
+        "pagination_edge_offset_mobile": 12,
+        "pagination_bullet_size_mobile": 6,
+        "pagination_bullet_size_active_mobile": 10,
+        "pagination_bullet_gap_mobile": 8,
+        "pagination_color_mobile": "#ffffff",
+        "pagination_opacity_mobile": 50,
+        "pagination_active_color_mobile": "#ffffff",
+        "pagination_active_opacity_mobile": 100,
+        "banner_max_width": 0,
+        "banner_max_width_mobile": 0,
+        "banner_border_radius": 0,
+        "banner_border_radius_mobile": 0,
+        "margin_top_desktop": 0,
+        "margin_bottom_desktop": 0,
+        "margin_top_mobile": 0,
+        "margin_bottom_mobile": 0
+      }
+    },
     "slideshow_plus_jFgVBi": {
       "type": "slideshow-plus",
       "blocks": {
         "slide_qp6jpb": {
           "type": "slide",
+          "disabled": true,
           "settings": {
             "image": "shopify://shop_images/BANNER_DESK_1920_ADIKA_1.png",
             "enable_video_looping": true,
@@ -77,21 +265,31 @@
             "banner_link": "shopify://collections/all"
           }
         },
+        "video_slide_e6LyqA": {
+          "type": "video_slide",
+          "settings": {
+            "enable_video_looping": true,
+            "video": "shopify://files/videos/adika_desk_banner_11.mp4",
+            "video_mobile": "shopify://files/videos/adika_desk_banner_mob_1.mp4",
+            "banner_link": "shopify://collections/october-sale"
+          }
+        },
         "slide_NXYncE": {
           "type": "slide",
+          "disabled": true,
           "settings": {
             "enable_video_looping": true,
             "video": "shopify://files/videos/10233506-hd_1920_1080_30fps.mp4",
-            "heading": "Video slide",
-            "heading_size": "h1",
+            "heading": "Hero Heading",
+            "heading_size": "h0",
             "heading_font_size_desktop": 0,
             "heading_font_size_mobile": 0,
             "heading_font": "default",
             "is_heading_uppercase": false,
             "heading_shadow": false,
             "subheading": "Tell your brand's story through images",
-            "subheading_font_size_desktop": 0,
-            "subheading_font_size_mobile": 0,
+            "subheading_font_size_desktop": 20,
+            "subheading_font_size_mobile": 14,
             "subheading_shadow": false,
             "button_label": "",
             "link": "",
@@ -113,6 +311,7 @@
       },
       "block_order": [
         "slide_qp6jpb",
+        "video_slide_e6LyqA",
         "slide_NXYncE"
       ],
       "disabled": true,
@@ -120,7 +319,8 @@
       "settings": {
         "first_block_on_page": false,
         "layout": "full_bleed",
-        "slide_height": "adapt_image",
+        "slide_height": "large",
+        "slide_height_mobile": "medium",
         "slider_visual": "dots",
         "is_slider_visual_outside": false,
         "auto_rotate": false,
@@ -138,41 +338,61 @@
         "column_bhkHfK": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/CAT_trends_0ef1857b-ffca-4c16-a088-195fd7d1dc5f.jpg",
+            "image": "shopify://shop_images/CAT_trends-1.jpg",
             "title": "",
             "text": "",
             "link_label": "",
-            "link": "shopify://collections/hot-trends"
+            "link": "shopify://collections/new-in"
           }
         },
         "column_iw9Urj": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/CAT_comfy_ea42a469-2b8e-405f-bdc6-c02044e4e1c0.jpg",
+            "image": "shopify://shop_images/CAT_trends-2.jpg",
             "title": "",
             "text": "",
             "link_label": "",
-            "link": "shopify://collections/comfy"
+            "link": "shopify://collections/גופיות-ובגדי-גוף"
           }
         },
         "column_TNFk6N": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/CAT_set_3a7a8c57-f835-4e9d-b024-e5c5b4cbd03c.jpg",
+            "image": "shopify://shop_images/CAT_comfy_0323e9e4-a30e-4956-a1a2-d11edc96c28e.jpg",
             "title": "",
             "text": "",
             "link_label": "",
-            "link": "shopify://collections/sets"
+            "link": "shopify://collections/חולצות-וטי-שירטים"
           }
         },
         "column_TA4KGA": {
           "type": "column",
           "settings": {
-            "image": "shopify://shop_images/CAT_top_c9e543d5-2f1b-46c5-a744-084e7f5232eb.jpg",
+            "image": "shopify://shop_images/CAT_trends_eb919be9-5c76-463b-b292-ec75aabd92ed.jpg",
             "title": "",
             "text": "",
             "link_label": "",
-            "link": "shopify://collections/tops-and-t-shirts-1"
+            "link": "shopify://collections/קרדיגנים-ועליוניות"
+          }
+        },
+        "column_B6TNcN": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/CAT_trends-3.jpg",
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": "shopify://collections/מכנסיים"
+          }
+        },
+        "column_KRBgq9": {
+          "type": "column",
+          "settings": {
+            "image": "shopify://shop_images/CAT_comfy-1.jpg",
+            "title": "",
+            "text": "",
+            "link_label": "",
+            "link": "shopify://collections/אביזרים"
           }
         }
       },
@@ -180,7 +400,9 @@
         "column_bhkHfK",
         "column_iw9Urj",
         "column_TNFk6N",
-        "column_TA4KGA"
+        "column_TA4KGA",
+        "column_B6TNcN",
+        "column_KRBgq9"
       ],
       "name": "t:sections.multicolumn.presets.name",
       "settings": {
@@ -190,10 +412,10 @@
         "image_ratio": "natural",
         "button_label": "",
         "button_link": "",
-        "columns_desktop": 4,
+        "columns_desktop": 3,
         "column_alignment": "center",
         "background_style": "none",
-        "color_scheme": "",
+        "color_scheme": "scheme-35026880-0af1-4623-94b9-d8747e7669a2",
         "columns_mobile": "2",
         "swipe_on_mobile": false,
         "padding_top": 30,
@@ -241,9 +463,9 @@
     "image_banner_bVNJqU": {
       "type": "image-banner",
       "settings": {
-        "image": "shopify://shop_images/Artboard_1.jpg",
-        "image_mobile": "shopify://shop_images/Artboard_2.jpg",
-        "global_url": "shopify://collections/adika-x-odeya",
+        "image": "shopify://shop_images/adika_desk_banner_2_c45f4afb-3c2c-4b1d-aa85-dee0eb99d313.jpg",
+        "image_mobile": "shopify://shop_images/adika_mob_banner_2_d222137a-074a-4c0e-bd25-f933b3929878.jpg",
+        "global_url": "shopify://collections/october-sale",
         "image_overlay_opacity": 0,
         "image_height": "adapt",
         "desktop_content_position": "bottom-center",
@@ -272,6 +494,7 @@
     },
     "image_banner_9TcxKP": {
       "type": "image-banner",
+      "disabled": true,
       "settings": {
         "image": "shopify://shop_images/adika_desk_banner_1-1.png",
         "image_mobile": "shopify://shop_images/adika_mob_banner_1-1.jpg",
@@ -305,9 +528,9 @@
     "featured_collection_rhRtaE": {
       "type": "featured-collection",
       "settings": {
-        "collection": "all",
+        "collection": "flash-sale-slider-1",
         "products_to_show": 8,
-        "title": "Best Seller",
+        "title": "Flash Sale",
         "heading_size": "h1",
         "heading_alignment": "center",
         "description": "",
@@ -318,7 +541,7 @@
         "full_width": false,
         "show_view_all": false,
         "view_all_style": "solid",
-        "color_scheme": "scheme-1",
+        "color_scheme": "scheme-35026880-0af1-4623-94b9-d8747e7669a2",
         "image_ratio": "portrait",
         "image_display_mode": "default",
         "image_display_mode_mobile": "slider",
@@ -338,6 +561,7 @@
     },
     "image_banner_gmVTmL": {
       "type": "image-banner",
+      "disabled": true,
       "settings": {
         "image": "shopify://shop_images/adika_desk_banner_2_28ef189b-a1a6-4304-b47d-efa460ef7728.jpg",
         "image_mobile": "shopify://shop_images/adika_mob_banner_2_1ee03df4-a17c-455b-ae74-05f9bbb75d0d.jpg",
@@ -371,6 +595,7 @@
   },
   "order": [
     "image_banner",
+    "main_banner_slider_jBXMEH",
     "slideshow_plus_jFgVBi",
     "multicolumn_eJEh6f",
     "featured_collection",
