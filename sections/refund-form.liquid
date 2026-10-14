@@ -1,0 +1,375 @@
+<div class="order-cancellation-form" dir="rtl" style="padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;">
+  <style>
+    .order-cancellation-form {
+      max-width: {{ section.settings.form_width }}px;
+      margin: 0 auto;
+      padding-left: 20px;
+      padding-right: 20px;
+      font-family: inherit;
+      direction: rtl;
+    }
+
+    .order-cancellation-form .form-field {
+      margin-bottom: 12px;
+    }
+
+    .order-cancellation-form input[type="text"],
+    .order-cancellation-form input[type="email"],
+    .order-cancellation-form input[type="tel"],
+    .order-cancellation-form textarea {
+      width: 100%;
+      padding: 14px 16px;
+      background-color: {{ section.settings.input_background }};
+      border: none;
+      border-radius: {{ section.settings.input_border_radius }}px;
+      font-size: 15px;
+      color: #333;
+      text-align: right;
+      direction: rtl;
+      box-sizing: border-box;
+      outline: none;
+      font-family: inherit;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .order-cancellation-form input[type="text"]::placeholder,
+    .order-cancellation-form input[type="email"]::placeholder,
+    .order-cancellation-form input[type="tel"]::placeholder,
+    .order-cancellation-form textarea::placeholder {
+      color: #999;
+    }
+
+    .order-cancellation-form textarea {
+      min-height: {{ section.settings.textarea_height }}px;
+      resize: vertical;
+    }
+
+    .order-cancellation-form .form-submit {
+      margin-top: 8px;
+    }
+
+    .order-cancellation-form button[type="submit"] {
+      background-color: {{ section.settings.button_background }};
+      color: {{ section.settings.button_text_color }};
+      border: none;
+      padding: 14px 32px;
+      font-size: 15px;
+      border-radius: {{ section.settings.input_border_radius }}px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .order-cancellation-form button[type="submit"]:hover {
+      opacity: 0.85;
+    }
+
+    .order-cancellation-form .form-errors {
+      margin-bottom: 16px;
+      padding: 12px 16px;
+      background-color: #f8d7da;
+      color: #721c24;
+      border-radius: 4px;
+      text-align: right;
+    }
+
+    .order-cancellation-form .form-errors ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .order-cancellation-form .form-success {
+      padding: 12px 16px;
+      background-color: #d4edda;
+      color: #155724;
+      border-radius: 4px;
+      text-align: right;
+    }
+  </style>
+
+  {% if section.settings.heading != blank %}
+    <h2 style="text-align: right; margin-bottom: 20px;">{{ section.settings.heading }}</h2>
+  {% endif %}
+
+  {% form 'contact', id: 'cancellation-form' %}
+
+    {% if form.posted_successfully? %}
+      <div class="form-success">
+        {{ section.settings.success_message }}
+      </div>
+
+    {% else %}
+
+      {% if form.errors %}
+        <div class="form-errors">
+          <ul>
+            {% for field in form.errors %}
+              <li>{{ form.errors.messages[field] }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+
+      <input type="hidden" name="contact[subject]" value="{{ section.settings.email_subject }}">
+
+      <div class="form-field">
+        <input
+          type="email"
+          name="contact[email]"
+          id="cancellation-email"
+          value="{{ form.email }}"
+          placeholder="{{ section.settings.label_email }}"
+          autocomplete="email"
+          required
+        >
+      </div>
+
+      <div class="form-field">
+        <input
+          type="text"
+          name="contact[first_name]"
+          id="cancellation-first-name"
+          value="{{ form.first_name }}"
+          placeholder="{{ section.settings.label_first_name }}"
+          autocomplete="given-name"
+          required
+        >
+      </div>
+
+      <div class="form-field">
+        <input
+          type="text"
+          name="contact[last_name]"
+          id="cancellation-last-name"
+          value="{{ form.last_name }}"
+          placeholder="{{ section.settings.label_last_name }}"
+          autocomplete="family-name"
+          required
+        >
+      </div>
+
+      {% if section.settings.show_phone %}
+        <div class="form-field">
+          <input
+            type="tel"
+            name="contact[phone]"
+            id="cancellation-phone"
+            value="{{ form.phone }}"
+            placeholder="{{ section.settings.label_phone }}"
+            autocomplete="tel"
+          >
+        </div>
+      {% endif %}
+
+      <div class="form-field">
+        <input
+          type="text"
+          name="contact[order_number]"
+          id="cancellation-order-number"
+          placeholder="{{ section.settings.label_order_number }}"
+          required
+        >
+      </div>
+
+      <div class="form-field">
+        <input
+          type="text"
+          name="contact[cancellation_reason]"
+          id="cancellation-reason"
+          placeholder="{{ section.settings.label_reason }}"
+          required
+        >
+      </div>
+
+      <div class="form-field">
+        <textarea
+          name="contact[body]"
+          id="cancellation-message"
+          placeholder="{{ section.settings.label_message }}"
+        >{{ form.body }}</textarea>
+      </div>
+
+      <div class="form-submit">
+        <button type="submit">{{ section.settings.label_submit }}</button>
+      </div>
+
+    {% endif %}
+
+  {% endform %}
+</div>
+
+{% schema %}
+{
+  "name": "Refund form custom",
+  "tag": "section",
+  "class": "section-cancellation-form",
+  "settings": [
+    {
+      "type": "header",
+      "content": "תוכן"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "כותרת",
+      "default": "ביטול הזמנה"
+    },
+    {
+      "type": "text",
+      "id": "email_subject",
+      "label": "נושא המייל",
+      "default": "בקשת ביטול עסקה"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "הודעת הצלחה",
+      "default": "הטופס נשלח בהצלחה. נחזור אליך בהקדם."
+    },
+    {
+      "type": "header",
+      "content": "תוויות שדות"
+    },
+    {
+      "type": "text",
+      "id": "label_email",
+      "label": "כתובת מייל",
+      "default": "כתובת מייל לתשובה בנוגע לביטול העסקה"
+    },
+    {
+      "type": "text",
+      "id": "label_first_name",
+      "label": "שם פרטי",
+      "default": "שם פרטי"
+    },
+    {
+      "type": "text",
+      "id": "label_last_name",
+      "label": "שם משפחה",
+      "default": "שם משפחה"
+    },
+    {
+      "type": "text",
+      "id": "label_phone",
+      "label": "טלפון",
+      "default": "טלפון"
+    },
+    {
+      "type": "text",
+      "id": "label_order_number",
+      "label": "מספר הזמנה",
+      "default": "מספר הזמנה"
+    },
+    {
+      "type": "text",
+      "id": "label_reason",
+      "label": "סיבת ביטול",
+      "default": "סיבת ביטול"
+    },
+    {
+      "type": "text",
+      "id": "label_message",
+      "label": "הודעה",
+      "default": "הודעה"
+    },
+    {
+      "type": "text",
+      "id": "label_submit",
+      "label": "טקסט כפתור שליחה",
+      "default": "שליחה"
+    },
+    {
+      "type": "header",
+      "content": "הצגת שדות"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone",
+      "label": "הצג שדה טלפון",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "עיצוב"
+    },
+    {
+      "type": "range",
+      "id": "form_width",
+      "label": "רוחב הטופס",
+      "min": 400,
+      "max": 1200,
+      "step": 20,
+      "default": 600,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "input_background",
+      "label": "רקע שדות קלט",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "range",
+      "id": "input_border_radius",
+      "label": "עיגול פינות",
+      "min": 0,
+      "max": 20,
+      "step": 1,
+      "default": 4,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "textarea_height",
+      "label": "גובה שדה הודעה",
+      "min": 60,
+      "max": 300,
+      "step": 10,
+      "default": 100,
+      "unit": "px"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "צבע כפתור",
+      "default": "#222222"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "צבע טקסט כפתור",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "ריווח"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "label": "ריווח עליון",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "label": "ריווח תחתון",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "default": 40,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Refund form custom"
+    }
+  ]
+}
+{% endschema %}

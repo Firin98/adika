@@ -1,0 +1,36 @@
+.adika-eq-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+.adika-eq-skip {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  z-index: 2147483647;
+  padding: 8px 12px;
+  background: #fff;
+  color: #000;
+  border: 2px solid #000;
+  font: 700 16px Arial;
+  direction: rtl;
+  transform: translateY(-150%);
+}
+.adika-eq-skip:focus {
+  transform: none;
+}
+.adika-eq-focus:focus-visible,
+.adika-eq-focus:focus {
+  outline: 3px solid #000 !important;
+  outline-offset: 3px;
+}
+.adika-eq-focus-panel {
+  outline: 3px solid #000 !important;
+  outline-offset: -3px;
+}

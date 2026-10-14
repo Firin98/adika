@@ -5,88 +5,125 @@
 
 {{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
 
-{%- if section.settings.slide_height == 'adapt_image' and section.blocks.first.settings.image != blank -%}
-  {%- style -%}
-    @media screen and (max-width: 749px) {
-      #Slider-{{ section.id }}::before,
-      #Slider-{{ section.id }} .media::before,
-      #Slider-{{ section.id }}:not(.banner--mobile-bottom) .banner__content::before {
-        {% if section.blocks.first.settings.image_mobile != blank and section.blocks.first.settings.image_mobile %}
-        padding-bottom: {{ 1 | divided_by: section.blocks.first.settings.image_mobile.aspect_ratio | times: 100 }}%;
-        {% else %}
-        padding-bottom: {{ 1 | divided_by: section.blocks.first.settings.image.aspect_ratio | times: 100 }}%;
-        {% endif %}
-        content: '' !important;
-        display: block !important;
-      }
-    }
+{%- liquid
+  assign height_mode = section.settings.slide_height
+  assign height_mode_mobile = section.settings.slide_height_mobile | default: 'same_as_desktop'
+  if height_mode_mobile == 'same_as_desktop'
+    assign height_mode_mobile = height_mode
+  endif
 
-    @media screen and (min-width: 750px) {
-      #Slider-{{ section.id }}::before,
-      #Slider-{{ section.id }} .media::before {
-        padding-bottom: {{ 1 | divided_by: section.blocks.first.settings.image.aspect_ratio | times: 100 }}%;
-        content: '';
-        display: block;
-      }
-    }
-  {%- endstyle -%}
-{%- endif -%}
-  <style>
-    {%- for block in section.blocks -%}
-      {% case block.type %}
-        {% when 'slide' %}
-          {%- if block.settings.video -%}
-            #swiper-{{ section.id }} .swiper-wrapper {
-              aspect-ratio: 16 / 9;
-            }
-            @media all and (max-width: 749px) {
-              #swiper-{{ section.id }} .swiper-wrapper {
-                aspect-ratio: 9 / 16;
-              }
-            }
-          {% else %}
-            #swiper-{{ section.id }} .swiper-wrapper {
-              aspect-ratio: 16 / 9;
-            }
-          {% endif %}
-        {% when 'video_slide' %}
-          #swiper-{{ section.id }} .swiper-wrapper {
-            aspect-ratio: 16 / 9;
-          }
-          @media all and (max-width: 749px) {
-            #swiper-{{ section.id }} .swiper-wrapper {
-              /* aspect-ratio: 9 / 16;*/
-              aspect-ratio: 16 / 9; 
+  assign adapt_ratio = blank
+  assign adapt_ratio_mobile = blank
+  assign first_block = section.blocks.first
 
-            }
-          }
-      {% endcase %}
-      {% break %}
-    {% endfor %}
-    
-    #swiper-{{ section.id }} .swiper-pagination-bullet {
-      background-color: rgba(255,255,255, 0.4);
-      margin: 0 5px;
+  if first_block != blank
+    if first_block.settings.image != blank
+      assign adapt_ratio = first_block.settings.image.aspect_ratio
+    elsif first_block.settings.video != blank
+      assign adapt_ratio = first_block.settings.video.aspect_ratio
+    endif
+
+    if first_block.settings.image_mobile != blank
+      assign adapt_ratio_mobile = first_block.settings.image_mobile.aspect_ratio
+    elsif first_block.settings.video_mobile != blank
+      assign adapt_ratio_mobile = first_block.settings.video_mobile.aspect_ratio
+    elsif adapt_ratio != blank
+      assign adapt_ratio_mobile = adapt_ratio
+    endif
+  endif
+-%}
+<style>
+  #swiper-{{ section.id }} {
+    {%- case height_mode -%}
+      {%- when 'small' -%}
+        height: 42rem;
+        aspect-ratio: auto;
+      {%- when 'medium' -%}
+        height: 56rem;
+        aspect-ratio: auto;
+      {%- when 'large' -%}
+        height: calc(100vh - var(--header-height, 0px) - var(--announcement-bar-height, 0px));
+        height: calc(100dvh - var(--header-height, 0px) - var(--announcement-bar-height, 0px));
+        aspect-ratio: auto;
+      {%- when 'xl' -%}
+        height: 85rem;
+        aspect-ratio: auto;
+      {%- when '9_16' -%}
+        aspect-ratio: 9 / 16;
+        height: auto;
+      {%- when '16_9' -%}
+        aspect-ratio: 16 / 9;
+        height: auto;
+      {%- when 'adapt_image' -%}
+        {%- if adapt_ratio != blank -%}
+          aspect-ratio: {{ adapt_ratio }};
+        {%- else -%}
+          aspect-ratio: 16 / 9;
+        {%- endif -%}
+        height: auto;
+      {%- else -%}
+        aspect-ratio: 16 / 9;
+        height: auto;
+    {%- endcase -%}
+  }
+
+  @media screen and (max-width: 749px) {
+    #swiper-{{ section.id }} {
+      {%- case height_mode_mobile -%}
+        {%- when 'small' -%}
+          height: 28rem;
+          aspect-ratio: auto;
+        {%- when 'medium' -%}
+          height: 34rem;
+          aspect-ratio: auto;
+        {%- when 'large' -%}
+          height: 39rem;
+          aspect-ratio: auto;
+        {%- when 'xl' -%}
+          height: 48rem;
+          aspect-ratio: auto;
+        {%- when '9_16' -%}
+          aspect-ratio: 9 / 16;
+          height: auto;
+        {%- when '16_9' -%}
+          aspect-ratio: 16 / 9;
+          height: auto;
+        {%- when 'adapt_image' -%}
+          {%- if adapt_ratio_mobile != blank -%}
+            aspect-ratio: {{ adapt_ratio_mobile }};
+          {%- elsif adapt_ratio != blank -%}
+            aspect-ratio: {{ adapt_ratio }};
+          {%- else -%}
+            aspect-ratio: 9 / 16;
+          {%- endif -%}
+          height: auto;
+        {%- else -%}
+          aspect-ratio: 9 / 16;
+          height: auto;
+      {%- endcase -%}
     }
-    #swiper-{{ section.id }} .swiper-pagination-bullet-active {
-      background-color: #fff;
-    }
-    .banner__whole-link {
-      position: absolute;
-      z-index: 3;
-      top: 0;
-      right: 0;
-      left: 0;
-      bottom: 0;
-      width: 100%;
-      height: 100%;
-    }
-    .template-collection #swiper-{{ section.id }} .swiper-wrapper {
-      aspect-ratio: 16 / 9;
-    }
-  </style>
+  }
+
+  #swiper-{{ section.id }} .swiper-pagination-bullet {
+    background-color: rgba(255,255,255, 0.4);
+    margin: 0 5px;
+  }
+  #swiper-{{ section.id }} .swiper-pagination-bullet-active {
+    background-color: #fff;
+  }
+  .banner__whole-link {
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+  }
+</style>
 <div
-  class="swiper   slideshow-plus" 
+  class="swiper slideshow-plus slideshow-plus--{{ height_mode }}" 
   {% comment %}class="slider-mobile-gutter{% if section.settings.layout == 'grid' %} page-width{% endif %}{% if section.settings.show_text_below %} mobile-text-below{% endif %} {% if section.blocks.first.settings.image == blank and section.blocks.first.settings.video == blank %} hidden{% endif %}"
    {% endcomment %}
   id="swiper-{{ section.id }}"
@@ -117,7 +154,7 @@
             class="swiper-slide ima"
             {% comment %}class="{% if forloop.index.last %}last_real_slide {% endif %} slideshow__slide grid__item grid--1-col slider__slide {% if block.settings.image_mobile %} slideshow__slide-mobile--adapt{% endif %} {% if block.settings.video %} slideshow__slide-video{% endif %} {% if block.settings.banner_link != blank %}  slideshow__slide--whole-link{% endif %}"
             {% endcomment %}
-            d="Slide-{{ section.id }}-{{ forloop.index }}"
+            id="Slide-{{ section.id }}-{{ forloop.index }}"
             {{ block.shopify_attributes }}
           >
             {%- if block.settings.banner_link != blank -%}
@@ -501,6 +538,18 @@
 
 <script>
 (function(){
+  function setAnnouncementBarHeight() {
+    var announcement = document.querySelector('.announcement-bar-section');
+    document.documentElement.style.setProperty(
+      '--announcement-bar-height',
+      (announcement ? announcement.offsetHeight : 0) + 'px'
+    );
+  }
+
+  setAnnouncementBarHeight();
+  window.addEventListener('resize', setAnnouncementBarHeight);
+  document.addEventListener('DOMContentLoaded', setAnnouncementBarHeight);
+
   document.addEventListener('DOMContentLoaded', function() {
     {% assign isAutoplay = true %} 
     {%- for block in section.blocks -%}
@@ -635,7 +684,7 @@
         },
         {
           "value": "large",
-          "label": "t:sections.slideshow.settings.slide_height.options__4.label"
+          "label": "Large (full screen)"
         },
         {
           "value": "xl",
@@ -651,7 +700,49 @@
         }
       ],
       "default": "medium",
-      "label": "t:sections.slideshow.settings.slide_height.label"
+      "label": "t:sections.slideshow.settings.slide_height.label",
+      "info": "Large fills the viewport minus header and announcement bar on desktop."
+    },
+    {
+      "type": "select",
+      "id": "slide_height_mobile",
+      "options": [
+        {
+          "value": "same_as_desktop",
+          "label": "Same as desktop"
+        },
+        {
+          "value": "adapt_image",
+          "label": "Adapt to mobile media"
+        },
+        {
+          "value": "small",
+          "label": "t:sections.slideshow.settings.slide_height.options__2.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.slideshow.settings.slide_height.options__3.label"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        },
+        {
+          "value": "xl",
+          "label": "XL"
+        },
+        {
+          "value": "9_16",
+          "label": "9:16"
+        },
+        {
+          "value": "16_9",
+          "label": "16:9"
+        }
+      ],
+      "default": "adapt_image",
+      "label": "Mobile slide height",
+      "info": "Adapt uses mobile video/image ratio when available, otherwise desktop media."
     },
     {
       "type": "select",
