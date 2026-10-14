@@ -57,7 +57,7 @@
             "text_content": "",
             "button_text": "",
             "button_link": "",
-            "banner_link": "",
+            "banner_link": "shopify://collections/october-sale",
             "position_mode": "preset",
             "position_preset": "center",
             "edge_offset": 5,
