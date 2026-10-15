@@ -2071,6 +2071,124 @@ window.initImageSwatchMobileSync = initImageSwatchMobileSync;
   }
   document.addEventListener("shopify:section:load", initModalWatchers);
 
+  /* ---- colour switching inside the modal ----
+     Colour is one product per colour on this shop, so the product markup the
+     modal shows carries the colour group (snippets/product-color-group.liquid):
+     the current colour is a <span>, every other one an <a> to that colour's
+     product. On a product page assets/product-color-group.js turns such a click
+     into a swap of the page behind the modal, which throws the visitor out of
+     the cart. Inside the modal the click has to re-render the modal instead -
+     the line being edited stays the same line, only its variant changes. */
+
+  function editModalContent(modal) {
+    return modal.modalContent || modal.querySelector('[id^="QuickAddInfo-"]');
+  }
+
+  // Option value ids are shared between products, so the sizes the visitor
+  // already picked can be handed to the server for the new colour; it resolves
+  // them to a variant of that product (and falls back when the combination
+  // does not exist there).
+  function checkedOptionValueIds(content) {
+    var checked = content.querySelectorAll('fieldset input[type="radio"]:checked, select option[selected]');
+    return Array.prototype.slice
+      .call(checked)
+      .map(function (input) {
+        return input.dataset.optionValueId;
+      })
+      .filter(Boolean);
+  }
+
+  function productSectionId(content) {
+    var info = content.querySelector("product-info[data-section]");
+    if (!info) return null;
+    return info.dataset.originalSection || info.dataset.section || null;
+  }
+
+  function productMarkupUrl(url, sectionId, optionValues) {
+    var params = [];
+    if (sectionId) params.push("section_id=" + encodeURIComponent(sectionId));
+    if (optionValues && optionValues.length) {
+      params.push("option_values=" + encodeURIComponent(optionValues.join(",")));
+    }
+    if (!params.length) return url;
+    return url + (url.indexOf("?") === -1 ? "?" : "&") + params.join("&");
+  }
+
+  // A sibling colour can be built on another template, in which case the
+  // section response carries no product markup - fall back to the whole page,
+  // the same way assets/product-color-group.js does it.
+  function fetchProductMarkup(url, sectionId, optionValues) {
+    return fetch(productMarkupUrl(url, sectionId, optionValues), { credentials: "same-origin" })
+      .then(function (response) {
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        return response.text();
+      })
+      .then(function (text) {
+        if (sectionId && text.indexOf("<product-info") === -1) {
+          return fetchProductMarkup(url, null, optionValues);
+        }
+        return text;
+      });
+  }
+
+  function swapModalProduct(modal, url, link) {
+    var content = editModalContent(modal);
+    if (!content || !url || !currentEdit || busy) return;
+    if (modal.dataset.cartEditLoading === "1") return;
+
+    modal.dataset.cartEditLoading = "1";
+    if (!modal.modalContent) modal.modalContent = content;
+    if (link) link.classList.add("product-color-group__link--loading");
+
+    fetchProductMarkup(url, productSectionId(content), checkedOptionValueIds(content))
+      .then(function (text) {
+        var parsed = new DOMParser().parseFromString(text, "text/html");
+        var productElement = parsed.querySelector("product-info");
+        if (!productElement) throw new Error("no product markup in the response");
+
+        // Same preprocessing the initial load gets: fresh ids, no URL
+        // switching, no nested modal.
+        modal.preprocessHTML(productElement);
+        HTMLUpdateUtility.setInnerHTML(content, productElement.outerHTML);
+
+        if (window.Shopify && Shopify.PaymentButton) Shopify.PaymentButton.init();
+        if (window.ProductModel) window.ProductModel.loadShopifyXR();
+
+        content.scrollTop = 0;
+        adjustModalContent(modal);
+      })
+      .catch(function () {
+        // anything unexpected: behave like the plain link it still is
+        window.location.href = url;
+      })
+      .finally(function () {
+        delete modal.dataset.cartEditLoading;
+        if (link) link.classList.remove("product-color-group__link--loading");
+      });
+  }
+
+  // Capture phase, so this runs before assets/product-color-group.js reads the
+  // click off the document and swaps the page underneath the drawer.
+  document.addEventListener(
+    "click",
+    function (event) {
+      if (event.defaultPrevented) return;
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+      var target = event.target;
+      if (!target || !target.closest) return;
+      var modal = target.closest("quick-add-modal.cart-edit-modal");
+      if (!modal) return;
+      var link = target.closest(".product-color-group__link");
+      if (!link) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      swapModalProduct(modal, link.getAttribute("href"), link);
+    },
+    true
+  );
+
   function setSubmitBusy(form, isBusy) {
     var button = form.querySelector('[type="submit"]');
     if (!button) return;

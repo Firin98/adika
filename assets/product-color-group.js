@@ -35,8 +35,24 @@
   var swapping = false;
   var warmedUp = false;
 
+  /* The cart edit modal (assets/pm-custom.js) renders the same product markup
+     inside a <quick-add-modal>, colour group included. Those swatch links are
+     not siblings of the page there - they swap the product inside the modal -
+     and the modal has no section of its own to swap into either. So this
+     page-level feature ignores everything that sits in a modal: without the
+     guard, a click on a swatch in the cart drawer replaces #MainContent with a
+     product page (the modal's data-section is not a real section, so the
+     request falls back to the whole page) and pushes that URL into history. */
+  function inModal(node) {
+    return Boolean(node && node.closest && node.closest('quick-add-modal'));
+  }
+
   function groupElement() {
-    return document.querySelector('.product-color-group[data-instant="ajax"]');
+    var groups = document.querySelectorAll('.product-color-group[data-instant="ajax"]');
+    for (var i = 0; i < groups.length; i += 1) {
+      if (!inModal(groups[i])) return groups[i];
+    }
+    return null;
   }
 
   function instantEnabled() {
@@ -110,7 +126,9 @@
   /* ---------------- idle warm-up ---------------- */
 
   function siblingLinks() {
-    return Array.prototype.slice.call(document.querySelectorAll(LINK_SELECTOR));
+    return Array.prototype.slice.call(document.querySelectorAll(LINK_SELECTOR)).filter(function (link) {
+      return !inModal(link);
+    });
   }
 
   function warmUpSequentially(links, index) {
@@ -291,7 +309,9 @@
   function linkFrom(event) {
     var target = event.target;
     if (!target || !target.closest) return null;
-    return target.closest(LINK_SELECTOR);
+    var link = target.closest(LINK_SELECTOR);
+    if (!link || inModal(link)) return null;
+    return link;
   }
 
   document.addEventListener(
