@@ -10,9 +10,21 @@
   Usage:
   {% render 'buy-buttons', block: block, product: product, product_form_id: product_form_id, section_id: section.id, show_pickup_availability: true %}
 {% endcomment %}
+{%- assign is_csoon = false -%}
 <div {{ block.shopify_attributes }}>
   {%- if product != blank -%}
     {%- liquid
+      # Csoon products are announced but cannot be bought yet: no add-to-cart
+      # form is rendered, the button becomes a disabled "Coming soon" CTA.
+      # Tag match is exact and case-insensitive ("Csoon" / "csoon").
+      for tag in product.tags
+        assign tag_downcase = tag | strip | downcase
+        if tag_downcase == 'csoon'
+          assign is_csoon = true
+          break
+        endif
+      endfor
+
       assign gift_card_recipient_feature_active = false
       if block.settings.show_gift_card_recipient and product.gift_card?
         assign gift_card_recipient_feature_active = true
@@ -22,8 +34,28 @@
       if block.settings.show_dynamic_checkout and gift_card_recipient_feature_active == false
         assign show_dynamic_checkout = true
       endif
+
+      # Accelerated checkout (Buy it now / Shop Pay) would bypass the block.
+      if is_csoon
+        assign show_dynamic_checkout = false
+      endif
     -%}
 
+    {%- if is_csoon -%}
+      <div class="product-form">
+        <div class="product-form__buttons">
+          <button
+            id="ProductSubmitButton-{{ section_id }}"
+            type="button"
+            class="product-form__submit button button--full-width button--primary"
+            disabled
+            aria-disabled="true"
+          >
+            <span>Coming soon</span>
+          </button>
+        </div>
+      </div>
+    {%- else -%}
     <product-form
       class="product-form"
       data-hide-errors="{{ gift_card_recipient_feature_active }}"
@@ -100,6 +132,7 @@
         </div>
       {%- endform -%}
     </product-form>
+    {%- endif -%}
   {%- else -%}
     <div class="product-form">
       <div class="product-form__buttons form">
@@ -115,7 +148,7 @@
     </div>
   {%- endif -%}
 
-  {%- if show_pickup_availability -%}
+  {%- if show_pickup_availability and is_csoon == false -%}
     {{ 'component-pickup-availability.css' | asset_url | stylesheet_tag }}
 
     {%- assign pick_up_availabilities = product.selected_or_first_available_variant.store_availabilities

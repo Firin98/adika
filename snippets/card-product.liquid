@@ -59,6 +59,17 @@
       endif
     endif
 
+    # Csoon products cannot be added to the cart yet. The size strip and every
+    # quick-add control are skipped below, leaving the card as a plain link to
+    # the product page. Tag match is exact and case-insensitive.
+    assign is_csoon = false
+    for tag in card_product.tags
+      assign tag_downcase = tag | strip | downcase
+      if tag_downcase == 'csoon'
+        assign is_csoon = true
+        break
+      endif
+    endfor
   -%}
   <div class="card-wrapper product-card-wrapper underline-links-hover">
     <div
@@ -264,7 +275,7 @@
               endif
             endfor
           -%}
-          {%- if card_size_option != blank -%}
+          {%- if card_size_option != blank and is_csoon == false -%}
             {%- comment -%}
               Кнопка-корзина внизу картинки. Только мобильный (CSS-медиазапрос,
               см. .card__sizes-toggle в component-card.css): по тапу выезжает
@@ -344,6 +355,7 @@
           {%- endif -%}
 
           {% assign quick_add_modal_id = 'QuickAdd-' | append: section_id | append: '-' | append: card_product.id %}
+          {%- unless is_csoon -%}
           {% if quick_add == 'standard' or quick_add == 'button' %}
             <div class="quick-add no-js-hidden 11 {% if quick_add == 'button' %} medium-hide large-up-hide{% endif %}">
               {%- liquid
@@ -627,6 +639,7 @@
               </div>
             {% endif %}
           {% endif %}
+          {%- endunless -%}
         </div>
       </div>
       <div class="card__content">
@@ -804,7 +817,7 @@
             </div>
           </div>
 
-          {% if quick_add == 'button' %}
+          {% if quick_add == 'button' and is_csoon == false %}
             <div class="quick-add quick-add--button no-js-hidden  small-hide 112">
               {%- liquid
                 assign qty_rules = false

@@ -5,6 +5,17 @@
     if card_product.selected_or_first_available_variant.quantity_rule.min > 1 or card_product.selected_or_first_available_variant.quantity_rule.max != null or card_product.selected_or_first_available_variant.quantity_rule.increment > 1
       assign qty_rules = true
     endif
+
+    # Csoon products are not purchasable yet; keep the recommendation card but
+    # replace every add-to-cart control with a disabled "Coming soon" button.
+    assign is_csoon = false
+    for tag in card_product.tags
+      assign tag_downcase = tag | strip | downcase
+      if tag_downcase == 'csoon'
+        assign is_csoon = true
+        break
+      endif
+    endfor
   -%}
 
   <div class="cdr-card-wrapper">
@@ -36,7 +47,16 @@
         </div>
 
         <div class="cdr-card__action quick-add no-js-hidden">
-          {%- if card_product.variants_count > 1 or qty_rules -%}
+          {%- if is_csoon -%}
+            <button
+              type="button"
+              class="cdr-card__btn button button--full-width button--secondary1"
+              disabled
+              aria-disabled="true"
+            >
+              Coming soon
+            </button>
+          {%- elsif card_product.variants_count > 1 or qty_rules -%}
             <modal-opener data-modal="#QuickAdd-{{ card_product.id }}">
               <button
                 id="{{ product_form_id }}-submit"

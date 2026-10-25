@@ -122,6 +122,17 @@
     if ratio == 0 or ratio == null
       assign ratio = 1
     endif
+
+    # Csoon products are not purchasable yet; the whole size select + form is
+    # replaced with a disabled "Coming soon" button.
+    assign is_csoon = false
+    for tag in card_product.tags
+      assign tag_downcase = tag | strip | downcase
+      if tag_downcase == 'csoon'
+        assign is_csoon = true
+        break
+      endif
+    endfor
   -%}
 
   <div
@@ -200,7 +211,18 @@
             </p>
           {%- endif -%}
 
-          {%- if quick_add != 'none' -%}
+          {%- if is_csoon and quick_add != 'none' -%}
+            <div class="complement-card__actions">
+              <button
+                type="button"
+                class="quick-add__submit button button--secondary"
+                disabled
+                aria-disabled="true"
+              >
+                Coming soon
+              </button>
+            </div>
+          {%- elsif quick_add != 'none' -%}
             <product-form data-section-id="{{ section_id }}">
               {%- form 'product',
                 card_product,
