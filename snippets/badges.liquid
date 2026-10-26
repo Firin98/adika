@@ -81,9 +81,16 @@
     assign badge_compare = badge_product.compare_at_price_min
   endif
 
+  # Процент скидки округляем до ближайшего целого: «ровная» скидка почти всегда
+  # промахивается на доли процента из-за округления цены до копейки.
+  #   114.95 → 57.48 — это 49.9956%, бейдж должен показать 50%, а не 49%.
+  #   57.475 Shopify округлил до 57.48, отсюда и разница.
+  # times: 100.0 (не 100) нужен, чтобы Liquid делил с дробью: divided_by
+  # отбрасывает остаток, если оба числа целые. round — обычное округление
+  # к ближайшему целому: 49.9956 → 50, 49.4 → 49.
   assign discount_percent = 0
   if badge_compare > badge_price and badge_compare > 0
-    assign discount_percent = badge_compare | minus: badge_price | times: 100 | divided_by: badge_compare
+    assign discount_percent = badge_compare | minus: badge_price | times: 100.0 | divided_by: badge_compare | round
   endif
 
   assign rendered_names = ''
