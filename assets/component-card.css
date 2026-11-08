@@ -1672,6 +1672,12 @@
     display: flex;
   justify-content: center;
   flex-direction: row-reverse;
+
+  /* <fieldset> is min-inline-size: min-content by default. Without this a
+     product with many sizes grew the row wider than the card and the pills
+     were painted over the neighbouring card. */
+  min-width: 0;
+  min-inline-size: 0;
 }
 
 .card__information-sizes .product-form__input--pill::-webkit-scrollbar {
@@ -2742,4 +2748,128 @@
 
 .card__colors .swatch--unavailable {
   border: 0.1rem dashed rgba(var(--color-foreground), 0.5);
+}
+
+/* ==========================================================================
+   Size strip: Swiper mode, enabled only while the sizes do not fit the card.
+
+   Markup is built by initCardSizesSwipers in assets/pm-custom.js:
+
+     .card__information-sizes                 the strip (absolute, white)
+       .product-form__input--pill             plain row; becomes .swiper only
+                                              when the pills overflow
+         .card-sizes-track                    display:contents while plain,
+                                              .swiper-wrapper while sliding
+           .card-sizes-slide (input+label)
+       .card-sizes-nav                        tiny edge arrows, sliding only
+
+   Nothing here changes the strip while the sizes fit: the track generates no
+   box, so the fieldset lays the slides out exactly like the old flat row.
+   ========================================================================== */
+
+.card__information-sizes .card-sizes-track {
+  display: contents;
+}
+
+.card__information-sizes .card-sizes-slide {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  width: auto;
+  max-width: none;
+}
+
+/* Sliding: the fieldset is the Swiper container, so it must not keep the
+   scroll container, the wrapping or the reversed order of the plain row.
+   Its gap must survive, though: pm-custom.js reads it to measure the row and
+   to feed Swiper's spaceBetween, so the spacing is zeroed on the track. */
+.card__information-sizes.card-sizes-slider {
+  padding-inline: 18px;
+}
+
+.card__information-sizes.card-sizes-slider .product-form__input--pill {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+.card__information-sizes.card-sizes-slider .card-sizes-track {
+  display: flex;
+  gap: 0;
+}
+
+.card-sizes-nav {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  /* The strip's vertical padding, so the chevron sits on the labels' line
+     while the button keeps the full strip height as its tap target. */
+  padding: 11px 0 0.5rem;
+  border: 0;
+  background: none;
+  color: #000;
+  opacity: 0.4;
+  cursor: pointer;
+  z-index: 3;
+  transition: opacity 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.card-sizes-nav--prev {
+  right: 0;
+}
+
+.card-sizes-nav--next {
+  left: 0;
+}
+
+.card-sizes-nav:hover {
+  opacity: 0.9;
+}
+
+.card-sizes-nav svg {
+  display: block;
+  width: 7px;
+  height: 11px;
+}
+
+/* Swiper marks the arrow it cannot use: at the beginning only the "more
+   sizes" arrow shows, at the end only the way back. visibility:hidden keeps
+   those out of the tab order as well. */
+.card-sizes-nav.swiper-button-disabled,
+.card-sizes-nav.swiper-button-lock {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Adding to cart: the pills are dimmed by the rule above; the arrows follow. */
+.product-card-wrapper[data-cart-busy='true'] .card-sizes-nav {
+  opacity: 0.25;
+  pointer-events: none;
+}
+
+@media screen and (max-width: 749px) {
+  .card__information-sizes.card-sizes-slider {
+    padding-inline: 15px;
+  }
+
+  .card-sizes-nav {
+    width: 15px;
+  }
+
+  .card-sizes-nav svg {
+    width: 6px;
+    height: 10px;
+  }
 }

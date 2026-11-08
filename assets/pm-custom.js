@@ -1345,6 +1345,19 @@ function initCardSizePickers(root) {
 // тап вне открытой карточки закрывает полоску
 if (!window.__cardSizeOutsideBound) {
   window.__cardSizeOutsideBound = true;
+  // Swallow the click that ends a swipe on the sizes strip before it reaches
+  // the handler below: its target sits above the card, so it looks like a tap
+  // on empty space. The flag is set by cardSizesEnable.
+  document.addEventListener(
+    "click",
+    function (event) {
+      if (!window.__cardSizesSwallowClick) return;
+      window.__cardSizesSwallowClick = false;
+      event.preventDefault();
+      event.stopPropagation();
+    },
+    true
+  );
   document.addEventListener("click", function (event) {
     var open = document.querySelectorAll(".card-wrapper.is-sizes-open");
     Array.prototype.forEach.call(open, function (wrapper) {
@@ -1356,12 +1369,321 @@ if (!window.__cardSizeOutsideBound) {
   });
 }
 
+/* --------------------------------------------------------------------------
+   Size strip as a Swiper - only while the sizes do not fit the card.
+
+   The strip is the row of pills pinned to the bottom of a product card. A
+   <fieldset> is min-inline-size: min-content by default, so a product with
+   many sizes used to grow the row wider than the card and paint the pills over
+   the neighbouring card. component-card.css clamps the fieldset; here the row
+   becomes a free-mode Swiper, but only once it really does not fit.
+
+   Every input+label pair is grouped once into .card-sizes-track /
+   .card-sizes-slide. While the row fits, the track is display:contents, so the
+   fieldset lays the slides out exactly like the old flat row (same gap, same
+   right-to-left order, same centering) and no Swiper instance exists at all.
+   When the natural width of the pills exceeds the strip, the fieldset becomes
+   .swiper and the track .swiper-wrapper with dir="rtl" (the first size stays
+   on the right), and two tiny edge arrows appear. Widening the card back
+   destroys the instance and returns the plain row.
+
+   Collection pages append cards over ajax; initCollectionGridEnhancements runs
+   after every grid mutation (watchCollectionGridUpdates) and calls
+   initCardSizesSwipers, so freshly loaded cards are handled as well.
+   -------------------------------------------------------------------------- */
+
+var CARD_SIZES_MIN_SLIDES = 2;
+
+function cardSizesGap(fieldset) {
+  var styles = window.getComputedStyle(fieldset);
+  var gap = parseFloat(styles.columnGap || styles.gap);
+  return isNaN(gap) ? 0 : gap;
+}
+
+function cardSizesRemoveSwiperClasses(element) {
+  if (!element) return;
+  Array.prototype.slice.call(element.classList).forEach(function (name) {
+    if (name.indexOf("swiper") === 0) element.classList.remove(name);
+  });
+}
+
+// Groups every input+label pair into a slide. Runs once per fieldset.
+function cardSizesPrepareTrack(fieldset) {
+  var existing = fieldset.querySelector(".card-sizes-track");
+  if (existing) return existing;
+
+  var pairs = [];
+  Array.prototype.slice.call(fieldset.children).forEach(function (child) {
+    if (!child.classList.contains("card-size-preview__input")) return;
+    var label = child.nextElementSibling;
+    if (!label || label.tagName !== "LABEL") return;
+    pairs.push([child, label]);
+  });
+
+  // A single size never needs a slider, and moving it into a track that is
+  // then dropped would simply remove it from the page.
+  if (pairs.length < CARD_SIZES_MIN_SLIDES) return null;
+
+  var track = document.createElement("div");
+  track.className = "card-sizes-track";
+  pairs.forEach(function (pair) {
+    var slide = document.createElement("div");
+    slide.className = "card-sizes-slide";
+    slide.appendChild(pair[0]);
+    slide.appendChild(pair[1]);
+    track.appendChild(slide);
+  });
+
+  fieldset.appendChild(track);
+  return track;
+}
+
+// Width the pills need. Swiper's spaceBetween margins sit between the slides
+// in both states, so the same arithmetic works before and after it starts.
+function cardSizesContentWidth(fieldset, track, swiper) {
+  var slides = track.children;
+  var width = 0;
+  for (var i = 0; i < slides.length; i++) {
+    width += slides[i].getBoundingClientRect().width;
+  }
+  var gap = swiper ? swiper.params.spaceBetween : cardSizesGap(fieldset);
+  return width + gap * Math.max(slides.length - 1, 0);
+}
+
+function cardSizesNavButton(direction, label) {
+  var chevron = direction === "prev" ? '<path d="M1 1l4 4-4 4"/>' : '<path d="M5 1L1 5l4 4"/>';
+  var button = document.createElement("button");
+  button.type = "button";
+  button.className = "card-sizes-nav card-sizes-nav--" + direction;
+  if (label) button.setAttribute("aria-label", label);
+  button.innerHTML =
+    '<svg viewBox="0 0 6 10" aria-hidden="true" focusable="false" fill="none" ' +
+    'stroke="currentColor" stroke-width="1.2" stroke-linecap="round" ' +
+    'stroke-linejoin="round">' +
+    chevron +
+    "</svg>";
+  return button;
+}
+
+function cardSizesEnable(strip, fieldset, track) {
+  if (strip.__sizesSwiper || !window.Swiper) return;
+
+  var gap = cardSizesGap(fieldset);
+  var prevButton = cardSizesNavButton("prev", strip.getAttribute("data-sizes-prev-label"));
+  var nextButton = cardSizesNavButton("next", strip.getAttribute("data-sizes-next-label"));
+
+  // Arrows sit in the strip padding, so they never overlap a size.
+  strip.appendChild(prevButton);
+  strip.appendChild(nextButton);
+  strip.classList.add("card-sizes-slider");
+
+  fieldset.classList.add("swiper");
+  fieldset.setAttribute("dir", "rtl");
+  track.classList.add("swiper-wrapper");
+  Array.prototype.slice.call(track.children).forEach(function (slide) {
+    slide.classList.add("swiper-slide");
+  });
+
+  strip.__sizesSwiper = new Swiper(fieldset, {
+    slidesPerView: "auto",
+    spaceBetween: gap,
+    // Cards also live inside horizontal section sliders (featured collections):
+    // while the sizes can still move, the parent slider must not.
+    nested: true,
+    freeMode: {
+      enabled: true,
+      momentum: true,
+      momentumBounce: false,
+      sticky: false,
+    },
+    watchOverflow: true,
+    navigation: {
+      prevEl: prevButton,
+      nextEl: nextButton,
+    },
+  });
+
+  // A swipe ends with a click whose target is the common ancestor of the
+  // press and the release - usually the grid item, i.e. outside the card
+  // wrapper. The outside-click handler would read it as "tapped away" and
+  // close the opened strip, so that one click is swallowed below.
+  var dragged = false;
+  strip.__sizesSwiper.on("sliderMove", function () {
+    dragged = true;
+  });
+  strip.__sizesSwiper.on("touchEnd", function () {
+    if (!dragged) return;
+    dragged = false;
+    window.__cardSizesSwallowClick = true;
+    window.setTimeout(function () {
+      window.__cardSizesSwallowClick = false;
+    }, 250);
+  });
+}
+
+function cardSizesDisable(strip, fieldset, track) {
+  var swiper = strip.__sizesSwiper;
+  strip.__sizesSwiper = null;
+  strip.__sizesContentWidth = null;
+
+  if (swiper) {
+    try {
+      swiper.destroy(true, true);
+    } catch (e) {
+      /* ignore - the classes below are removed by hand anyway */
+    }
+  }
+
+  strip.classList.remove("card-sizes-slider");
+  Array.prototype.slice.call(strip.querySelectorAll(".card-sizes-nav")).forEach(function (button) {
+    button.remove();
+  });
+
+  fieldset.removeAttribute("dir");
+  fieldset.removeAttribute("style");
+  track.removeAttribute("style");
+  cardSizesRemoveSwiperClasses(fieldset);
+  cardSizesRemoveSwiperClasses(track);
+  Array.prototype.slice.call(track.children).forEach(function (slide) {
+    slide.removeAttribute("style");
+    cardSizesRemoveSwiperClasses(slide);
+  });
+}
+
+function cardSizesUpdate(strip) {
+  if (!strip || !strip.isConnected) return;
+
+  var fieldset = strip.querySelector("[data-card-size-picker]");
+  if (!fieldset) return;
+  var track = fieldset.querySelector(".card-sizes-track");
+  if (!track || track.children.length < CARD_SIZES_MIN_SLIDES) return;
+
+  // display:none cards (complementary products, closed quick-adds) measure 0;
+  // the ResizeObserver calls back once the card has a width.
+  var available = fieldset.clientWidth;
+  if (!available) return;
+
+  var swiper = strip.__sizesSwiper || null;
+  var gap = cardSizesGap(fieldset);
+  var content = cardSizesContentWidth(fieldset, track, swiper);
+
+  if (!swiper) {
+    if (content > available + 1) cardSizesEnable(strip, fieldset, track);
+    return;
+  }
+
+  // A little slack before tearing the slider down, so a resize wobble cannot
+  // switch it on and off. While sliding the strip is narrower (arrow padding),
+  // so this branch only fires when the pills really do fit again.
+  if (content <= available - 2) {
+    cardSizesDisable(strip, fieldset, track);
+    return;
+  }
+
+  if (gap !== swiper.params.spaceBetween) {
+    swiper.params.spaceBetween = gap;
+    swiper.update();
+  } else if (content !== strip.__sizesContentWidth) {
+    swiper.update();
+  }
+  strip.__sizesContentWidth = content;
+}
+
+// One observer for every strip: card width changes on resize, on breakpoint
+// changes and when a hidden card becomes visible.
+function cardSizesObserve(strip) {
+  if (strip.dataset.sizesResizeObserved === "true") return;
+  if (typeof ResizeObserver !== "function") return;
+  strip.dataset.sizesResizeObserved = "true";
+
+  if (!window.__cardSizesResizeObserver) {
+    window.__cardSizesResizeObserver = new ResizeObserver(function (entries) {
+      // Enabling or disabling the slider changes the strip paddings, so the
+      // measurement has to happen outside the observer callback.
+      var targets = entries.map(function (entry) {
+        return entry.target;
+      });
+      window.requestAnimationFrame(function () {
+        targets.forEach(function (target) {
+          if (!target.isConnected) {
+            window.__cardSizesResizeObserver.unobserve(target);
+            return;
+          }
+          cardSizesUpdate(target);
+        });
+      });
+    });
+  }
+
+  window.__cardSizesResizeObserver.observe(strip);
+}
+
+function initCardSizesSwipers(root) {
+  const scope = root || document;
+  const fieldsets = scope.querySelectorAll(".card__information-sizes [data-card-size-picker]");
+
+  Array.prototype.forEach.call(fieldsets, function (fieldset) {
+    const strip = fieldset.closest(".card__information-sizes");
+    if (!strip) return;
+
+    const track = cardSizesPrepareTrack(fieldset);
+    if (!track) return;
+
+    // Keyboard users tab through the radios even past the visible edge:
+    // bring the focused size into view instead of leaving focus off-screen.
+    if (fieldset.dataset.sizesFocusReady !== "true") {
+      fieldset.dataset.sizesFocusReady = "true";
+      fieldset.addEventListener("focusin", function (event) {
+        const slide = event.target && event.target.closest && event.target.closest(".card-sizes-slide");
+        const swiper = strip.__sizesSwiper;
+        if (!slide || !swiper) return;
+        // The browser scrolls overflow:hidden boxes to reveal a focused child.
+        // That would move the row behind Swiper's back, so undo it first and
+        // let the instance scroll instead.
+        if (fieldset.scrollLeft !== 0) fieldset.scrollLeft = 0;
+        if (fieldset.scrollTop !== 0) fieldset.scrollTop = 0;
+        const slideRect = slide.getBoundingClientRect();
+        const box = fieldset.getBoundingClientRect();
+        if (slideRect.left >= box.left - 1 && slideRect.right <= box.right + 1) return;
+        const index = Array.prototype.indexOf.call(track.children, slide);
+        if (index > -1) swiper.slideTo(index);
+      });
+    }
+
+    cardSizesObserve(strip);
+    cardSizesUpdate(strip);
+  });
+}
+
+function refreshCardSizesSwipers(root) {
+  const scope = root || document;
+  const strips = scope.querySelectorAll(".card__information-sizes");
+  Array.prototype.forEach.call(strips, function (strip) {
+    if (strip.querySelector(".card-sizes-track")) cardSizesUpdate(strip);
+  });
+}
+
+// The pills are measured before webfonts settle, and the CDN Swiper may land
+// after the first pass - re-measure both once the page is fully loaded.
+if (window.__cardSizesRefreshBound !== true) {
+  window.__cardSizesRefreshBound = true;
+  if (document.fonts && document.fonts.ready && typeof document.fonts.ready.then === "function") {
+    document.fonts.ready.then(function () {
+      refreshCardSizesSwipers(document);
+    });
+  }
+  window.addEventListener("load", function () {
+    refreshCardSizesSwipers(document);
+  });
+}
+
 function initCollectionGridEnhancements(root) {
   const scope = root || document;
 
   initProductCardSliders(scope);
   initImageSwatchMobileSync(scope);
   initCardSizePickers(scope);
+  initCardSizesSwipers(scope);
 }
 
 function watchCollectionGridUpdates(root) {
