@@ -2812,13 +2812,14 @@
   align-items: center;
   justify-content: center;
   margin: 0;
-  /* The strip's vertical padding, so the chevron sits on the labels' line
-     while the button keeps the full strip height as its tap target. */
-  padding: 11px 0 0.5rem;
+  /* Full strip height, no vertical padding: the chevron is centered on the
+     strip itself. Centering it inside the padded text row instead pushed it
+     several pixels below the digits, which read as off-center. */
+  padding: 0;
   border: 0;
   background: none;
   color: #000;
-  opacity: 0.4;
+  opacity: 1;
   cursor: pointer;
   z-index: 3;
   transition: opacity 0.15s ease;
@@ -2831,10 +2832,6 @@
 
 .card-sizes-nav--next {
   left: 0;
-}
-
-.card-sizes-nav:hover {
-  opacity: 0.9;
 }
 
 .card-sizes-nav svg {
