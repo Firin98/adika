@@ -259,7 +259,7 @@
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
-        "collection": "october-sale",
+        "collection": "all",
         "products_to_show": 4,
         "title": "We’re cute too",
         "heading_size": "h1",

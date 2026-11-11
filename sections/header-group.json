@@ -14,14 +14,14 @@
     "announcement-bar": {
       "type": "announcement-bar",
       "blocks": {
-        "announcement_q4cbVq": {
+        "announcement-bar-0": {
           "type": "announcement",
           "settings": {
-            "text": "מלאי ותמהיל המוצרים עשוי להשתנות/ דמי משלוח בסך 24.9 (משלוח חינם בקניה מעל 299.9 ₪)",
+            "text": "NOVEMBER GOES WILD",
             "link": ""
           }
         },
-        "announcement-bar-0": {
+        "announcement_Ugb38C": {
           "type": "announcement",
           "settings": {
             "text": "HI ADIKA GIRL….",
@@ -31,23 +31,15 @@
         "announcement_9znq6Q": {
           "type": "announcement",
           "settings": {
-            "text": "WE ARE SOOOOOO BACK",
-            "link": ""
-          }
-        },
-        "announcement_g9EXp3": {
-          "type": "announcement",
-          "settings": {
-            "text": "מלאי ותמהיל המוצרים עשוי להשתנות/ דמי משלוח בסך 24.9 (משלוח חינם בקניה מעל 299.9 ₪)",
+            "text": "NOVEMBER GOES WILD",
             "link": ""
           }
         }
       },
       "block_order": [
-        "announcement_q4cbVq",
         "announcement-bar-0",
-        "announcement_9znq6Q",
-        "announcement_g9EXp3"
+        "announcement_Ugb38C",
+        "announcement_9znq6Q"
       ],
       "settings": {
         "auto_rotate": true,
@@ -64,11 +56,11 @@
       "settings": {
         "logo_position": "right",
         "mobile_logo_position": "right",
-        "menu": "main-menu-flash-sale",
+        "menu": "main-menu",
         "menu_type_desktop": "dropdown",
         "sticky_header_type": "on-scroll-up",
         "show_line_separator": false,
-        "color_scheme": "scheme-35026880-0af1-4623-94b9-d8747e7669a2",
+        "color_scheme": "scheme-1",
         "menu_color_scheme": "scheme-1",
         "enable_country_selector": false,
         "enable_language_selector": false,
