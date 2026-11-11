@@ -298,7 +298,7 @@
 
             <div
               id="CardSizes-{{ section_id }}-{{ card_product.id }}"
-              class="card__information-sizes no-js-hidden"
+              class="card__information-sizes no-js-hidden{% if settings.card_sizes_display == 'wrap' %} card-sizes-wrap{% endif %}"
               aria-label="{{ card_size_option.name | escape }}"
               data-sizes-prev-label="{{ 'general.slider.previous_slide' | t | escape }}"
               data-sizes-next-label="{{ 'general.slider.next_slide' | t | escape }}"

@@ -1626,6 +1626,10 @@ function initCardSizesSwipers(root) {
     const strip = fieldset.closest(".card__information-sizes");
     if (!strip) return;
 
+    // Theme settings > Product cards > size list: in "wrap" mode the pills
+    // simply wrap onto a second line, so there is nothing to slide.
+    if (strip.classList.contains("card-sizes-wrap")) return;
+
     const track = cardSizesPrepareTrack(fieldset);
     if (!track) return;
 

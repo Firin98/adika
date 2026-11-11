@@ -55,6 +55,16 @@
     "cards": {
       "name": "Product cards",
       "settings": {
+        "sizes_display": {
+          "label": "Size list on product cards",
+          "info": "Used when the size options do not fit on one line. Slider scrolls the row behind two small arrows; Two lines wraps the sizes onto a second line instead.",
+          "options__1": {
+            "label": "Slider with arrows"
+          },
+          "options__2": {
+            "label": "Two lines (wrap)"
+          }
+        },
         "style": {
           "options__1": {
             "label": "Standard"

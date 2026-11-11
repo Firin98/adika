@@ -504,6 +504,23 @@
         "label": "t:settings_schema.cards.settings.style.label"
       },
       {
+        "type": "select",
+        "id": "card_sizes_display",
+        "options": [
+          {
+            "value": "slider",
+            "label": "t:settings_schema.cards.settings.sizes_display.options__1.label"
+          },
+          {
+            "value": "wrap",
+            "label": "t:settings_schema.cards.settings.sizes_display.options__2.label"
+          }
+        ],
+        "default": "slider",
+        "info": "t:settings_schema.cards.settings.sizes_display.info",
+        "label": "t:settings_schema.cards.settings.sizes_display.label"
+      },
+      {
         "type": "range",
         "id": "card_image_padding",
         "min": 0,

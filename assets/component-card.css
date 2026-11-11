@@ -2870,3 +2870,37 @@
     height: 10px;
   }
 }
+
+/* ==========================================================================
+   Size strip: wrapped mode.
+
+   Theme settings > Product cards > "Size list on product cards" = "Two
+   lines". Same strip, same hover / cart-button reveal as the slider mode, but
+   the pills wrap onto a second line instead of scrolling behind arrows. The
+   strip is anchored with bottom: 1px, so it grows upwards from the card bottom.
+   ========================================================================== */
+
+.card--media .card__information-sizes.card-sizes-wrap {
+  /* Slider mode fixes the height to one row (see .card--media
+     .card__information-sizes above); a wrapped row has to grow instead. */
+  height: auto;
+  min-height: 39px;
+}
+
+.card__information-sizes.card-sizes-wrap .product-form__input--pill {
+  flex-wrap: wrap;
+  row-gap: 0.6rem;
+  /* Nothing scrolls sideways once the pills wrap. Clipping keeps a single
+     oversized label from bleeding onto the neighbouring card. */
+  overflow: hidden;
+}
+
+@media screen and (max-width: 749px) {
+  .card--media .card__information-sizes.card-sizes-wrap {
+    min-height: 33px;
+  }
+
+  .card__information-sizes.card-sizes-wrap .product-form__input--pill {
+    row-gap: 0.5rem;
+  }
+}
